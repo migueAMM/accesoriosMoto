@@ -1,4 +1,4 @@
-# Glosario del Lenguaje Ubicuo - [Nombre de su e-commerce / nicho]
+# Glosario del Lenguaje Ubicuo - Accesorios Moto
 
 ## Conceptos Centrales
 
