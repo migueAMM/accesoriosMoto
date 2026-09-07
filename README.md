@@ -1,3 +1,7 @@
+Miguel Angel Marin Montes
+Diana Maria Garcia Alzate 
+Juan Jose Suarez
+
 # Glosario del Lenguaje Ubicuo - Accesorios Moto
 
 ## Conceptos Centrales
