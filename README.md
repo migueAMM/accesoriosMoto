@@ -100,12 +100,12 @@ casco.setMaterial("Policarbonato")
 
 | No usar | Usar |
 |---|---|
-| [Objeto] | [Producto] |
-| [Cosa] | [Producto] |
-| [Articulo] | [Producto] |
-| [Usuario] | []Cliente |
-| [Tipo de producto] | [Categoria] |
-| [Compra] | [Pedido] |
-| [Valor] | [Precio] |
-| [Forma de pago] | [Método de pago] |
-| [Nivel de seguridad ] | [Certificado] |
+| Objeto | Producto |
+| Cosa | Producto |
+| Articulo | Producto |
+| Usuario | Cliente |
+| Tipo de producto | Categoria |
+| Compra | [Pedido |
+| Valor | Precio |
+| Forma de pago | Método de pago |
+| Nivel de seguridad | Certificado |
