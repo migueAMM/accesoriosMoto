@@ -5,7 +5,7 @@ Miguel Angel Marin Montes - Diana Maria Garcia Alzate - Juan Jose Suarez
 ## Conceptos Centrales
 
 ### Marca.
-*Definición:* [Nombre comercial que identifica al fabricante o proveedor de un producto]
+*Definición:* Nombre comercial que identifica al fabricante o proveedor de un producto.
 
 *Sinónimos aceptados:* comercializador.
 *No usar:* Firma.
@@ -100,6 +100,12 @@ casco.setMaterial("Policarbonato")
 
 | No usar | Usar |
 |---|---|
-| [genérico 1] | [su término] |
-| [genérico 2] | [su término] |
-| [genérico 3] | [su término] |
+| [Objeto] | [Producto] |
+| [Cosa] | [Producto] |
+| [Articulo] | [Producto] |
+| [Usuario] | []Cliente |
+| [Tipo de producto] | [Categoria] |
+| [Compra] | [Pedido] |
+| [Valor] | [Precio] |
+| [Forma de pago] | [Método de pago] |
+| [Nivel de seguridad ] | [Certificado] |
