@@ -5,7 +5,7 @@ Miguel Angel Marin Montes - Diana Maria Garcia Alzate - Juan Jose Suarez
 ## Conceptos Centrales
 
 ### Marca.
-*Definición:* Nombre comercial que identifica al fabricante o proveedor de un producto
+*Definición:* [Nombre comercial que identifica al fabricante o proveedor de un producto]
 
 *Sinónimos aceptados:* comercializador.
 *No usar:* Firma.
