@@ -12,4 +12,6 @@ public record Precio(double monto, String moneda) {
     public Precio conProteccion(Proteccion proteccion) {
         return new Precio(monto * proteccion.factorProteccion(), moneda);
     }
+
+
 }
