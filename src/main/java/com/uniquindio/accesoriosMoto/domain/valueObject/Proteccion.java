@@ -7,7 +7,7 @@ public enum Proteccion {
     NIVEL_4(7),
     NIVEL_5(9);
 
-    private final int factorProteccion;
+    public final int factorProteccion;
 
     Proteccion(int factorProteccion) {
         this.factorProteccion = factorProteccion;

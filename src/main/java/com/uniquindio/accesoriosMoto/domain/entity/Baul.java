@@ -1,6 +1,7 @@
 package com.uniquindio.accesoriosMoto.domain.entity;
 
 import com.uniquindio.accesoriosMoto.domain.valueObject.Marca;
+import com.uniquindio.accesoriosMoto.domain.valueObject.Material;
 import com.uniquindio.accesoriosMoto.domain.valueObject.Precio;
 
 import java.util.Objects;
