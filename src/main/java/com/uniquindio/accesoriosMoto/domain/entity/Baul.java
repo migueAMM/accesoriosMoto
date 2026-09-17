@@ -1,5 +1,6 @@
 package com.uniquindio.accesoriosMoto.domain.entity;
 
+import com.uniquindio.accesoriosMoto.domain.exception.ReglaDominioException;
 import com.uniquindio.accesoriosMoto.domain.valueObject.Marca;
 import com.uniquindio.accesoriosMoto.domain.valueObject.Material;
 import com.uniquindio.accesoriosMoto.domain.valueObject.Precio;
@@ -10,21 +11,31 @@ public class Baul {
     private final String id;
     private Marca marca;
     private Material material;
-    private int capacidadLitros;
+    private double capacidadLitros;
     private String dimensiones;
     private Precio precio;
+    private double capacidadMaximaCarga;
 
-    public Baul(String id, Marca marca, Material material, int capacidadLitros, String dimensiones, Precio precio) {
+    private Baul(String id, Marca marca, Material material, double capacidadLitros, String dimensiones, Precio precio, double capacidadMaximaCarga) {
         this.id = id;
         this.marca = marca;
         this.material = material;
         this.capacidadLitros = capacidadLitros;
         this.dimensiones = dimensiones;
         this.precio = precio;
+        this.capacidadMaximaCarga = capacidadMaximaCarga;
     }
 
-    public static Baul crear(String id, Marca marca, Material material, int capacidadLitros, String dimensiones, Precio precio){
-        return new Baul(id, marca, material, capacidadLitros, dimensiones, precio);
+    public static Baul crear(String id, Marca marca, Material material, int capacidadLitros, String dimensiones, Precio precio, double capacidadMaximaCarga){
+
+        if (capacidadLitros <= 0){
+            throw new ReglaDominioException("Un baul debe indicar su capacidad en litros antes de ser publicado para la venta");
+        }
+
+        if (capacidadMaximaCarga <= 0){
+            throw new ReglaDominioException("Un baul debe indicar su capacidad máxima de carga antes de ser publicado para la venta");
+        }
+        return new Baul(id, marca, material, capacidadLitros, dimensiones, precio, capacidadMaximaCarga);
     }
 
     @Override
