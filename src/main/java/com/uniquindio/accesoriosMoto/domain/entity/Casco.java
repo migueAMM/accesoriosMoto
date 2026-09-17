@@ -1,5 +1,6 @@
 package com.uniquindio.accesoriosMoto.domain.entity;
 
+import com.uniquindio.accesoriosMoto.domain.exception.ReglaDominioException;
 import com.uniquindio.accesoriosMoto.domain.valueObject.Marca;
 import com.uniquindio.accesoriosMoto.domain.valueObject.Precio;
 import com.uniquindio.accesoriosMoto.domain.valueObject.Proteccion;
@@ -30,6 +31,10 @@ public class Casco {
     }
 
    public static Casco crear(String id, Marca marca, String modelo, String color, Talla talla, Precio precio, Proteccion proteccion, String certificacionSeguridad) {
+
+        if (certificacionSeguridad == null || certificacionSeguridad.isBlank()){
+            throw new ReglaDominioException("Un casco debe tener una certificacion de seguridad antes de ser publicado para la venta");
+        }
        return new Casco(id, marca, modelo, color, talla, precio, proteccion, certificacionSeguridad);
    }
 

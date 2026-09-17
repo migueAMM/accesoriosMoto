@@ -35,6 +35,7 @@ public class Baul {
         if (capacidadMaximaCarga <= 0){
             throw new ReglaDominioException("Un baul debe indicar su capacidad máxima de carga antes de ser publicado para la venta");
         }
+
         return new Baul(id, marca, material, capacidadLitros, dimensiones, precio, capacidadMaximaCarga);
     }
 
