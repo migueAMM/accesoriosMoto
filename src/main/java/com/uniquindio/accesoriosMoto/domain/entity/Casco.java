@@ -1,10 +1,7 @@
 package com.uniquindio.accesoriosMoto.domain.entity;
 
 import com.uniquindio.accesoriosMoto.domain.exception.ReglaDominioException;
-import com.uniquindio.accesoriosMoto.domain.valueObject.Marca;
-import com.uniquindio.accesoriosMoto.domain.valueObject.Precio;
-import com.uniquindio.accesoriosMoto.domain.valueObject.Proteccion;
-import com.uniquindio.accesoriosMoto.domain.valueObject.Talla;
+import com.uniquindio.accesoriosMoto.domain.valueObject.*;
 
 import java.util.Objects;
 
@@ -17,8 +14,9 @@ public class Casco {
     private Precio precio;
     private Proteccion proteccion;
     private String certificacionSeguridad;
+    private EstadoPublicacion estadoPublicacion;
 
-    private Casco(String id, Marca marca, String modelo, String color, Talla talla, Precio precio, Proteccion proteccion, String certificacionSeguridad) {
+    private Casco(String id, Marca marca, String modelo, String color, Talla talla, Precio precio, Proteccion proteccion, String certificacionSeguridad, EstadoPublicacion estadoPublicacion) {
         this.id = id;
         this.marca = marca;
         this.modelo = modelo;
@@ -27,15 +25,23 @@ public class Casco {
         this.precio = precio;
         this.proteccion = proteccion;
         this.certificacionSeguridad = certificacionSeguridad;
-
+        this.estadoPublicacion = EstadoPublicacion.PUBLICADO;
     }
 
-   public static Casco crear(String id, Marca marca, String modelo, String color, Talla talla, Precio precio, Proteccion proteccion, String certificacionSeguridad) {
+   public static Casco crear(String id, Marca marca, String modelo, String color, Talla talla, Precio precio, Proteccion proteccion, String certificacionSeguridad, EstadoPublicacion estadoPublicacion) {
 
         if (certificacionSeguridad == null || certificacionSeguridad.isBlank()){
             throw new ReglaDominioException("Un casco debe tener una certificacion de seguridad antes de ser publicado para la venta");
         }
-       return new Casco(id, marca, modelo, color, talla, precio, proteccion, certificacionSeguridad);
+       return new Casco(id, marca, modelo, color, talla, precio, proteccion, certificacionSeguridad, EstadoPublicacion.PUBLICADO);
+   }
+
+   public void publicar(){
+        this.estadoPublicacion = EstadoPublicacion.PUBLICADO;
+   }
+
+   public void despublicar(){
+        this.estadoPublicacion = EstadoPublicacion.NO_PUBLICADO;
    }
 
    @Override
