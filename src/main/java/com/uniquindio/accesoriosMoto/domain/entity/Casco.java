@@ -15,8 +15,9 @@ public class Casco {
     private Talla talla;
     private Precio precio;
     private Proteccion proteccion;
+    private String certificacionSeguridad;
 
-    private Casco(String id, Marca marca, String modelo, String color, Talla talla, Precio precio, Proteccion proteccion) {
+    private Casco(String id, Marca marca, String modelo, String color, Talla talla, Precio precio, Proteccion proteccion, String certificacionSeguridad) {
         this.id = id;
         this.marca = marca;
         this.modelo = modelo;
@@ -24,11 +25,12 @@ public class Casco {
         this.talla = talla;
         this.precio = precio;
         this.proteccion = proteccion;
+        this.certificacionSeguridad = certificacionSeguridad;
+
     }
 
-
-   public static Casco crear(String id, Marca marca, String modelo, String color, Talla talla, Precio precio, Proteccion proteccion) {
-       return new Casco(id, marca, modelo, color, talla, precio, proteccion);
+   public static Casco crear(String id, Marca marca, String modelo, String color, Talla talla, Precio precio, Proteccion proteccion, String certificacionSeguridad) {
+       return new Casco(id, marca, modelo, color, talla, precio, proteccion, certificacionSeguridad);
    }
 
    @Override

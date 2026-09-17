@@ -10,21 +10,23 @@ public class Baul {
     private final String id;
     private Marca marca;
     private Material material;
-    private int capacidadLitros;
+    private double capacidadLitros;
     private String dimensiones;
     private Precio precio;
+    private double capacidadMaximaCarga;
 
-    public Baul(String id, Marca marca, Material material, int capacidadLitros, String dimensiones, Precio precio) {
+    public Baul(String id, Marca marca, Material material, double capacidadLitros, String dimensiones, Precio precio, double capacidadMaximaCarga) {
         this.id = id;
         this.marca = marca;
         this.material = material;
         this.capacidadLitros = capacidadLitros;
         this.dimensiones = dimensiones;
         this.precio = precio;
+        this.capacidadMaximaCarga = capacidadMaximaCarga;
     }
 
-    public static Baul crear(String id, Marca marca, Material material, int capacidadLitros, String dimensiones, Precio precio){
-        return new Baul(id, marca, material, capacidadLitros, dimensiones, precio);
+    public static Baul crear(String id, Marca marca, Material material, int capacidadLitros, String dimensiones, Precio precio, double capacidadMaximaCarga){
+        return new Baul(id, marca, material, capacidadLitros, dimensiones, precio, capacidadMaximaCarga);
     }
 
     @Override
