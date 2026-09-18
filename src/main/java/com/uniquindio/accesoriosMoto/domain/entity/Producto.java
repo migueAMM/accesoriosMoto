@@ -30,6 +30,10 @@ public abstract class Producto {
         this.estadoPublicacion = EstadoPublicacion.NO_PUBLICADO;
     }
 
+    public boolean estaPublicado() {
+        return this.estadoPublicacion == EstadoPublicacion.PUBLICADO;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
