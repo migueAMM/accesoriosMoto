@@ -16,4 +16,8 @@ public class Visor extends Producto{
         this.tipoVisor = tipoVisor;
         this.modelosCascoCompatibles = modelosCascoCompatibles;
     }
+
+    public static Visor crear(String id, Marca marca, Precio precio, String color, String tipoVisor, List<String> modelosCascoCompatibles) {
+        return new Visor(id, marca, precio, color, EstadoPublicacion.NO_PUBLICADO, tipoVisor, modelosCascoCompatibles);
+    }
 }

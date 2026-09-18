@@ -15,4 +15,8 @@ public class SoporteCelular extends Producto{
         this.compatibleTamanoCelular = compatibleTamanoCelular;
     }
 
+    public static SoporteCelular crear(String id, Marca marca, Precio precio, String color, String tipoSujecion, String compatibleTamanoCelular){
+        return new SoporteCelular(id, marca, precio, color, EstadoPublicacion.NO_PUBLICADO, tipoSujecion, compatibleTamanoCelular);
+    }
+
 }

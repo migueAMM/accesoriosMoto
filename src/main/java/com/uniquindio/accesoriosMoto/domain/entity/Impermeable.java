@@ -1,5 +1,6 @@
 package com.uniquindio.accesoriosMoto.domain.entity;
 
+import com.uniquindio.accesoriosMoto.domain.exception.ReglaDominioException;
 import com.uniquindio.accesoriosMoto.domain.valueObject.*;
 
 public class Impermeable extends Producto{
@@ -8,10 +9,14 @@ public class Impermeable extends Producto{
     private Material material;
 
 
-    public Impermeable(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion, Talla talla, Material material, String color1) {
+    public Impermeable(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion, Talla talla, Material material) {
         super(id, marca, precio, color, estadoPublicacion);
         this.talla = talla;
         this.material = material;
-        this.color = color1;
+    }
+
+    public static Impermeable crear(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion, Talla talla, Material material){
+        return new Impermeable(id, marca, precio, color, EstadoPublicacion.NO_PUBLICADO, talla, material);
+
     }
 }

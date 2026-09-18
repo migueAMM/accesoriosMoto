@@ -16,4 +16,8 @@ public class Intercomunicador extends Producto{
         this.autonomiaHoras = autonomiaHoras;
         this.bluetooth = bluetooth;
     }
+
+    public static Intercomunicador crear(String id, Marca marca, Precio precio, String color, int alcanceMetros, int autonomiaHoras, boolean bluetooth){
+        return new Intercomunicador(id, marca, precio, color, EstadoPublicacion.NO_PUBLICADO, alcanceMetros, autonomiaHoras, bluetooth);
+    }
 }
