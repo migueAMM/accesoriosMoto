@@ -16,4 +16,5 @@ public enum Proteccion {
     public int getFactorProteccion() {
         return factorProteccion;
     }
+
 }
