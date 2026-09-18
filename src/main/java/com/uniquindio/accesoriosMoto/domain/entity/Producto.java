@@ -22,6 +22,14 @@ public abstract class Producto {
         this.estadoPublicacion = estadoPublicacion;
     }
 
+    public void publicar(){
+        this.estadoPublicacion = EstadoPublicacion.PUBLICADO;
+    }
+
+    public void despublicar(){
+        this.estadoPublicacion = EstadoPublicacion.NO_PUBLICADO;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
