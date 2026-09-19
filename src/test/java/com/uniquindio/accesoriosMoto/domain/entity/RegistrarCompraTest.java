@@ -1,5 +1,4 @@
 package com.uniquindio.accesoriosMoto.domain.entity;
 
-public class Pedido {
-
+public class RegistrarCompraTest {
 }
