@@ -1,4 +1,4 @@
-package com.uniquindio.accesoriosMoto.domain.infrastructure;
+package com.uniquindio.accesoriosMoto.infrastructure.persistence;
 
 import com.uniquindio.accesoriosMoto.domain.entity.Producto;
 import com.uniquindio.accesoriosMoto.domain.repository.ProductoRepository;
