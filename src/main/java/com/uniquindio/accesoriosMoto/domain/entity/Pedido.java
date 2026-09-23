@@ -65,4 +65,23 @@ public class Pedido {
         return pedido;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public Comprador getComprador() {
+        return comprador;
+    }
+
+    public List<Producto> getProductos() {
+        return productos;
+    }
+
+    public LocalDateTime getFecha() {
+        return fecha;
+    }
+
+    public Precio getTotal() {
+        return total;
+    }
 }

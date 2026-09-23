@@ -1,4 +1,4 @@
-package com.uniquindio.accesoriosMoto.domain.entity;
+package com.uniquindio.accesoriosMoto.infrastructure.persistence;
 
 import com.uniquindio.accesoriosMoto.domain.entity.Pedido;
 import com.uniquindio.accesoriosMoto.domain.repository.PedidoRepository;
@@ -15,11 +15,11 @@ public class PedidoRepositoryEnMemoria implements PedidoRepository {
         pedidos.put(pedido.getId(), pedido);
     }
 
-    public Pedido buscarPorId(String id) {
-        return pedidos.get(id);
-    }
-
     public int cantidadRegistrada() {
         return pedidos.size();
+    }
+
+    public boolean contiene(Pedido pedido){
+        return pedidos.containsValue(pedido);
     }
 }
