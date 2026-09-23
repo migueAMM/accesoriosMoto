@@ -90,4 +90,14 @@ public class Pedido {
     public void setTotal(Precio total) {
         this.total = total;
     }
+
+    public void validarParaRegistro() {
+        if (this.productos == null || this.productos.isEmpty()) {
+            throw new ReglaDominioException("Un pedido no puede registrarse sin productos");
+        }
+        if (this.total == null || this.total.esNegativoOCero()) {
+            throw new ReglaDominioException("Un pedido debe tener un total válido");
+        }
+    }
+
 }
