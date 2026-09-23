@@ -49,47 +49,6 @@ public class Pedido {
         return Objects.hash(id);
     }
 
-    //Setter y getter
-
-    public String getId() {
-        return id;
-    }
-
-    public Comprador getComprador() {
-        return comprador;
-    }
-
-    public List<Producto> getProductos() {
-        return productos;
-    }
-
-    public LocalDateTime getFecha() {
-        return fecha;
-    }
-
-    public Precio getTotal() {
-        return total;
-    }
-
-    public void setComprador(Comprador comprador) {
-        this.comprador = comprador;
-    }
-
-    public void setProductos(List<Producto> productos) {
-        this.productos = productos;
-    }
-
-    public void setEstadoPedido(EstadoPedido estadoPedido) {
-        this.estadoPedido = estadoPedido;
-    }
-
-    public void setFecha(LocalDateTime fecha) {
-        this.fecha = fecha;
-    }
-
-    public void setTotal(Precio total) {
-        this.total = total;
-    }
 
     public void validarParaRegistro() {
         if (this.productos == null || this.productos.isEmpty()) {
@@ -98,6 +57,12 @@ public class Pedido {
         if (this.total == null || this.total.esNegativoOCero()) {
             throw new ReglaDominioException("Un pedido debe tener un total válido");
         }
+    }
+
+    public static Pedido registrar(String id, Comprador comprador, List<Producto> productos, LocalDateTime fecha, Precio total){
+        Pedido pedido = new Pedido(id, comprador, productos, EstadoPedido.PENDIENTE, fecha, total);
+        pedido.validarParaRegistro();
+        return pedido;
     }
 
 }
