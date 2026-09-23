@@ -5,9 +5,7 @@ import com.uniquindio.accesoriosMoto.domain.entity.Pedido;
 import com.uniquindio.accesoriosMoto.domain.entity.Producto;
 import com.uniquindio.accesoriosMoto.domain.repository.PedidoRepository;
 import com.uniquindio.accesoriosMoto.domain.valueObject.EstadoPedido;
-import com.uniquindio.accesoriosMoto.domain.valueObject.EstadoPublicacion;
 import com.uniquindio.accesoriosMoto.domain.valueObject.Precio;
-import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,7 +20,8 @@ public class RealizarPedidoUseCase {
 
     public Pedido ejecutar(String id, Comprador comprador, List<Producto> productos, Precio precioTotal) {
         Pedido pedido = new Pedido(id, comprador, productos, EstadoPedido.PENDIENTE, LocalDateTime.now(), precioTotal);
-        pedidoRepository.guardar(pedido);
+        pedidoRepository.registrar(pedido);
         return pedido;
     }
 }
+
