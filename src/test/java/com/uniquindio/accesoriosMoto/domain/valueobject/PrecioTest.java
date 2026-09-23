@@ -15,4 +15,11 @@ public class PrecioTest {
         assertEquals(p1 , p2);
     }
 
+    @Test
+    public void unPrecioNegativoLanzaReglaDominioException(){
+        assertThrows(ReglaDominioException.class, () -> {
+            new Precio(-100000, "COP");
+        });
+    }
+
 }

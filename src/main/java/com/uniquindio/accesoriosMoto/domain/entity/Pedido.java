@@ -1,5 +1,6 @@
 package com.uniquindio.accesoriosMoto.domain.entity;
 
+import com.uniquindio.accesoriosMoto.domain.exception.ReglaDominioException;
 import com.uniquindio.accesoriosMoto.domain.valueObject.EstadoPedido;
 import com.uniquindio.accesoriosMoto.domain.valueObject.Precio;
 
@@ -23,6 +24,17 @@ public class Pedido {
         this.estadoPedido = estadoPedido;
         this.fecha = fecha;
         this.total = total;
+    }
+
+    public void solicitarReembolso(String motivo){
+        if (this.estadoPedido != EstadoPedido.COMPLETADA){
+            throw new ReglaDominioException("Solo se puede solicitar reembolso de un pedido completado");
+        }
+        this.estadoPedido = EstadoPedido.REEMBOLSADA;
+    }
+
+    public EstadoPedido getEstadoPedido(){
+        return estadoPedido;
     }
 
     @Override
