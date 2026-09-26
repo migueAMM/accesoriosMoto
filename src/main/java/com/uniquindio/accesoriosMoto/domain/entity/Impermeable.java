@@ -9,7 +9,7 @@ public class Impermeable extends Producto{
     private Material material;
 
 
-    public Impermeable(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion, Talla talla, Material material) {
+    private Impermeable(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion, Talla talla, Material material) {
         super(id, marca, precio, color, estadoPublicacion);
         this.talla = talla;
         this.material = material;

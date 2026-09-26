@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public interface ProductoRepository {
 
-    Optional<Producto> obtenrePorId(String id);
+    Optional<Producto> obtenerPorId(String id);
 
     void guardar(Producto producto);
 }

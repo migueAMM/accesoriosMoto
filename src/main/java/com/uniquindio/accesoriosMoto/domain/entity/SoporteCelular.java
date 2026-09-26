@@ -9,7 +9,7 @@ public class SoporteCelular extends Producto{
     private String tipoSujecion;
     private String compatibleTamanoCelular;
 
-    public SoporteCelular(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion, String tipoSujecion, String compatibleTamanoCelular) {
+    private SoporteCelular(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion, String tipoSujecion, String compatibleTamanoCelular) {
         super(id, marca, precio, color, estadoPublicacion);
         this.tipoSujecion = tipoSujecion;
         this.compatibleTamanoCelular = compatibleTamanoCelular;

@@ -11,7 +11,7 @@ public class Visor extends Producto{
     private String tipoVisor;
     private List<String> modelosCascoCompatibles;
 
-    public Visor(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion, String tipoVisor, List<String> modelosCascoCompatibles) {
+    private Visor(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion, String tipoVisor, List<String> modelosCascoCompatibles) {
         super(id, marca, precio, color, estadoPublicacion);
         this.tipoVisor = tipoVisor;
         this.modelosCascoCompatibles = modelosCascoCompatibles;

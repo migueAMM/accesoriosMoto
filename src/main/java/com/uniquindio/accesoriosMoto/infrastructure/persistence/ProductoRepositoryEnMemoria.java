@@ -17,7 +17,7 @@ public class ProductoRepositoryEnMemoria implements ProductoRepository{
     }
 
     @Override
-    public Optional<Producto> obtenrePorId(String id) {
+    public Optional<Producto> obtenerPorId(String id) {
         return Optional.ofNullable(productos.get(id));
     }
 }
