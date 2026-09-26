@@ -13,8 +13,9 @@ public class RegistrarBaulUseCase {
         this.repository = repository;
     }
 
-    public Baul ejecutar(String id, Marca marca, Material material, String color, int capacidadLitros, double capacidadMaximaCarga, String dimensiones, Precio precio){
-        Baul baul = Baul.crear(id, marca, material, color, capacidadLitros, capacidadMaximaCarga, dimensiones, precio);
+    public Baul ejecutar(String id, Marca marca, Material material, double capacidadLitros,
+                         String dimensiones, Precio precio, double capacidadMaximaCarga, String color) {
+        Baul baul = Baul.crear(id, marca, material, capacidadLitros, dimensiones, precio, capacidadMaximaCarga, color);
         repository.guardar(baul);
         return baul;
     }

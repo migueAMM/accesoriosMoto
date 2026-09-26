@@ -12,7 +12,7 @@ public class ProductoRepositoryEnMemoria implements ProductoRepository{
     private final Map<String, Producto> productos = new HashMap<>();
 
     @Override
-    public void guardar(com.uniquindio.accesoriosMoto.domain.entity.Producto producto) {
+    public void guardar(Producto producto) {
         productos.put(producto.getId(), producto);
     }
 
