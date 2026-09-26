@@ -3,11 +3,13 @@ package com.uniquindio.accesoriosMoto.domain.entity;
 import com.uniquindio.accesoriosMoto.domain.valueObject.EstadoPublicacion;
 import com.uniquindio.accesoriosMoto.domain.valueObject.Marca;
 import com.uniquindio.accesoriosMoto.domain.valueObject.Precio;
+import lombok.Getter;
 
 import java.util.Objects;
 
 public abstract class Producto {
 
+    @Getter
     protected final String id;
     protected Marca marca;
     protected Precio precio;
