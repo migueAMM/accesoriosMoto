@@ -13,5 +13,7 @@ public record Precio(double monto, String moneda) {
         return new Precio(monto * proteccion.getFactorProteccion(), moneda);
     }
 
-
+    public boolean esNegativoOCero() {
+        return monto <= 0;
+    }
 }
