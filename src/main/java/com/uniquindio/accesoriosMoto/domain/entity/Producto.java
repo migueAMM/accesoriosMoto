@@ -1,5 +1,6 @@
 package com.uniquindio.accesoriosMoto.domain.entity;
 
+import com.uniquindio.accesoriosMoto.domain.exception.ReglaDominioException;
 import com.uniquindio.accesoriosMoto.domain.valueObject.EstadoPublicacion;
 import com.uniquindio.accesoriosMoto.domain.valueObject.Marca;
 import com.uniquindio.accesoriosMoto.domain.valueObject.Precio;
@@ -25,10 +26,18 @@ public abstract class Producto {
     }
 
     public void publicar(){
+        if (this.estadoPublicacion == EstadoPublicacion.PUBLICADO){
+            throw new ReglaDominioException("El producto ya esta publicado");
+        }
+
         this.estadoPublicacion = EstadoPublicacion.PUBLICADO;
     }
 
     public void despublicar(){
+        if (this.estadoPublicacion == EstadoPublicacion.NO_PUBLICADO){
+            throw new ReglaDominioException("El producto ya esta despublicado");
+        }
+
         this.estadoPublicacion = EstadoPublicacion.NO_PUBLICADO;
     }
 
