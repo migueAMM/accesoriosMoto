@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class ComentarioTest {
 
     private Producto productoPrueba(){
-        return new Casco ("P1", new Marca("M1", "AGV"), new Precio(500000, "COP"), "negro con morado", EstadoPublicacion.PUBLICADO, "K-3", Talla.M, Proteccion.NIVEL_2, "DOT");
+        return Casco.crear("p1", new Marca("m1", "Shark"), "Evo Jet", "Negro", Talla.M, new Precio(200000, "COP"), Proteccion.NIVEL_3, "DOT");
     }
 
     private Comprador compradorPrueba(){
