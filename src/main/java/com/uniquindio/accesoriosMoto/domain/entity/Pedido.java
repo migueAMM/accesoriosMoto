@@ -12,18 +12,27 @@ public class Pedido {
 
     private final String id;
     private Comprador comprador;
-    private List<Producto> productos;
+    private List<ItemPedido> items;
     private EstadoPedido estadoPedido;
     private LocalDateTime fecha;
     private Precio total;
 
-    public Pedido(String id, Comprador comprador, List<Producto> productos, EstadoPedido estadoPedido, LocalDateTime fecha, Precio total) {
+    private Pedido(String id, Comprador comprador, List<ItemPedido> items, EstadoPedido estadoPedido, LocalDateTime fecha, Precio total) {
         this.id = id;
         this.comprador = comprador;
-        this.productos = productos;
+        this.items = items;
         this.estadoPedido = estadoPedido;
         this.fecha = fecha;
         this.total = total;
+    }
+
+
+    public void completar(){
+        if (this.estadoPedido != EstadoPedido.PENDIENTE){
+            throw new ReglaDominioException("Solo se puede completar un pedido pendiente");
+        }
+
+        this.estadoPedido = EstadoPedido.COMPLETADA;
     }
 
     public void solicitarReembolso(String motivo){
@@ -51,16 +60,16 @@ public class Pedido {
 
 
     public void validarParaRegistro() {
-        if (this.productos == null || this.productos.isEmpty()) {
-            throw new ReglaDominioException("Un pedido no puede registrarse sin productos");
+        if (this.items == null || this.items.isEmpty()) {
+            throw new ReglaDominioException("Un pedido no puede registrarse sin items");
         }
         if (this.total == null || this.total.esNegativoOCero()) {
-            throw new ReglaDominioException("Un pedido debe tener un total válido");
+            throw new ReglaDominioException("Un pedido debe tener un total valido");
         }
     }
 
-    public static Pedido registrar(String id, Comprador comprador, List<Producto> productos, LocalDateTime fecha, Precio total){
-        Pedido pedido = new Pedido(id, comprador, productos, EstadoPedido.PENDIENTE, fecha, total);
+    public static Pedido registrar(String id, Comprador comprador, List<ItemPedido> items, LocalDateTime fecha, Precio total){
+        Pedido pedido = new Pedido(id, comprador, items, EstadoPedido.PENDIENTE, fecha, total);
         pedido.validarParaRegistro();
         return pedido;
     }
@@ -73,8 +82,8 @@ public class Pedido {
         return comprador;
     }
 
-    public List<Producto> getProductos() {
-        return productos;
+    public List<ItemPedido> getItems() {
+        return items;
     }
 
     public LocalDateTime getFecha() {

@@ -1,6 +1,7 @@
 package com.uniquindio.accesoriosMoto.domain.entity;
 
 import com.uniquindio.accesoriosMoto.application.usecase.PublicarProductoUseCase;
+import com.uniquindio.accesoriosMoto.domain.exception.ReglaDominioException;
 import com.uniquindio.accesoriosMoto.domain.valueObject.Precio;
 
 import java.util.Objects;
@@ -16,6 +17,13 @@ public class ItemPedido {
         this.producto = producto;
         this.cantidad = cantidad;
         this.subtotal = subtotal;
+    }
+
+    public static ItemPedido crear(String id, Producto producto, int cantidad, Precio subtotal) {
+        if (cantidad <= 0) {
+            throw new ReglaDominioException("La cantidad de un Item de pedido debe ser mayor a cero");
+        }
+        return new ItemPedido(id, producto, cantidad, subtotal);
     }
 
     public String getId() {

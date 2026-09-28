@@ -1,8 +1,7 @@
 package com.uniquindio.accesoriosMoto.domain.entity;
 
 import com.uniquindio.accesoriosMoto.domain.exception.ReglaDominioException;
-import com.uniquindio.accesoriosMoto.domain.valueObject.EstadoPedido;
-import com.uniquindio.accesoriosMoto.domain.valueObject.Precio;
+import com.uniquindio.accesoriosMoto.domain.valueObject.*;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -17,25 +16,29 @@ public class PedidoTest {
         return new Comprador("C1", "Juan Perez", "juanP@gmail.com", "456");
     }
 
+    private ItemPedido itemPrueba() {
+        Producto casco = Casco.crear("P2", new Marca("M2", "AGV"), "K-3", "Blanco con plateado", Talla.M, new Precio(200000, "COP"), Proteccion.NIVEL_3, "DOT");
+        return ItemPedido.crear("i1", casco, 1, new Precio(200000, "COP"));
+    }
+
+    private Pedido pedidoPendiente(){
+        return Pedido.registrar("ped1", compradorPrueba(), List.of(itemPrueba()), LocalDateTime.now(), new Precio(200000, "COP"));
+    }
+
     @Test
     public void noSePuedeSolicitarReembolsoDeUnPedidoPendiente(){
-        Pedido pedido = new Pedido("P1", compradorPrueba(), List.of(), EstadoPedido.PENDIENTE, LocalDateTime.now(), new Precio(500000, "COP") );
-
-        assertThrows(ReglaDominioException.class, () -> {
-            pedido.solicitarReembolso("No llego a tiempo");
-        });
-
+        Pedido pedido = pedidoPendiente();
+        assertThrows(ReglaDominioException.class, () -> pedido.solicitarReembolso("No llego a tiempo"));
         assertEquals(EstadoPedido.PENDIENTE, pedido.getEstadoPedido());
     }
 
     @Test
     public void noSePuedeSolicitarReembolosoDeUnPedidoYaReembolsado(){
-        Pedido pedido = new Pedido("P2", compradorPrueba(), List.of(), EstadoPedido.REEMBOLSADA, LocalDateTime.now(), new Precio(100000, "COP"));
+        Pedido pedido = pedidoPendiente();
+        pedido.completar();
+        pedido.solicitarReembolso("Primer reembolso");
 
-        assertThrows(ReglaDominioException.class, () -> {
-            pedido.solicitarReembolso("Quiero reembolso otra vez");
-        });
-
+        assertThrows(ReglaDominioException.class, () -> pedido.solicitarReembolso("otra vez"));
         assertEquals(EstadoPedido.REEMBOLSADA, pedido.getEstadoPedido());
     }
 }

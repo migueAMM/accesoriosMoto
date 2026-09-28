@@ -1,6 +1,7 @@
 package com.uniquindio.accesoriosMoto.application.usecase;
 
 import com.uniquindio.accesoriosMoto.domain.entity.Comprador;
+import com.uniquindio.accesoriosMoto.domain.entity.ItemPedido;
 import com.uniquindio.accesoriosMoto.domain.entity.Pedido;
 import com.uniquindio.accesoriosMoto.domain.entity.Producto;
 import com.uniquindio.accesoriosMoto.domain.repository.PedidoRepository;
@@ -18,8 +19,8 @@ public class RealizarPedidoUseCase {
         this.pedidoRepository = pedidoRepository;
     }
 
-    public Pedido ejecutar(String id, Comprador comprador, List<Producto> productos, Precio precioTotal) {
-        Pedido pedido = new Pedido(id, comprador, productos, EstadoPedido.PENDIENTE, LocalDateTime.now(), precioTotal);
+    public Pedido ejecutar(String id, Comprador comprador, List<ItemPedido> items, Precio precioTotal) {
+        Pedido pedido = Pedido.registrar(id, comprador, items, LocalDateTime.now(), precioTotal);
         pedidoRepository.registrar(pedido);
         return pedido;
     }
