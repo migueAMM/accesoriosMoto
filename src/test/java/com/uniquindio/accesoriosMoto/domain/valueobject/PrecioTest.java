@@ -13,4 +13,9 @@ public class PrecioTest {
         assertThrows(ReglaDominioException.class, () -> new Precio(-100, "COP"));
     }
 
+    @Test
+    void unPrecioEnCeroLanzaReglaDominioException() {
+        assertThrows(ReglaDominioException.class, () -> new Precio(0, "COP"));
+    }
+
 }

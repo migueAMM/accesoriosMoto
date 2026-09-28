@@ -4,8 +4,8 @@ import com.uniquindio.accesoriosMoto.domain.exception.ReglaDominioException;
 
 public record Precio(double monto, String moneda) {
     public Precio {
-        if (monto < 0) {
-            throw new ReglaDominioException("El precio no puede ser negativo");
+        if (esNegativoOCero()) {
+            throw new ReglaDominioException("El precio debe ser mayor a cero");
         }
     }
 
