@@ -1,6 +1,5 @@
 package com.uniquindio.accesoriosMoto.domain.entity;
 
-import com.uniquindio.accesoriosMoto.application.usecase.PublicarProductoUseCase;
 import com.uniquindio.accesoriosMoto.domain.exception.ReglaDominioException;
 import com.uniquindio.accesoriosMoto.domain.valueObject.Precio;
 

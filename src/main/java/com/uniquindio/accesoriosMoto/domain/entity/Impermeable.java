@@ -15,7 +15,7 @@ public class Impermeable extends Producto{
         this.material = material;
     }
 
-    public static Impermeable crear(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion, Talla talla, Material material){
+    public static Impermeable crear(String id, Marca marca, Precio precio, String color, Talla talla, Material material){
         return new Impermeable(id, marca, precio, color, EstadoPublicacion.NO_PUBLICADO, talla, material);
 
     }
