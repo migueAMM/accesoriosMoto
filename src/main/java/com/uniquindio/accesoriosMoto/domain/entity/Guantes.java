@@ -19,9 +19,6 @@ public class Guantes extends Producto{
 
     public static Guantes crear(String id, Marca marca, Precio precio, String color,
                                 Talla talla, Material material, Proteccion proteccion) {
-        if (talla == null) {
-            throw new ReglaDominioException("Se debe especificar la talla de los guantes");
-        }
         if (proteccion == null) {
             throw new ReglaDominioException("Se debe especificar la protección de los guantes");
         }
