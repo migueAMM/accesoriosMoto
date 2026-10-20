@@ -7,10 +7,10 @@ import com.uniquindio.accesoriosMoto.domain.repository.ProductoRepository;
 import com.uniquindio.accesoriosMoto.domain.valueObject.Compatibilidad;
 import com.uniquindio.accesoriosMoto.domain.valueObject.TipoCompatibilidad;
 
-public class GestionarCompatibilidad {
+public class GestionarCompatibilidadUseCase {
     private final ProductoRepository productoRepository;
 
-    public GestionarCompatibilidad(ProductoRepository productoRepository){
+    public GestionarCompatibilidadUseCase(ProductoRepository productoRepository){
         this.productoRepository = productoRepository;
     }
 
