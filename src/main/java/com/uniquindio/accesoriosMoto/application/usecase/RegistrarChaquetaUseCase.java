@@ -1,6 +1,5 @@
 package com.uniquindio.accesoriosMoto.application.usecase;
 
-import com.uniquindio.accesoriosMoto.domain.entity.Baul;
 import com.uniquindio.accesoriosMoto.domain.entity.Chaqueta;
 import com.uniquindio.accesoriosMoto.domain.repository.ProductoRepository;
 import com.uniquindio.accesoriosMoto.domain.valueObject.*;
