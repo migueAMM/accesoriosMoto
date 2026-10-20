@@ -1,0 +1,42 @@
+package com.uniquindio.accesoriosMoto.application.usecase;
+
+import com.uniquindio.accesoriosMoto.domain.entity.Producto;
+import com.uniquindio.accesoriosMoto.domain.entity.ProductoCompatible;
+import com.uniquindio.accesoriosMoto.domain.exception.ReglaDominioException;
+import com.uniquindio.accesoriosMoto.domain.repository.ProductoRepository;
+import com.uniquindio.accesoriosMoto.domain.valueObject.Compatibilidad;
+import com.uniquindio.accesoriosMoto.domain.valueObject.TipoCompatibilidad;
+
+public class GestionarCompatibilidad {
+    private final ProductoRepository productoRepository;
+
+    public GestionarCompatibilidad(ProductoRepository productoRepository){
+        this.productoRepository = productoRepository;
+    }
+
+    /**
+     * Indica una compatibilidad para un producto dado su id, tipo y modelo.
+     * @param idProducto
+     * @param tipo
+     * @param modelo
+     * @return
+     */
+    public Producto indicar(String idProducto, TipoCompatibilidad tipo, String modelo){
+        Producto producto = obtenerProducto(idProducto);
+        obtenerCompatible(producto).indicarCompatibilidad(new Compatibilidad(tipo, modelo));
+        productoRepository.guardar(producto);
+        return producto;
+    }
+
+    private ProductoCompatible obtenerCompatible(Producto producto){
+        if(producto instanceof ProductoCompatible compatible){
+            return compatible;
+        }
+        throw new RuntimeException("El producto no admite gestión de compatibilidad");
+    }
+
+    private Producto obtenerProducto(String id){
+        return productoRepository.obtenerPorId(id)
+                .orElseThrow(() -> new ReglaDominioException("No existe un producto con ese id"));
+    }
+}
