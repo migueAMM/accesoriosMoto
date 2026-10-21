@@ -87,16 +87,35 @@ public class Pedido {
 
 
     public void validarParaRegistro() {
-        if (this.items == null || this.items.isEmpty()) {
-            throw new ReglaDominioException("Un pedido no puede registrarse sin items");
-        }
+        validarDatosRegistro(id, comprador, items);
         if (this.total == null || this.total.esNegativoOCero()) {
             throw new ReglaDominioException("Un pedido debe tener un total valido");
         }
     }
 
-    public static Pedido registrar(String id, Comprador comprador, List<ItemPedido> items, LocalDateTime fecha, Precio total){
-        Pedido pedido = new Pedido(id, comprador, items, EstadoPedido.PENDIENTE, fecha, total);
+    private static void validarDatosRegistro(String id, Comprador comprador, List<ItemPedido> items) {
+        if (id == null || id.isBlank()) {
+            throw new ReglaDominioException("El pedido debe tener un identificador válido");
+        }
+        if (comprador == null) {
+            throw new ReglaDominioException("El pedido debe indicar un comprador");
+        }
+        if (items == null || items.isEmpty()) {
+            throw new ReglaDominioException("Un pedido no puede registrarse sin items");
+        }
+        if (items.stream().anyMatch(Objects::isNull)) {
+            throw new ReglaDominioException("Los ítems del pedido no pueden ser nulos");
+        }
+    }
+
+    public static Pedido registrar(String id, Comprador comprador, List<ItemPedido> items, LocalDateTime fecha){
+        validarDatosRegistro(id, comprador, items);
+        List<ItemPedido> itemsRegistrados = List.copyOf(items);
+        Precio total = itemsRegistrados.getFirst().getSubtotal();
+        for (int i = 1; i < itemsRegistrados.size(); i++) {
+            total = total.sumar(itemsRegistrados.get(i).getSubtotal());
+        }
+        Pedido pedido = new Pedido(id, comprador, itemsRegistrados, EstadoPedido.PENDIENTE, fecha, total);
         pedido.validarParaRegistro();
         return pedido;
     }

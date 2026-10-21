@@ -18,11 +18,17 @@ public class ItemPedido {
         this.subtotal = subtotal;
     }
 
-    public static ItemPedido crear(String id, Producto producto, int cantidad, Precio subtotal) {
+    public static ItemPedido crear(String id, Producto producto, int cantidad) {
+        if (id == null || id.isBlank()) {
+            throw new ReglaDominioException("El ítem debe tener un identificador válido");
+        }
+        if (producto == null) {
+            throw new ReglaDominioException("El ítem debe indicar un producto");
+        }
         if (cantidad <= 0) {
             throw new ReglaDominioException("La cantidad de un Item de pedido debe ser mayor a cero");
         }
-        return new ItemPedido(id, producto, cantidad, subtotal);
+        return new ItemPedido(id, producto, cantidad, producto.getPrecio().multiplicarPor(cantidad));
     }
 
     public String getId() {

@@ -54,10 +54,13 @@ public class Baul extends Producto implements ProductoCompatible {
 
     public static Baul crear(String id, Marca marca, Material material, double capacidadLitros,
                              String dimensiones, Precio precio, double capacidadMaximaCarga, String color) {
-        if (capacidadLitros <= 0) {
+        if (material == null) {
+            throw new ReglaDominioException("El baúl debe indicar su material");
+        }
+        if (!Double.isFinite(capacidadLitros) || capacidadLitros <= 0) {
             throw new ReglaDominioException("Un baúl debe indicar su capacidad en litros antes de ser publicado");
         }
-        if (capacidadMaximaCarga <= 0) {
+        if (!Double.isFinite(capacidadMaximaCarga) || capacidadMaximaCarga <= 0) {
             throw new ReglaDominioException("Un baúl debe indicar su capacidad máxima de carga antes de ser publicado");
         }
         return new Baul(id, marca, precio, color, EstadoPublicacion.NO_PUBLICADO, material, capacidadLitros, dimensiones, capacidadMaximaCarga);
