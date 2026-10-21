@@ -5,10 +5,16 @@ import com.uniquindio.accesoriosMoto.domain.repository.PedidoRepository;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class PedidoRepositoryEnMemoria implements PedidoRepository {
 
     private final Map<String, Pedido> pedidos = new HashMap<>();
+
+    @Override
+    public Optional<Pedido> obtenerPorId(String id) {
+        return Optional.ofNullable(pedidos.get(id));
+    }
 
     @Override
     public void registrar(Pedido pedido) {

@@ -26,7 +26,6 @@ public class Pedido {
         this.total = total;
     }
 
-
     public void completar(){
         if (this.estadoPedido != EstadoPedido.PENDIENTE){
             throw new ReglaDominioException("Solo se puede completar un pedido pendiente");
