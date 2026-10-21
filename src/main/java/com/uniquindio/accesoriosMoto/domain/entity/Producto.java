@@ -18,7 +18,6 @@ public abstract class Producto {
     protected Precio precio;
     @Getter
     protected String color;
-    @Getter
     protected EstadoPublicacion estadoPublicacion;
 
     protected Producto(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion) {
