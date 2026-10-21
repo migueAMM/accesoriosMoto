@@ -16,6 +16,7 @@ public class Pedido {
     private EstadoPedido estadoPedido;
     private LocalDateTime fecha;
     private Precio total;
+    private String motivoReembolso;
 
     private Pedido(String id, Comprador comprador, List<ItemPedido> items, EstadoPedido estadoPedido, LocalDateTime fecha, Precio total) {
         this.id = id;
@@ -35,10 +36,18 @@ public class Pedido {
     }
 
     public void solicitarReembolso(String motivo){
-        if (this.estadoPedido != EstadoPedido.COMPLETADA){
+        if(this.estadoPedido != EstadoPedido.COMPLETADA){
             throw new ReglaDominioException("Solo se puede solicitar reembolso de un pedido completado");
         }
+        if(motivo == null || motivo.isBlank()){
+            throw new ReglaDominioException("Debe indicar el motivo del reembolso");
+        }
+        this.motivoReembolso = motivo.strip();
         this.estadoPedido = EstadoPedido.REEMBOLSADA;
+    }
+
+    public String getMotivoReembolso(){
+        return motivoReembolso;
     }
 
     public EstadoPedido getEstadoPedido(){
