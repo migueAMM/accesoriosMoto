@@ -21,6 +21,12 @@ public abstract class Producto {
     protected EstadoPublicacion estadoPublicacion;
 
     protected Producto(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion) {
+        if (id == null || id.isBlank()){
+            throw new ReglaDominioException("El producto debe tener un identificador valido");
+        }
+        if (marca == null || precio == null){
+            throw new ReglaDominioException("El producto debe tener una marca y un precio");
+        }
         this.id = id;
         this.marca = marca;
         this.precio = precio;

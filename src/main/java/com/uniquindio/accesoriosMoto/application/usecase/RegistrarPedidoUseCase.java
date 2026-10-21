@@ -18,7 +18,7 @@ public class RegistrarPedidoUseCase {
     }
 
     public Pedido ejecutar(String id, Comprador comprador, List<ItemPedido> items, Precio precioTotal) {
-        Pedido pedido = Pedido.registrar(id, comprador, items, LocalDateTime.now(), precioTotal);
+        Pedido pedido = Pedido.registrar(id, comprador, items, LocalDateTime.now());
         pedidoRepository.registrar(pedido);
         return pedido;
     }

@@ -1,5 +1,7 @@
 package com.uniquindio.accesoriosMoto.domain.entity;
 
+import com.uniquindio.accesoriosMoto.domain.exception.ReglaDominioException;
+
 import java.util.Objects;
 
 public abstract class Usuario {
@@ -9,6 +11,9 @@ public abstract class Usuario {
     protected String contrasena;
 
     public Usuario(String id, String nombre, String correo, String contrasena) {
+        if (id == null || id.isBlank()){
+            throw new ReglaDominioException("El usuario debe tener un identificador valido");
+        }
         this.id = id;
         this.nombre = nombre;
         this.correo = correo;
