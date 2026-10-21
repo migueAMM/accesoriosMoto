@@ -28,6 +28,11 @@ public class GestionarCompatibilidadUseCase {
         return producto;
     }
 
+    /**
+     * Retira una compatibilidad para un producto dado su id, tipo y modelo.
+     * @param producto
+     * @return
+     */
     private ProductoCompatible obtenerCompatible(Producto producto){
         if(producto instanceof ProductoCompatible compatible){
             return compatible;
@@ -35,6 +40,11 @@ public class GestionarCompatibilidadUseCase {
         throw new RuntimeException("El producto no admite gestión de compatibilidad");
     }
 
+    /**
+     * Obtiene un producto por su id, lanzando una excepción si no existe.
+     * @param id
+     * @return
+     */
     private Producto obtenerProducto(String id){
         return productoRepository.obtenerPorId(id)
                 .orElseThrow(() -> new ReglaDominioException("No existe un producto con ese id"));

@@ -7,8 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PedidoTest {
 
@@ -40,5 +39,28 @@ public class PedidoTest {
 
         assertThrows(ReglaDominioException.class, () -> pedido.solicitarReembolso("otra vez"));
         assertEquals(EstadoPedido.REEMBOLSADA, pedido.getEstadoPedido());
+    }
+
+    @Test
+    void unPedidoCompletadoConservaElMotivoDelReembolso(){
+        Pedido pedido = pedidoPendiente();
+        pedido.completar();
+
+        pedido.solicitarReembolso("  El accesorio llegó dañado  ");
+
+        assertEquals(EstadoPedido.REEMBOLSADA, pedido.getEstadoPedido());
+        assertEquals("El accesorio llegó dañado", pedido.getMotivoReembolso());
+    }
+
+    @Test
+    void unMotivoInvalidoNoModificaElPedido() {
+        Pedido pedido = pedidoPendiente();
+        pedido.completar();
+
+        for (String motivo : new String[]{null, "", "   "}) {
+            assertThrows(ReglaDominioException.class, () -> pedido.solicitarReembolso(motivo));
+            assertEquals(EstadoPedido.COMPLETADA, pedido.getEstadoPedido());
+            assertNull(pedido.getMotivoReembolso());
+        }
     }
 }
