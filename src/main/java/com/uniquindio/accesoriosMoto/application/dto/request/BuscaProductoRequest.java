@@ -1,4 +1,4 @@
-package com.uniquindio.accesoriosMoto.application.usecase.dto.request;
+package com.uniquindio.accesoriosMoto.application.dto.request;
 
 import com.uniquindio.accesoriosMoto.domain.valueObject.TipoCompatibilidad;
 import jakarta.validation.constraints.PositiveOrZero;
