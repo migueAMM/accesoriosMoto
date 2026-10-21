@@ -54,6 +54,25 @@ public class Pedido {
         return estadoPedido;
     }
 
+    public Producto obtenerProductoParaComentar(Comprador comprador, String idProducto){
+        if (comprador == null || this.comprador == null || !this.comprador.equals(comprador)){
+            throw new ReglaDominioException("Solo el comprador del pedido puede comentar sus productos");
+        }
+        if (estadoPedido != EstadoPedido.COMPLETADA){
+            throw new ReglaDominioException("Solo se pueden comentar productos de un pedido completado");
+        }
+        if (idProducto == null || idProducto.isBlank()){
+            throw new ReglaDominioException("Debe indicar el producto que desea comentar");
+        }
+        return items.stream()
+                .filter(Objects::nonNull)
+                .map(ItemPedido::getProducto)
+                .filter(Objects::nonNull)
+                .filter(producto -> idProducto.equals(producto.getId()))
+                .findFirst()
+                .orElseThrow(() -> new ReglaDominioException("El producto no pertenece al pedido"));
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
