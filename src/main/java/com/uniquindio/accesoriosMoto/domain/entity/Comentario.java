@@ -43,7 +43,7 @@ public class Comentario {
         if (pedido == null){
             throw new ReglaDominioException("Se requiere un pedido para verificar la compra");
         }
-        Producto producto = pedido.obtenerProductoParaComertar(comprador, idProducto);
+        Producto producto = pedido.obtenerProductoParaComentar(comprador, idProducto);
         return new Comentario(id, pedido.getComprador(), producto, calificacion, texto);
     }
 

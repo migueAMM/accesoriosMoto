@@ -20,6 +20,10 @@ public abstract class Usuario {
         this.contrasena = contrasena;
     }
 
+    public String getId() {
+        return id;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
