@@ -5,7 +5,9 @@ import com.uniquindio.accesoriosMoto.domain.repository.ProductoRepository;
 import com.uniquindio.accesoriosMoto.domain.valueObject.EstadoPublicacion;
 import com.uniquindio.accesoriosMoto.domain.valueObject.Marca;
 import com.uniquindio.accesoriosMoto.domain.valueObject.Precio;
+import org.springframework.stereotype.Service;
 
+@Service
 public class RegistrarSoporteCelularUseCase {
     private final ProductoRepository repository;
 

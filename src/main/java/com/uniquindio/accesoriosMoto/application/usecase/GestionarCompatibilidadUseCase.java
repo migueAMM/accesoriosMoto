@@ -6,7 +6,9 @@ import com.uniquindio.accesoriosMoto.domain.exception.ReglaDominioException;
 import com.uniquindio.accesoriosMoto.domain.repository.ProductoRepository;
 import com.uniquindio.accesoriosMoto.domain.valueObject.Compatibilidad;
 import com.uniquindio.accesoriosMoto.domain.valueObject.TipoCompatibilidad;
+import org.springframework.stereotype.Service;
 
+@Service
 public class GestionarCompatibilidadUseCase {
     private final ProductoRepository productoRepository;
 

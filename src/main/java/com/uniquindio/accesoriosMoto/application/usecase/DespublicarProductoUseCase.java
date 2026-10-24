@@ -4,7 +4,9 @@ import com.uniquindio.accesoriosMoto.domain.entity.Producto;
 import com.uniquindio.accesoriosMoto.domain.exception.ReglaDominioException;
 import com.uniquindio.accesoriosMoto.domain.repository.ProductoRepository;
 import org.springframework.data.domain.jaxb.SpringDataJaxb;
+import org.springframework.stereotype.Service;
 
+@Service
 public class DespublicarProductoUseCase {
     private final ProductoRepository productoRepository;
 

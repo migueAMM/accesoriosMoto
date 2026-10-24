@@ -3,7 +3,9 @@ package com.uniquindio.accesoriosMoto.application.usecase;
 import com.uniquindio.accesoriosMoto.domain.entity.Pedido;
 import com.uniquindio.accesoriosMoto.domain.exception.ReglaDominioException;
 import com.uniquindio.accesoriosMoto.domain.repository.PedidoRepository;
+import org.springframework.stereotype.Service;
 
+@Service
 public class SolicitarReembolsoUseCase {
     private final PedidoRepository pedidoRepository;
 

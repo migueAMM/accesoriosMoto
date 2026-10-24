@@ -10,20 +10,20 @@ import com.uniquindio.accesoriosMoto.domain.repository.CompradorRepository;
 import com.uniquindio.accesoriosMoto.domain.repository.PedidoRepository;
 import com.uniquindio.accesoriosMoto.domain.repository.ProductoRepository;
 import com.uniquindio.accesoriosMoto.domain.valueObject.Precio;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Service
 public class RegistrarPedidoUseCase {
     private final CompradorRepository compradorRepository;
     private final ProductoRepository productoRepository;
     private final PedidoRepository pedidoRepository;
 
-    public RegistrarPedidoUseCase(CompradorRepository compradorRepository,
-                                  ProductoRepository productoRepository,
-                                  PedidoRepository pedidoRepository) {
+    public RegistrarPedidoUseCase(CompradorRepository compradorRepository, ProductoRepository productoRepository, PedidoRepository pedidoRepository) {
         this.compradorRepository = compradorRepository;
         this.productoRepository = productoRepository;
         this.pedidoRepository = pedidoRepository;

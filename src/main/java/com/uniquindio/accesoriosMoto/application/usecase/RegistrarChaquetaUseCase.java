@@ -3,7 +3,9 @@ package com.uniquindio.accesoriosMoto.application.usecase;
 import com.uniquindio.accesoriosMoto.domain.entity.Chaqueta;
 import com.uniquindio.accesoriosMoto.domain.repository.ProductoRepository;
 import com.uniquindio.accesoriosMoto.domain.valueObject.*;
+import org.springframework.stereotype.Service;
 
+@Service
 public class RegistrarChaquetaUseCase {
     private final ProductoRepository repository;
 

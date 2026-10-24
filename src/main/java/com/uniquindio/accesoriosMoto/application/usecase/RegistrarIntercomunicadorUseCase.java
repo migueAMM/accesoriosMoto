@@ -3,7 +3,9 @@ package com.uniquindio.accesoriosMoto.application.usecase;
 import com.uniquindio.accesoriosMoto.domain.entity.Intercomunicador;
 import com.uniquindio.accesoriosMoto.domain.repository.ProductoRepository;
 import com.uniquindio.accesoriosMoto.domain.valueObject.*;
+import org.springframework.stereotype.Service;
 
+@Service
 public class RegistrarIntercomunicadorUseCase {
     private final ProductoRepository repository;
 

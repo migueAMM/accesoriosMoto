@@ -3,7 +3,9 @@ package com.uniquindio.accesoriosMoto.application.usecase;
 import com.uniquindio.accesoriosMoto.domain.entity.Producto;
 import com.uniquindio.accesoriosMoto.domain.exception.ReglaDominioException;
 import com.uniquindio.accesoriosMoto.domain.repository.ProductoRepository;
+import org.springframework.stereotype.Service;
 
+@Service
 public class PublicarProductoUseCase {
 
     private final ProductoRepository productoRepository;
