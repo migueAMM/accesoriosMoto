@@ -4,6 +4,7 @@ import com.uniquindio.accesoriosMoto.application.dto.request.DejarComentarioRequ
 import com.uniquindio.accesoriosMoto.application.dto.response.ComentarioResponse;
 import com.uniquindio.accesoriosMoto.application.usecase.DejarComentarioUseCase;
 import com.uniquindio.accesoriosMoto.domain.entity.Comentario;
+import com.uniquindio.accesoriosMoto.infrastructure.rest.mapper.ComentarioMapper;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
