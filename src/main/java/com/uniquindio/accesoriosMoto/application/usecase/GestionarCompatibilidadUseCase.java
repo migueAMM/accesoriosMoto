@@ -41,6 +41,21 @@ public class GestionarCompatibilidadUseCase {
     }
 
     /**
+     * Retira una compatibilidad para un producto dado su id, tipo y modelo.
+     * @param idProducto
+     * @param tipo
+     * @param modelo
+     * @return
+     */
+    public Producto retirar(String idProducto, TipoCompatibilidad tipo, String modelo) {
+        Producto producto = obtenerProducto(idProducto);
+        obtenerCompatible(producto).retirarCompatibilidad(new Compatibilidad(tipo, modelo));
+        productoRepository.guardar(producto);
+        return producto;
+    }
+
+
+    /**
      * Obtiene un producto por su id, lanzando una excepción si no existe.
      * @param id
      * @return
