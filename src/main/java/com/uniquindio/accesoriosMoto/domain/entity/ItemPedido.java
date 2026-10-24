@@ -11,7 +11,7 @@ public class ItemPedido {
     private int cantidad;
     private Precio subtotal;
 
-    protected ItemPedido (String id, Producto producto, int cantidad, Precio subtotal) {
+    private ItemPedido (String id, Producto producto, int cantidad, Precio subtotal) {
         this.id = id;
         this.producto = producto;
         this.cantidad = cantidad;

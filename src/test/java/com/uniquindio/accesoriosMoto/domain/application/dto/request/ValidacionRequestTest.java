@@ -58,26 +58,26 @@ public class ValidacionRequestTest {
 
     @Test
     void busquedaPermiteTodosLosFiltrosOmitidos() {
-        BuscaProductoRequest request = new BuscaProductoRequest(null, null, null, null, null, null, null);
+        BuscarProductoRequest request = new BuscarProductoRequest(null, null, null, null, null, null, null);
 
         assertTrue(validator.validate(request).isEmpty());
     }
 
     @Test
     void busquedaAceptaCeroYLimitesIndependientes() {
-        List<BuscaProductoRequest> requests = List.of(
-                new BuscaProductoRequest("AGV", "Negro", 0.0, 100.0, "COP", TipoCompatibilidad.CASCO, "K-3"),
-                new BuscaProductoRequest(null, null, 100.0, null, "COP", null, null),
-                new BuscaProductoRequest(null, null, null, 0.0, "COP", null, null));
+        List<BuscarProductoRequest> requests = List.of(
+                new BuscarProductoRequest("AGV", "Negro", 0.0, 100.0, "COP", TipoCompatibilidad.CASCO, "K-3"),
+                new BuscarProductoRequest(null, null, 100.0, null, "COP", null, null),
+                new BuscarProductoRequest(null, null, null, 0.0, "COP", null, null));
 
-        for (BuscaProductoRequest request : requests) {
+        for (BuscarProductoRequest request : requests) {
             assertTrue(validator.validate(request).isEmpty());
         }
     }
 
     @Test
     void busquedaRechazaPreciosNegativos() {
-        BuscaProductoRequest request = new BuscaProductoRequest(null, null, -1.0, -2.0, "COP", null, null);
+        BuscarProductoRequest request = new BuscarProductoRequest(null, null, -1.0, -2.0, "COP", null, null);
 
         assertEquals(Set.of("precioMinimo", "precioMaximo"), camposInvalidos(request));
     }

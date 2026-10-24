@@ -37,7 +37,7 @@ public class GestionarCompatibilidadUseCase {
         if(producto instanceof ProductoCompatible compatible){
             return compatible;
         }
-        throw new RuntimeException("El producto no admite gestión de compatibilidad");
+        throw new ReglaDominioException("El producto no admite gestión de compatibilidad");
     }
 
     /**

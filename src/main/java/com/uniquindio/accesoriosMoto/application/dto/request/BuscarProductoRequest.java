@@ -3,7 +3,7 @@ package com.uniquindio.accesoriosMoto.application.dto.request;
 import com.uniquindio.accesoriosMoto.domain.valueObject.TipoCompatibilidad;
 import jakarta.validation.constraints.PositiveOrZero;
 
-public record BuscaProductoRequest (
+public record BuscarProductoRequest(
   String marca,
   String color,
   @PositiveOrZero(message = "El precio minimo no puede ser negativo") Double precioMinimo,
