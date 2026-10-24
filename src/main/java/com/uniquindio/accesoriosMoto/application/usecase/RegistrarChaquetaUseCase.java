@@ -11,7 +11,7 @@ public class RegistrarChaquetaUseCase {
         this.repository = repository;
     }
 
-    public Chaqueta ejecutar(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion, Talla talla, Material material, Proteccion proteccion) {
+    public Chaqueta ejecutar(String id, Marca marca, Precio precio, String color, Talla talla, Material material, Proteccion proteccion) {
         Chaqueta chaqueta = Chaqueta.crear(id, marca, precio, color, talla, material, proteccion);
         repository.guardar(chaqueta);
         return chaqueta;

@@ -13,7 +13,7 @@ public class RegistrarSoporteCelularUseCase {
         this.repository = repository;
     }
 
-    public SoporteCelular ejecutar(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion, String tipoSujecion) {
+    public SoporteCelular ejecutar(String id, Marca marca, Precio precio, String color, String tipoSujecion) {
         SoporteCelular soporteCelular = SoporteCelular.crear(id, marca, precio, color, tipoSujecion);
         repository.guardar(soporteCelular);
         return soporteCelular;

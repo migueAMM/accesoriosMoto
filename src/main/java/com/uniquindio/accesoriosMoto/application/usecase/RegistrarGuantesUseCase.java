@@ -11,7 +11,7 @@ public class RegistrarGuantesUseCase {
         this.repository = repository;
     }
 
-    public Guantes ejecutar(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion, Talla talla, Material material, Proteccion proteccion) {
+    public Guantes ejecutar(String id, Marca marca, Precio precio, String color, Talla talla, Material material, Proteccion proteccion) {
         Guantes guantes = Guantes.crear(id, marca, precio, color, talla, material, proteccion);
         repository.guardar(guantes);
         return guantes;

@@ -15,7 +15,7 @@ public class RegistrarVisorUseCase {
         this.repository = repository;
     }
 
-    public Visor ejecutar(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion, String tipoVisor, List<String> modelosCascoCompatibles) {
+    public Visor ejecutar(String id, Marca marca, Precio precio, String color, String tipoVisor, List<String> modelosCascoCompatibles) {
         Visor visor = Visor.crear(id, marca, precio, color, tipoVisor, modelosCascoCompatibles);
         repository.guardar(visor);
         return visor;

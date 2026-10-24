@@ -11,7 +11,7 @@ public class RegistrarImpermeableUseCase {
         this.repository = repository;
     }
 
-    public Impermeable ejecutar(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion, Talla talla, Material material) {
+    public Impermeable ejecutar(String id, Marca marca, Precio precio, String color, Talla talla, Material material) {
         Impermeable impermeable = Impermeable.crear(id, marca, precio, color, talla, material);
         repository.guardar(impermeable);
         return impermeable;
