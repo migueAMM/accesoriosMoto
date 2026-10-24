@@ -1,4 +1,4 @@
-package com.uniquindio.accesoriosMoto.domain;
+package com.uniquindio.accesoriosMoto.domain.domain;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

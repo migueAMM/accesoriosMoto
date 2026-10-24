@@ -1,5 +1,6 @@
-package com.uniquindio.accesoriosMoto.domain.entity;
+package com.uniquindio.accesoriosMoto.domain.domain.entity;
 
+import com.uniquindio.accesoriosMoto.domain.entity.*;
 import com.uniquindio.accesoriosMoto.domain.exception.ReglaDominioException;
 import com.uniquindio.accesoriosMoto.domain.valueObject.*;
 import org.junit.jupiter.api.Test;
@@ -8,6 +9,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class CompatibilidadProductoTest {
+
     private Visor visor(List<String> modelos) {
         return Visor.crear("v1", new Marca("m1", "AGV"), new Precio(100, "COP"), "Claro", "Integral", modelos);
     }

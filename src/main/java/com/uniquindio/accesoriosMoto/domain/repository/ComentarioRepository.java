@@ -7,5 +7,5 @@ import java.util.Optional;
 public interface ComentarioRepository {
 
     void guardar(Comentario comentario);
-    Optional<Comentario> obtenerPorID(String id);
+    Optional<Comentario> obtenerPorId(String id);
 }

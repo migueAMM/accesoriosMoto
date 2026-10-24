@@ -1,5 +1,6 @@
-package com.uniquindio.accesoriosMoto.domain.entity;
+package com.uniquindio.accesoriosMoto.domain.domain.entity;
 
+import com.uniquindio.accesoriosMoto.domain.entity.*;
 import com.uniquindio.accesoriosMoto.domain.exception.ReglaDominioException;
 import com.uniquindio.accesoriosMoto.domain.valueObject.*;
 import org.junit.jupiter.api.Test;
@@ -13,9 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class ComentarioTest {
 
     private Pedido pedido(Comprador comprador, Producto producto) {
-        Pedido pedido = Pedido.registrar("ped1", comprador,
-                List.of(ItemPedido.crear("i1", producto, 1, new Precio(200000, "COP"))),
-                LocalDateTime.now(), new Precio(200000, "COP"));
+        Pedido pedido = Pedido.registrar("ped1", comprador, List.of(ItemPedido.crear("i1", producto, 1)), LocalDateTime.now());
         pedido.completar();
         return pedido;
     }
@@ -32,8 +31,9 @@ public class ComentarioTest {
     public void dosComentariosConDatosDistintosMismoIdSonIguales(){
         Producto producto = productoPrueba();
         Comprador comprador = compradorPrueba();
-        Comentario original = new Comentario("COM1", comprador, producto, 5, "Excelente");
-        Comentario otro = new Comentario("COM1", comprador, producto, 1, "Malo");
+        Pedido pedido = pedido(comprador, producto);
+        Comentario original = Comentario.dejar("COM1", comprador, pedido, producto.getId(), 5, "Excelente");
+        Comentario otro = Comentario.dejar("COM1", comprador, pedido, producto.getId(), 1, "Malo");
 
         assertEquals(original, otro);
 
@@ -44,11 +44,26 @@ public class ComentarioTest {
         Producto producto = productoPrueba();
         Comprador comprador = compradorPrueba();
 
+        Pedido pedido = pedido(comprador, producto);
+
         assertThrows(ReglaDominioException.class, () -> {
-            new Comentario("COM2", comprador, producto, 7, "Calificacion invalida");
+            Comentario.dejar("COM2", comprador, pedido, producto.getId(), 7, "Calificacion invalida");
         });
     }
 
+    @Test
+    void aceptaLimitesDeCalificacionYConservaDatosDeCompra() {
+        Comprador comprador = compradorPrueba();
+        Producto producto = productoPrueba();
+        Pedido pedido = pedido(comprador, producto);
+        for (int calificacion : new int[]{1, 5}) {
+            Comentario comentario = Comentario.dejar("COM" + calificacion, comprador, pedido, producto.getId(), calificacion, "Mi opinión");
+            assertEquals(calificacion, comentario.getCalificacion());
+            assertEquals("Mi opinión", comentario.getTexto());
+            assertEquals(comprador, comentario.getComprador());
+            assertEquals(producto, comentario.getProducto());
+        }
+    }
 
     @Test
     void rechazaCalificacionInvalidaTextoVacioEIdentidadAusente() {
@@ -83,8 +98,7 @@ public class ComentarioTest {
     void rechazaPedidosPendientesYReembolsados() {
         Comprador comprador = compradorPrueba();
         Producto producto = productoPrueba();
-        Pedido pendiente = Pedido.registrar("p2", comprador,
-                List.of(ItemPedido.crear("i1", producto, 1, new Precio(200000, "COP"))), LocalDateTime.now(), new Precio(200000, "COP"));
+        Pedido pendiente = Pedido.registrar("p2", comprador, List.of(ItemPedido.crear("i1", producto, 1)), LocalDateTime.now());
         assertThrows(ReglaDominioException.class, () -> Comentario.dejar("c1", comprador, pendiente, producto.getId(), 5, "Opinión"));
         Pedido reembolsado = pedido(comprador, producto);
         reembolsado.solicitarReembolso("Devolución");

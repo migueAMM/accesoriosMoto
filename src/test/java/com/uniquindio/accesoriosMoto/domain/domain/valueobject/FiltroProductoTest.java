@@ -1,4 +1,4 @@
-package com.uniquindio.accesoriosMoto.domain.valueobject;
+package com.uniquindio.accesoriosMoto.domain.domain.valueobject;
 
 import com.uniquindio.accesoriosMoto.domain.entity.Baul;
 import com.uniquindio.accesoriosMoto.domain.entity.Guantes;
@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FiltroProductoTest {
-    
+
     private Visor visor(double monto, String moneda) {
         Visor producto = Visor.crear("v1", new Marca("m1", "AGV"), new Precio(monto, moneda), "Negro", "Integral", List.of("K-3"));
         producto.publicar();

@@ -1,5 +1,6 @@
-package com.uniquindio.accesoriosMoto.domain.usecase;
+package com.uniquindio.accesoriosMoto.domain.application.usecase;
 
+import com.uniquindio.accesoriosMoto.application.usecase.GestionarCompatibilidadUseCase;
 import com.uniquindio.accesoriosMoto.domain.entity.Guantes;
 import com.uniquindio.accesoriosMoto.domain.entity.Producto;
 import com.uniquindio.accesoriosMoto.domain.entity.Visor;
@@ -18,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class GestionarCompatibilidadUseCase {
+public class GestionarCompatibilidadUseCaseTest {
 
     private Visor visor() {
         return Visor.crear("v1", new Marca("m", "AGV"), new Precio(100, "COP"), "Claro", "Integral", List.of());
@@ -29,7 +30,7 @@ public class GestionarCompatibilidadUseCase {
         ProductoRepository repository = new ProductoRepositoryEnMemoria();
         Visor producto = visor();
         repository.guardar(producto);
-        com.uniquindio.accesoriosMoto.application.usecase.GestionarCompatibilidadUseCase caso = new com.uniquindio.accesoriosMoto.application.usecase.GestionarCompatibilidadUseCase(repository);
+        GestionarCompatibilidadUseCase caso = new GestionarCompatibilidadUseCase(repository);
         caso.indicar("v1", TipoCompatibilidad.CASCO, "K-3");
         assertSame(producto, repository.obtenerPorId("v1").orElseThrow());
         assertEquals(1, producto.getCompatibilidades().size());
@@ -45,14 +46,14 @@ public class GestionarCompatibilidadUseCase {
             public Optional<Producto> obtenerPorId(String id) { return Optional.of(producto); }
             public void guardar(Producto p) { fail("No debe guardar un producto sin compatibilidad"); }
         };
-        com.uniquindio.accesoriosMoto.application.usecase.GestionarCompatibilidadUseCase caso = new com.uniquindio.accesoriosMoto.application.usecase.GestionarCompatibilidadUseCase(repository);
-        assertThrows(ReglaDominioException  .class, () -> caso.indicar("g1", TipoCompatibilidad.MOTO, "NKD"));
+        GestionarCompatibilidadUseCase caso = new GestionarCompatibilidadUseCase(repository);
+        assertThrows(ReglaDominioException.class, () -> caso.indicar("g1", TipoCompatibilidad.MOTO, "NKD"));
         assertThrows(ReglaDominioException.class, () -> caso.retirar("g1", TipoCompatibilidad.MOTO, "NKD"));
     }
 
     @Test
     void rechazaProductoInexistenteEnAmbasOperaciones() {
-        com.uniquindio.accesoriosMoto.application.usecase.GestionarCompatibilidadUseCase caso = new com.uniquindio.accesoriosMoto.application.usecase.GestionarCompatibilidadUseCase(new ProductoRepositoryEnMemoria());
+        GestionarCompatibilidadUseCase caso = new GestionarCompatibilidadUseCase(new ProductoRepositoryEnMemoria());
         assertThrows(ReglaDominioException.class, () -> caso.indicar("no", TipoCompatibilidad.CASCO, "K-3"));
         assertThrows(ReglaDominioException.class, () -> caso.retirar("no", TipoCompatibilidad.CASCO, "K-3"));
     }
@@ -67,7 +68,7 @@ public class GestionarCompatibilidadUseCase {
             public void guardar(Producto p) { assertSame(producto, p); guardados++; }
         }
         RepositorioPrueba repository = new RepositorioPrueba();
-        com.uniquindio.accesoriosMoto.application.usecase.GestionarCompatibilidadUseCase caso = new com.uniquindio.accesoriosMoto.application.usecase.GestionarCompatibilidadUseCase(repository);
+        GestionarCompatibilidadUseCase caso = new GestionarCompatibilidadUseCase(repository);
         assertSame(producto, caso.indicar("v1", TipoCompatibilidad.CASCO, "K-3"));
         assertEquals(1, repository.guardados);
         assertThrows(ReglaDominioException.class, () -> caso.indicar("v1", TipoCompatibilidad.CASCO, "k-3"));

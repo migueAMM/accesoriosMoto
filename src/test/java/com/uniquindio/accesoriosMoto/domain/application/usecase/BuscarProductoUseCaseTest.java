@@ -1,4 +1,4 @@
-package com.uniquindio.accesoriosMoto.domain.usecase;
+package com.uniquindio.accesoriosMoto.domain.application.usecase;
 
 import com.uniquindio.accesoriosMoto.application.usecase.BuscarProductoUseCase;
 import com.uniquindio.accesoriosMoto.domain.entity.Producto;

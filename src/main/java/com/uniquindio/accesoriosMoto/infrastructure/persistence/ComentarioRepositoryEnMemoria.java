@@ -16,7 +16,7 @@ public class ComentarioRepositoryEnMemoria implements ComentarioRepository {
     }
 
     @Override
-    public Optional<Comentario> obtenerPorID(String id){
+    public Optional<Comentario> obtenerPorId(String id){
         return Optional.ofNullable(comentarios.get(id));
     }
 }

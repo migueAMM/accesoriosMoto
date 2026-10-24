@@ -1,4 +1,4 @@
-package com.uniquindio.accesoriosMoto.domain.valueobject;
+package com.uniquindio.accesoriosMoto.domain.domain.valueobject;
 
 import com.uniquindio.accesoriosMoto.domain.valueObject.Marca;
 import org.junit.jupiter.api.Test;
