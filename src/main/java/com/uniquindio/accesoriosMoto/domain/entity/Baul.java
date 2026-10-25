@@ -2,11 +2,21 @@ package com.uniquindio.accesoriosMoto.domain.entity;
 
 import com.uniquindio.accesoriosMoto.domain.exception.ReglaDominioException;
 import com.uniquindio.accesoriosMoto.domain.valueObject.*;
+import lombok.Getter;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class Baul extends Producto implements ProductoCompatible {
+
+    @Getter
+    private Material material;
+    @Getter
+    private double capacidadLitros;
+    @Getter
+    private String dimensiones;
+    @Getter
+    private double capacidadMaximaCarga;
 
     private final Set<Compatibilidad> compatibilidades = new LinkedHashSet<>();
 
@@ -38,11 +48,6 @@ public class Baul extends Producto implements ProductoCompatible {
         return Set.copyOf(compatibilidades);
     }
 
-    private Material material;
-    private double capacidadLitros;
-    private String dimensiones;
-    private double capacidadMaximaCarga;
-
 
     private Baul(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion, Material material, double capacidadLitros, String dimensiones, double capacidadMaximaCarga) {
         super(id, marca, precio, color, estadoPublicacion);
@@ -52,8 +57,7 @@ public class Baul extends Producto implements ProductoCompatible {
         this.capacidadMaximaCarga = capacidadMaximaCarga;
     }
 
-    public static Baul crear(String id, Marca marca, Material material, double capacidadLitros,
-                             String dimensiones, Precio precio, double capacidadMaximaCarga, String color) {
+    public static Baul crear(String id, Marca marca, Material material, double capacidadLitros, String dimensiones, Precio precio, double capacidadMaximaCarga, String color) {
         if (material == null) {
             throw new ReglaDominioException("El baúl debe indicar su material");
         }
@@ -64,6 +68,12 @@ public class Baul extends Producto implements ProductoCompatible {
             throw new ReglaDominioException("Un baúl debe indicar su capacidad máxima de carga antes de ser publicado");
         }
         return new Baul(id, marca, precio, color, EstadoPublicacion.NO_PUBLICADO, material, capacidadLitros, dimensiones, capacidadMaximaCarga);
+    }
+
+    public static Baul reconstruir(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion, Material material,double capacidadLitros,String dimensiones,double capacidadMaximaCarga, java.util.Set<com.uniquindio.accesoriosMoto.domain.valueObject.Compatibilidad> compatibilidades) {
+        Baul producto = new Baul(id, marca, precio, color, estadoPublicacion, material, capacidadLitros, dimensiones, capacidadMaximaCarga);
+        producto.compatibilidades.addAll(java.util.Set.copyOf(compatibilidades));
+        return producto;
     }
 
 }

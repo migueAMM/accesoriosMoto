@@ -2,6 +2,7 @@ package com.uniquindio.accesoriosMoto.infrastructure.persistence.jpa;
 
 import com.uniquindio.accesoriosMoto.domain.entity.ItemPedido;
 import com.uniquindio.accesoriosMoto.domain.entity.Pedido;
+import com.uniquindio.accesoriosMoto.infrastructure.persistence.jpa.mapper.PedidoPersistenceMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 

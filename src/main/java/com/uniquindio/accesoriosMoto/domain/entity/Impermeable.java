@@ -2,10 +2,13 @@ package com.uniquindio.accesoriosMoto.domain.entity;
 
 import com.uniquindio.accesoriosMoto.domain.exception.ReglaDominioException;
 import com.uniquindio.accesoriosMoto.domain.valueObject.*;
+import lombok.Getter;
 
 public class Impermeable extends Producto{
 
+    @Getter
     private Talla talla;
+    @Getter
     private Material material;
 
 
@@ -18,5 +21,10 @@ public class Impermeable extends Producto{
     public static Impermeable crear(String id, Marca marca, Precio precio, String color, Talla talla, Material material){
         return new Impermeable(id, marca, precio, color, EstadoPublicacion.NO_PUBLICADO, talla, material);
 
+    }
+
+    public static Impermeable reconstruir(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion, Talla talla,Material material) {
+        Impermeable producto = new Impermeable(id, marca, precio, color, estadoPublicacion, talla, material);
+        return producto;
     }
 }

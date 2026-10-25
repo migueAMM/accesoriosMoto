@@ -5,9 +5,11 @@ import com.uniquindio.accesoriosMoto.domain.repository.ProductoRepository;
 import com.uniquindio.accesoriosMoto.domain.valueObject.Marca;
 import com.uniquindio.accesoriosMoto.domain.valueObject.Material;
 import com.uniquindio.accesoriosMoto.domain.valueObject.Precio;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 @Service
+@Transactional
 public class RegistrarBaulUseCase {
     private final ProductoRepository repository;
 

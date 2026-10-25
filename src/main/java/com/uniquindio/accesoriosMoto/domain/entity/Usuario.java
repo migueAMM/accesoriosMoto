@@ -1,13 +1,19 @@
 package com.uniquindio.accesoriosMoto.domain.entity;
 
 import com.uniquindio.accesoriosMoto.domain.exception.ReglaDominioException;
+import lombok.Getter;
 
 import java.util.Objects;
 
 public abstract class Usuario {
+
+    @Getter
     protected final String id;
+    @Getter
     protected String nombre;
+    @Getter
     protected String correo;
+    @Getter
     protected String contrasena;
 
     public Usuario(String id, String nombre, String correo, String contrasena) {
@@ -20,9 +26,6 @@ public abstract class Usuario {
         this.contrasena = contrasena;
     }
 
-    public String getId() {
-        return id;
-    }
 
     @Override
     public boolean equals(Object o) {

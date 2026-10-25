@@ -8,8 +8,10 @@ import com.uniquindio.accesoriosMoto.domain.repository.ComentarioRepository;
 import com.uniquindio.accesoriosMoto.domain.repository.CompradorRepository;
 import com.uniquindio.accesoriosMoto.domain.repository.PedidoRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class DejarComentarioUseCase {
     private final CompradorRepository compradorRepository;
     private final PedidoRepository pedidoRepository;

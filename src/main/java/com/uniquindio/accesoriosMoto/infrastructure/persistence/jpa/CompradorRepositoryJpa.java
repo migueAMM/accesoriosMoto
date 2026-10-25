@@ -1,6 +1,7 @@
 package com.uniquindio.accesoriosMoto.infrastructure.persistence.jpa;
 
 import com.uniquindio.accesoriosMoto.domain.entity.Comprador;
+import com.uniquindio.accesoriosMoto.infrastructure.persistence.jpa.mapper.CompradorPersistenceMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -3,6 +3,7 @@ package com.uniquindio.accesoriosMoto.domain.entity;
 import com.uniquindio.accesoriosMoto.domain.exception.ReglaDominioException;
 import com.uniquindio.accesoriosMoto.domain.valueObject.EstadoPedido;
 import com.uniquindio.accesoriosMoto.domain.valueObject.Precio;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -10,12 +11,19 @@ import java.util.Objects;
 
 public class Pedido {
 
+    @Getter
     private final String id;
-    private Comprador comprador;
-    private List<ItemPedido> items;
+    @Getter
+    private final Comprador comprador;
+    @Getter
+    private final List<ItemPedido> items;
+    @Getter
     private EstadoPedido estadoPedido;
+    @Getter
     private LocalDateTime fecha;
+    @Getter
     private Precio total;
+    @Getter
     private String motivoReembolso;
 
     private Pedido(String id, Comprador comprador, List<ItemPedido> items, EstadoPedido estadoPedido, LocalDateTime fecha, Precio total) {
@@ -46,13 +54,6 @@ public class Pedido {
         this.estadoPedido = EstadoPedido.REEMBOLSADA;
     }
 
-    public String getMotivoReembolso(){
-        return motivoReembolso;
-    }
-
-    public EstadoPedido getEstadoPedido(){
-        return estadoPedido;
-    }
 
     public Producto obtenerProductoParaComentar(Comprador comprador, String idProducto){
         if (comprador == null || this.comprador == null || !this.comprador.equals(comprador)){
@@ -120,23 +121,4 @@ public class Pedido {
         return pedido;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public Comprador getComprador() {
-        return comprador;
-    }
-
-    public List<ItemPedido> getItems() {
-        return items;
-    }
-
-    public LocalDateTime getFecha() {
-        return fecha;
-    }
-
-    public Precio getTotal() {
-        return total;
-    }
 }

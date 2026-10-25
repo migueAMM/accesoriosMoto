@@ -17,6 +17,7 @@ public class Comentario {
     private int calificacion;
     @Getter
     private String texto;
+    @Getter
     private String respuestaVendedor;
 
     public Comentario(String id, Comprador comprador, Producto producto, int calificacion, String texto) {
@@ -45,6 +46,13 @@ public class Comentario {
         }
         Producto producto = pedido.obtenerProductoParaComentar(comprador, idProducto);
         return new Comentario(id, pedido.getComprador(), producto, calificacion, texto);
+    }
+
+
+    public static Comentario reconstruir(String id, Comprador comprador, Producto producto, int calificacion, String texto, String respuestaVendedor) {
+        Comentario comentario = new Comentario(id, comprador, producto, calificacion, texto);
+        comentario.respuestaVendedor = respuestaVendedor;
+        return comentario;
     }
 
     @Override
