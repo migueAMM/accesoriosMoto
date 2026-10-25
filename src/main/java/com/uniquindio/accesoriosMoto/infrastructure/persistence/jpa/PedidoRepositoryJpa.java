@@ -2,6 +2,7 @@ package com.uniquindio.accesoriosMoto.infrastructure.persistence.jpa;
 
 import com.uniquindio.accesoriosMoto.domain.entity.ItemPedido;
 import com.uniquindio.accesoriosMoto.domain.entity.Pedido;
+import com.uniquindio.accesoriosMoto.domain.repository.PedidoRepository;
 import com.uniquindio.accesoriosMoto.infrastructure.persistence.jpa.entity.ProductoEntity;
 import com.uniquindio.accesoriosMoto.infrastructure.persistence.jpa.mapper.PedidoPersistenceMapper;
 import org.springframework.stereotype.Repository;
@@ -13,7 +14,8 @@ import java.util.Optional;
 
 @Repository
 @Transactional(readOnly = true)
-public class PedidoRepositoryJpa {
+public class PedidoRepositoryJpa implements PedidoRepository {
+
     private final PedidoJpaDataRepository repository;
     private final PedidoPersistenceMapper mapper;
     private final CompradorJpaDataRepository compradores;

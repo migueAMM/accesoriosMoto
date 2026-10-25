@@ -1,6 +1,7 @@
 package com.uniquindio.accesoriosMoto.infrastructure.persistence.jpa;
 
 import com.uniquindio.accesoriosMoto.domain.entity.Comprador;
+import com.uniquindio.accesoriosMoto.domain.repository.CompradorRepository;
 import com.uniquindio.accesoriosMoto.infrastructure.persistence.jpa.mapper.CompradorPersistenceMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,7 +10,8 @@ import java.util.Optional;
 
 @Repository
 @Transactional(readOnly = true)
-public class CompradorRepositoryJpa {
+public class CompradorRepositoryJpa implements CompradorRepository {
+
     private final CompradorJpaDataRepository repository;
     private final CompradorPersistenceMapper mapper;
 

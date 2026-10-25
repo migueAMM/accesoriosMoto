@@ -1,6 +1,7 @@
 package com.uniquindio.accesoriosMoto.infrastructure.persistence.jpa;
 
 import com.uniquindio.accesoriosMoto.domain.entity.Producto;
+import com.uniquindio.accesoriosMoto.domain.repository.ProductoRepository;
 import com.uniquindio.accesoriosMoto.domain.valueObject.FiltroProducto;
 import com.uniquindio.accesoriosMoto.infrastructure.persistence.jpa.mapper.ProductoPersistenceMapper;
 import org.springframework.stereotype.Repository;
@@ -11,7 +12,8 @@ import java.util.Optional;
 
 @Repository
 @Transactional(readOnly = true)
-public class ProductoRepositoryJpa {
+public class ProductoRepositoryJpa implements ProductoRepository {
+
     private final ProductoJpaDataRepository repository;
     private final ProductoPersistenceMapper mapper;
 

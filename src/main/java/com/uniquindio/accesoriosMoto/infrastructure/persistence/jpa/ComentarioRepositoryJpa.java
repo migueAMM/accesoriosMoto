@@ -1,6 +1,7 @@
 package com.uniquindio.accesoriosMoto.infrastructure.persistence.jpa;
 
 import com.uniquindio.accesoriosMoto.domain.entity.Comentario;
+import com.uniquindio.accesoriosMoto.domain.repository.ComentarioRepository;
 import com.uniquindio.accesoriosMoto.infrastructure.persistence.jpa.mapper.ComentarioPersistenceMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,7 +10,8 @@ import java.util.Optional;
 
 @Repository
 @Transactional(readOnly = true)
-public class ComentarioRepositoryJpa {
+public class ComentarioRepositoryJpa implements ComentarioRepository {
+
     private final ComentarioJpaDataRepository repository;
     private final ComentarioPersistenceMapper mapper;
     private final CompradorJpaDataRepository compradores;
