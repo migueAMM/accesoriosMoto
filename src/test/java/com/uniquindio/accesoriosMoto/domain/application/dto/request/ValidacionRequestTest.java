@@ -42,7 +42,7 @@ public class ValidacionRequestTest {
     @Test
     void compatibilidadAceptaAmbosDestinos() {
         for (TipoCompatibilidad tipo : TipoCompatibilidad.values()) {
-            GestionarCompatibilidadRequest request = new GestionarCompatibilidadRequest("p1", tipo, "Modelo");
+            GestionarCompatibilidadRequest request = new GestionarCompatibilidadRequest( tipo, "K-3");
 
             assertTrue(validator.validate(request).isEmpty());
         }
@@ -51,9 +51,9 @@ public class ValidacionRequestTest {
     @Test
     void compatibilidadExigeProductoTipoYModelo() {
         assertEquals(Set.of("productoId", "tipo", "modelo"),
-                camposInvalidos(new GestionarCompatibilidadRequest(null, null, null)));
+                camposInvalidos(new GestionarCompatibilidadRequest(null, null)));
         assertEquals(Set.of("productoId", "modelo"),
-                camposInvalidos(new GestionarCompatibilidadRequest(" ", TipoCompatibilidad.MOTO, " ")));
+                camposInvalidos(new GestionarCompatibilidadRequest( TipoCompatibilidad.MOTO, " ")));
     }
 
     @Test
@@ -84,7 +84,7 @@ public class ValidacionRequestTest {
 
     @Test
     void reembolsoAceptaMotivoSinImponerLongitudDelProyectoEjemplo() {
-        SolicitarReembolsoRequest request = new SolicitarReembolsoRequest("p1", "Dañado");
+        SolicitarReembolsoRequest request = new SolicitarReembolsoRequest("Dañado");
 
         assertTrue(validator.validate(request).isEmpty());
     }
@@ -92,7 +92,7 @@ public class ValidacionRequestTest {
     @Test
     void reembolsoExigePedidoYMotivo() {
         for (String texto : new String[]{null, "", " "}) {
-            assertEquals(Set.of("pedidoId", "motivo"), camposInvalidos(new SolicitarReembolsoRequest(texto, texto)));
+            assertEquals(Set.of("pedidoId", "motivo"), camposInvalidos(new SolicitarReembolsoRequest(texto)));
         }
     }
 
