@@ -74,6 +74,12 @@ public class Pedido {
                 .orElseThrow(() -> new ReglaDominioException("El producto no pertenece al pedido"));
     }
 
+    public static Pedido reconstruir(String id, Comprador comprador, List<ItemPedido> items, EstadoPedido estado, LocalDateTime fecha, Precio total, String motivoReembolso) {
+        Pedido pedido = new Pedido(id, comprador, List.copyOf(items), estado, fecha, total);
+        pedido.motivoReembolso = motivoReembolso;
+        return pedido;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

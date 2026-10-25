@@ -92,7 +92,7 @@ public class ProductoPersistenceMapper {
             case GuantesEntity p -> Guantes.reconstruir(e.getId(), marca, precio, e.getColor(), e.getEstadoPublicacion(), p.getTalla(), p.getMaterial(), p.getProteccion());
             case ImpermeableEntity p -> Impermeable.reconstruir(e.getId(), marca, precio, e.getColor(), e.getEstadoPublicacion(), p.getTalla(), p.getMaterial());
             case IntercomunicadorEntity p -> Intercomunicador.reconstruir(e.getId(), marca, precio, e.getColor(), e.getEstadoPublicacion(), p.getAlcanceMetros(), p.getAutonomiaHoras(), p.isBluetooth());
-            case SoporteCelularEntity p -> SoporteCelular.reconstruir(e.getId(), marca, precio, e.getColor(), e.getEstadoPublicacion(), p.getTipoSujecion(), p.getCompatibleTamanoCelular());
+            case SoporteCelularEntity p -> SoporteCelular.reconstruir(e.getId(), marca, precio, e.getColor(), e.getEstadoPublicacion(), p.getTipoSujecion());
             case VisorEntity p -> Visor.reconstruir(e.getId(), marca, precio, e.getColor(), e.getEstadoPublicacion(), p.getTipoVisor(), p.getCompatibilidades().stream().map(c -> new Compatibilidad(c.getTipo(), c.getModelo())).collect(Collectors.toSet()));
             default -> throw new IllegalArgumentException("Tipo persistido no soportado: " + e.getClass().getName());
         };
