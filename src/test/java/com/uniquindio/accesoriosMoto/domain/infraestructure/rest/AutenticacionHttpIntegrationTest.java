@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -42,7 +43,8 @@ class AutenticacionHttpIntegrationTest {
     CodificadorContrasena contrasenas;
     @Autowired
     JdbcTemplate jdbc;
-    @Autowired JwtDecoder decoder;
+    @Autowired
+    JwtDecoder decoder;
     @Autowired
     ApplicationContext contexto;
     private final HttpClient http = HttpClient.newHttpClient();

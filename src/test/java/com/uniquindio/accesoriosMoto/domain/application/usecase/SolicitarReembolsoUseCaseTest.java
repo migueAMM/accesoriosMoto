@@ -36,7 +36,7 @@ public class SolicitarReembolsoUseCaseTest {
         repository.registrar(pedido(true));
         SolicitarReembolsoUseCase caso = new SolicitarReembolsoUseCase(repository);
 
-        Pedido resultado = caso.ejecutar("p1", "Accesorio dañado");
+        Pedido resultado = caso.ejecutar("p1", "u1", "Accesorio dañado");
 
         Pedido guardado = repository.obtenerPorId("p1").orElseThrow();
         assertSame(resultado, guardado);
@@ -61,11 +61,11 @@ public class SolicitarReembolsoUseCaseTest {
         RepositorioPrueba repository = new RepositorioPrueba();
         SolicitarReembolsoUseCase caso = new SolicitarReembolsoUseCase(repository);
 
-        assertThrows(ReglaDominioException.class, () -> caso.ejecutar("p1", " "));
+        assertThrows(ReglaDominioException.class, () -> caso.ejecutar("p1", "u1", " "));
         assertEquals(0, repository.registros);
-        assertSame(pedido, caso.ejecutar("p1", "Motivo válido"));
+        assertSame(pedido, caso.ejecutar("p1", "u1","Motivo válido"));
         assertEquals(1, repository.registros);
-        assertThrows(ReglaDominioException.class, () -> caso.ejecutar("p1", "Otro motivo"));
+        assertThrows(ReglaDominioException.class, () -> caso.ejecutar("p1", "u1", "Otro motivo"));
         assertEquals(1, repository.registros);
     }
 
@@ -80,8 +80,8 @@ public class SolicitarReembolsoUseCaseTest {
         };
         SolicitarReembolsoUseCase caso = new SolicitarReembolsoUseCase(repository);
 
-        assertThrows(ReglaDominioException.class, () -> caso.ejecutar("inexistente", "Motivo"));
-        assertThrows(ReglaDominioException.class, () -> caso.ejecutar("p1", "Motivo"));
+        assertThrows(ReglaDominioException.class, () -> caso.ejecutar("inexistente", "u1", "Motivo"));
+        assertThrows(ReglaDominioException.class, () -> caso.ejecutar("p1", "u1", "Motivo"));
         assertEquals(EstadoPedido.PENDIENTE, pendiente.getEstadoPedido());
         assertNull(pendiente.getMotivoReembolso());
     }

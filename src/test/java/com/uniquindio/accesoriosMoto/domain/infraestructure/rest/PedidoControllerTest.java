@@ -29,8 +29,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(PedidoController.class)
-@Import(PedidoMapper.class)
+@Import({PedidoMapper.class, com.uniquindio.accesoriosMoto.infrastructure.security.SecurityConfig.class})
+@org.springframework.security.test.context.support.WithMockUser(username="u1", roles="COMPRADOR")
 class PedidoControllerTest {
+    @MockitoBean
+    private org.springframework.security.oauth2.jwt.JwtDecoder jwtDecoder;
     @Autowired
     private MockMvc mockMvc;
     @MockitoBean
@@ -82,7 +85,7 @@ class PedidoControllerTest {
         Pedido pedido = DatosRestPrueba.pedido("ped1");
         pedido.completar();
         pedido.solicitarReembolso("Dañado");
-        when(solicitarReembolsoUseCase.ejecutar("ped1", "Dañado")).thenReturn(pedido);
+        when(solicitarReembolsoUseCase.ejecutar("ped1", "u1", "Dañado")).thenReturn(pedido);
 
         mockMvc.perform(put("/api/pedidos/ped1/reembolso").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"motivo\":\"Dañado\"}"))
@@ -91,7 +94,7 @@ class PedidoControllerTest {
                 .andExpect(jsonPath("$.estado").value("REEMBOLSADA"))
                 .andExpect(jsonPath("$.totalMonto").value(200));
 
-        verify(solicitarReembolsoUseCase).ejecutar("ped1", "Dañado");
+        verify(solicitarReembolsoUseCase).ejecutar("ped1", "u1", "Dañado");
     }
 
     @Test

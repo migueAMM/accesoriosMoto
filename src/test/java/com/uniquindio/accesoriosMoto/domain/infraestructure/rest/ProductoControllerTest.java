@@ -31,8 +31,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ProductoController.class)
-@Import(ProductoMapper.class)
+@Import({ProductoMapper.class, com.uniquindio.accesoriosMoto.infrastructure.security.SecurityConfig.class})
+@org.springframework.security.test.context.support.WithMockUser(username="u1", roles="ADMINISTRADOR")
 class ProductoControllerTest {
+    @MockitoBean
+    private org.springframework.security.oauth2.jwt.JwtDecoder jwtDecoder;
     @Autowired
     private MockMvc mockMvc;
     @MockitoBean
@@ -107,73 +110,73 @@ class ProductoControllerTest {
 
     @Test
     void registraChaquetaConIdGeneradoYLocationGeneral() throws Exception {
-        when(registrarChaquetaUseCase.ejecutar(anyString(), eq(new Marca("m1", "Marca")), eq(new Precio(100, "COP")), eq("Negro"), eq(Talla.M), eq(Material.CUERO), eq(Proteccion.NIVEL_1)))
+        when(registrarChaquetaUseCase.ejecutar(anyString(), eq(new Marca("m1", "Marca")), eq(new Precio(100, "COP")), eq("Negro"), eq(EstadoPublicacion.NO_PUBLICADO), eq(Talla.M), eq(Material.CUERO), eq(Proteccion.NIVEL_1)))
                 .thenAnswer(invocacion -> DatosRestPrueba.producto("Chaqueta", invocacion.getArgument(0, String.class)));
 
         MvcResult resultado = registrar("chaquetas", "\"talla\":\"M\",\"material\":\"CUERO\",\"proteccion\":\"NIVEL_1\"", "Chaqueta");
 
         ArgumentCaptor<String> id = ArgumentCaptor.forClass(String.class);
-        verify(registrarChaquetaUseCase).ejecutar(id.capture(), eq(new Marca("m1", "Marca")), eq(new Precio(100, "COP")), eq("Negro"),eq(Talla.M), eq(Material.CUERO), eq(Proteccion.NIVEL_1));
+        verify(registrarChaquetaUseCase).ejecutar(id.capture(), eq(new Marca("m1", "Marca")), eq(new Precio(100, "COP")), eq("Negro"), eq(EstadoPublicacion.NO_PUBLICADO), eq(Talla.M), eq(Material.CUERO), eq(Proteccion.NIVEL_1));
         comprobarIdYLocation(id, resultado);
     }
 
     @Test
     void registraGuantesConIdGeneradoYLocationGeneral() throws Exception {
-        when(registrarGuantesUseCase.ejecutar(anyString(), eq(new Marca("m1", "Marca")), eq(new Precio(100, "COP")), eq("Negro"),eq(Talla.M), eq(Material.CUERO), eq(Proteccion.NIVEL_1)))
+        when(registrarGuantesUseCase.ejecutar(anyString(), eq(new Marca("m1", "Marca")), eq(new Precio(100, "COP")), eq("Negro"), eq(EstadoPublicacion.NO_PUBLICADO), eq(Talla.M), eq(Material.CUERO), eq(Proteccion.NIVEL_1)))
                 .thenAnswer(invocacion -> DatosRestPrueba.producto("Guantes", invocacion.getArgument(0, String.class)));
 
         MvcResult resultado = registrar("guantes", "\"talla\":\"M\",\"material\":\"CUERO\",\"proteccion\":\"NIVEL_1\"", "Guantes");
 
         ArgumentCaptor<String> id = ArgumentCaptor.forClass(String.class);
-        verify(registrarGuantesUseCase).ejecutar(id.capture(), eq(new Marca("m1", "Marca")), eq(new Precio(100, "COP")), eq("Negro"), eq(Talla.M), eq(Material.CUERO), eq(Proteccion.NIVEL_1));
+        verify(registrarGuantesUseCase).ejecutar(id.capture(), eq(new Marca("m1", "Marca")), eq(new Precio(100, "COP")), eq("Negro"), eq(EstadoPublicacion.NO_PUBLICADO), eq(Talla.M), eq(Material.CUERO), eq(Proteccion.NIVEL_1));
         comprobarIdYLocation(id, resultado);
     }
 
     @Test
     void registraImpermeableConIdGeneradoYLocationGeneral() throws Exception {
-        when(registrarImpermeableUseCase.ejecutar(anyString(), eq(new Marca("m1", "Marca")), eq(new Precio(100, "COP")), eq("Negro"), eq(Talla.M), eq(Material.PVC)))
+        when(registrarImpermeableUseCase.ejecutar(anyString(), eq(new Marca("m1", "Marca")), eq(new Precio(100, "COP")), eq("Negro"), eq(EstadoPublicacion.NO_PUBLICADO), eq(Talla.M), eq(Material.PVC)))
                 .thenAnswer(invocacion -> DatosRestPrueba.producto("Impermeable", invocacion.getArgument(0, String.class)));
 
         MvcResult resultado = registrar("impermeables", "\"talla\":\"M\",\"material\":\"PVC\"", "Impermeable");
 
         ArgumentCaptor<String> id = ArgumentCaptor.forClass(String.class);
-        verify(registrarImpermeableUseCase).ejecutar(id.capture(), eq(new Marca("m1", "Marca")), eq(new Precio(100, "COP")), eq("Negro"), eq(Talla.M), eq(Material.PVC));
+        verify(registrarImpermeableUseCase).ejecutar(id.capture(), eq(new Marca("m1", "Marca")), eq(new Precio(100, "COP")), eq("Negro"), eq(EstadoPublicacion.NO_PUBLICADO), eq(Talla.M), eq(Material.PVC));
         comprobarIdYLocation(id, resultado);
     }
 
     @Test
     void registraIntercomunicadorConIdGeneradoYLocationGeneral() throws Exception {
-        when(registrarIntercomunicadorUseCase.ejecutar(anyString(), eq(new Marca("m1", "Marca")), eq(new Precio(100, "COP")), eq("Negro"), eq(100), eq(8), eq(false)))
+        when(registrarIntercomunicadorUseCase.ejecutar(anyString(), eq(new Marca("m1", "Marca")), eq(new Precio(100, "COP")), eq("Negro"), eq(EstadoPublicacion.NO_PUBLICADO), eq(100), eq(8), eq(false)))
                 .thenAnswer(invocacion -> DatosRestPrueba.producto("Intercomunicador", invocacion.getArgument(0, String.class)));
 
         MvcResult resultado = registrar("intercomunicadores", "\"alcanceMetros\":100,\"autonomiaHoras\":8,\"bluetooth\":false", "Intercomunicador");
 
         ArgumentCaptor<String> id = ArgumentCaptor.forClass(String.class);
-        verify(registrarIntercomunicadorUseCase).ejecutar(id.capture(), eq(new Marca("m1", "Marca")), eq(new Precio(100, "COP")), eq("Negro"), eq(100), eq(8), eq(false));
+        verify(registrarIntercomunicadorUseCase).ejecutar(id.capture(), eq(new Marca("m1", "Marca")), eq(new Precio(100, "COP")), eq("Negro"), eq(EstadoPublicacion.NO_PUBLICADO), eq(100), eq(8), eq(false));
         comprobarIdYLocation(id, resultado);
     }
 
     @Test
     void registraSoporteCelularConIdGeneradoYLocationGeneral() throws Exception {
-        when(registrarSoporteCelularUseCase.ejecutar(anyString(), eq(new Marca("m1", "Marca")), eq(new Precio(100, "COP")), eq("Negro"), eq("Manillar")))
+        when(registrarSoporteCelularUseCase.ejecutar(anyString(), eq(new Marca("m1", "Marca")), eq(new Precio(100, "COP")), eq("Negro"), eq(EstadoPublicacion.NO_PUBLICADO), eq("Manillar"), eq("4 a 7 pulgadas")))
                 .thenAnswer(invocacion -> DatosRestPrueba.producto("SoporteCelular", invocacion.getArgument(0, String.class)));
 
         MvcResult resultado = registrar("soportes-celular", "\"tipoSujecion\":\"Manillar\",\"compatibleTamanoCelular\":\"4 a 7 pulgadas\"", "SoporteCelular");
 
         ArgumentCaptor<String> id = ArgumentCaptor.forClass(String.class);
-        verify(registrarSoporteCelularUseCase).ejecutar(id.capture(), eq(new Marca("m1", "Marca")), eq(new Precio(100, "COP")), eq("Negro"),eq("Manillar"));
+        verify(registrarSoporteCelularUseCase).ejecutar(id.capture(), eq(new Marca("m1", "Marca")), eq(new Precio(100, "COP")), eq("Negro"), eq(EstadoPublicacion.NO_PUBLICADO), eq("Manillar"), eq("4 a 7 pulgadas"));
         comprobarIdYLocation(id, resultado);
     }
 
     @Test
     void registraVisorConIdGeneradoYLocationGeneral() throws Exception {
-        when(registrarVisorUseCase.ejecutar(anyString(), eq(new Marca("m1", "Marca")), eq(new Precio(100, "COP")), eq("Negro"), eq("Integral"), eq(List.of("K-3"))))
+        when(registrarVisorUseCase.ejecutar(anyString(), eq(new Marca("m1", "Marca")), eq(new Precio(100, "COP")), eq("Negro"), eq(EstadoPublicacion.NO_PUBLICADO), eq("Integral"), eq(List.of("K-3"))))
                 .thenAnswer(invocacion -> DatosRestPrueba.producto("Visor", invocacion.getArgument(0, String.class)));
 
         MvcResult resultado = registrar("visores", "\"tipoVisor\":\"Integral\",\"modelosCascoCompatibles\":[\"K-3\"]", "Visor");
 
         ArgumentCaptor<String> id = ArgumentCaptor.forClass(String.class);
-        verify(registrarVisorUseCase).ejecutar(id.capture(), eq(new Marca("m1", "Marca")), eq(new Precio(100, "COP")), eq("Negro"),eq("Integral"), eq(List.of("K-3")));
+        verify(registrarVisorUseCase).ejecutar(id.capture(), eq(new Marca("m1", "Marca")), eq(new Precio(100, "COP")), eq("Negro"), eq(EstadoPublicacion.NO_PUBLICADO), eq("Integral"), eq(List.of("K-3")));
         comprobarIdYLocation(id, resultado);
     }
 

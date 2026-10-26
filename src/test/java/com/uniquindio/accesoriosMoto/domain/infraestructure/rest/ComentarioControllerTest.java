@@ -22,8 +22,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(ComentarioController.class)
-@Import(ComentarioMapper.class)
+@Import({ComentarioMapper.class, com.uniquindio.accesoriosMoto.infrastructure.security.SecurityConfig.class})
+@org.springframework.security.test.context.support.WithMockUser(username="u1", roles="COMPRADOR")
 class ComentarioControllerTest {
+    @MockitoBean
+    private org.springframework.security.oauth2.jwt.JwtDecoder jwtDecoder;
     @Autowired
     private MockMvc mockMvc;
     @MockitoBean
