@@ -1,5 +1,6 @@
 package com.uniquindio.accesoriosMoto.infrastructure.persistence.jpa;
 
+import com.uniquindio.accesoriosMoto.application.exception.CorreoDuplicadoException;
 import com.uniquindio.accesoriosMoto.domain.entity.Usuario;
 import com.uniquindio.accesoriosMoto.domain.repository.UsuarioRepository;
 import com.uniquindio.accesoriosMoto.infrastructure.persistence.jpa.mapper.UsuarioPersistenceMapper;
