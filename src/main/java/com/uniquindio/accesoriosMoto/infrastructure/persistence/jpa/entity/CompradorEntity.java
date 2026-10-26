@@ -12,7 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(name="compradores")
-public class CompradorEntity {
+public class CompradorEntity extends UsuarioEntity {
     @Id
     private String id;
     private String nombre;
