@@ -50,9 +50,9 @@ public class ValidacionRequestTest {
 
     @Test
     void compatibilidadExigeProductoTipoYModelo() {
-        assertEquals(Set.of("productoId", "tipo", "modelo"),
+        assertEquals(Set.of("tipo", "modelo"),
                 camposInvalidos(new GestionarCompatibilidadRequest(null, null)));
-        assertEquals(Set.of("productoId", "modelo"),
+        assertEquals(Set.of("modelo"),
                 camposInvalidos(new GestionarCompatibilidadRequest( TipoCompatibilidad.MOTO, " ")));
     }
 
@@ -90,9 +90,9 @@ public class ValidacionRequestTest {
     }
 
     @Test
-    void reembolsoExigePedidoYMotivo() {
+    void reembolsoExigeMotivo() {
         for (String texto : new String[]{null, "", " "}) {
-            assertEquals(Set.of("pedidoId", "motivo"), camposInvalidos(new SolicitarReembolsoRequest(texto)));
+            assertEquals(Set.of("motivo"), camposInvalidos(new SolicitarReembolsoRequest(texto)));
         }
     }
 

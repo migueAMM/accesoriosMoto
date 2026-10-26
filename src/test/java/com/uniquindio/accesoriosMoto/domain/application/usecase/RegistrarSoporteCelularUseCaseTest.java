@@ -25,6 +25,5 @@ public class RegistrarSoporteCelularUseCaseTest {
         assertEquals("s1", resultado.getId());
         assertFalse(resultado.estaPublicado());
         assertEquals("Manillar", ReflectionTestUtils.getField(resultado, "tipoSujecion"));
-        assertEquals("4 a 7 pulgadas", ReflectionTestUtils.getField(resultado, "compatibleTamanoCelular"));
     }
 }

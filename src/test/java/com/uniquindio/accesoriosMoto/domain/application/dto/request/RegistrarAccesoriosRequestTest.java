@@ -100,7 +100,7 @@ public class RegistrarAccesoriosRequestTest {
                 new RegistrarIntercomunicadorRequest("m1", "Marca", 100.0, "COP", "Negro", null, null, null),
                 Set.of("alcanceMetros", "autonomiaHoras", "bluetooth"),
                 new RegistrarSoporteCelularRequest("m1", "Marca", 100.0, "COP", "Negro", null),
-                Set.of("tipoSujecion", "compatibleTamanoCelular"),
+                Set.of("tipoSujecion"),
                 new RegistrarVisorRequest("m1", "Marca", 100.0, "COP", "Negro", null, null),
                 Set.of("tipoVisor", "modelosCascoCompatibles"));
 
@@ -110,7 +110,7 @@ public class RegistrarAccesoriosRequestTest {
     @Test
     void rechazaTextosEspecificosEnBlanco() {
         comprobarCampos(new RegistrarCascoRequest("m1", "Marca", 100.0, "COP", "Negro", " ", Talla.M, Proteccion.NIVEL_1, " "), Set.of("modelo", "certificacionSeguridad"));
-        comprobarCampos(new RegistrarSoporteCelularRequest("m1", "Marca", 100.0, "COP", "Negro", " "), Set.of("tipoSujecion", "compatibleTamanoCelular"));
+        comprobarCampos(new RegistrarSoporteCelularRequest("m1", "Marca", 100.0, "COP", "Negro", " "), Set.of("tipoSujecion"));
         comprobarCampos(new RegistrarVisorRequest("m1", "Marca", 100.0, "COP", "Negro", " ", List.of()), Set.of("tipoVisor"));
     }
 
