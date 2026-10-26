@@ -1,5 +1,7 @@
 package com.uniquindio.accesoriosMoto.infrastructure.security;
 
+import com.uniquindio.accesoriosMoto.application.port.CodificadorContrasena;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component

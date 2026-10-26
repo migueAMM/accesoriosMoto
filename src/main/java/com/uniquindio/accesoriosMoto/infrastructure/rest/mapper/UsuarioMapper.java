@@ -1,5 +1,6 @@
 package com.uniquindio.accesoriosMoto.infrastructure.rest.mapper;
 
+import com.uniquindio.accesoriosMoto.application.dto.response.UsuarioResponse;
 import com.uniquindio.accesoriosMoto.domain.entity.Usuario;
 import org.springframework.stereotype.Component;
 

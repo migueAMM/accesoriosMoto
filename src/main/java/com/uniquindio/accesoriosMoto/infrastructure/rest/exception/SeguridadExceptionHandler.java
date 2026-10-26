@@ -1,5 +1,9 @@
 package com.uniquindio.accesoriosMoto.infrastructure.rest.exception;
 
+import com.uniquindio.accesoriosMoto.application.exception.AccesoDenegadoException;
+import com.uniquindio.accesoriosMoto.application.exception.ContrasenaInvalidaException;
+import com.uniquindio.accesoriosMoto.application.exception.CorreoDuplicadoException;
+import com.uniquindio.accesoriosMoto.application.exception.CredencialesInvalidasException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;

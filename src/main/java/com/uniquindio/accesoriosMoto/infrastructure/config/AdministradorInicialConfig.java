@@ -1,5 +1,7 @@
 package com.uniquindio.accesoriosMoto.infrastructure.config;
 
+import com.uniquindio.accesoriosMoto.application.dto.request.RegistrarCompradorRequest;
+import com.uniquindio.accesoriosMoto.application.port.CodificadorContrasena;
 import com.uniquindio.accesoriosMoto.domain.entity.Administrador;
 import com.uniquindio.accesoriosMoto.domain.repository.UsuarioRepository;
 import jakarta.validation.Validator;
