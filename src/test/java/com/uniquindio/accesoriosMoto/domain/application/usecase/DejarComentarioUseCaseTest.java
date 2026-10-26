@@ -1,5 +1,6 @@
 package com.uniquindio.accesoriosMoto.domain.application.usecase;
 
+import com.uniquindio.accesoriosMoto.application.exception.AccesoDenegadoException;
 import com.uniquindio.accesoriosMoto.application.usecase.DejarComentarioUseCase;
 import com.uniquindio.accesoriosMoto.domain.entity.*;
 import com.uniquindio.accesoriosMoto.domain.exception.ReglaDominioException;
@@ -72,7 +73,7 @@ public class DejarComentarioUseCaseTest {
         assertThrows(ReglaDominioException.class, () -> caso.ejecutar("c1", "u1", "p1", "v1", 5, "Opinión"));
         pedidos.registrar(pedido(true));
         assertThrows(ReglaDominioException.class, () -> caso.ejecutar("c1", "u1", "p1", "otro", 5, "Opinión"));
-        assertThrows(ReglaDominioException.class, () -> caso.ejecutar("c1", "u2", "p1", "v1", 5, "Opinión"));
+        assertThrows(AccesoDenegadoException.class, () -> caso.ejecutar("c1", "u2", "p1", "v1", 5, "Opinión"));
         assertThrows(ReglaDominioException.class, () -> caso.ejecutar("c1", "u1", "p1", "v1", 6, "Opinión"));
         assertThrows(ReglaDominioException.class, () -> caso.ejecutar("c1", "u1", "p1", "v1", 5, " "));
     }
