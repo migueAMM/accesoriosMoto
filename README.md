@@ -6,8 +6,9 @@ Para ejecutar la suite desde la raíz:
 
 ## Seguimiento de pruebas avanzadas
 
-La Parte 0 está en `ProductoRepositoryIntegrationTest`: guardar/recuperar un casco y consultar el ranking real en H2.
-El ranking suma unidades de pedidos `COMPLETADA`, estado que asigna `Pedido.completar()`; excluye los demás estados.
+### 0. Pruebas del repositorio
+Esta Parte está en `ProductoRepositoryIntegrationTest`: guardar/recuperar un casco y consultar el ranking real en H2.
+El ranking suma unidades de pedidos `COMPLETADA`, estado que asigna `Pedido.completar()` (excluye los demás estados).
 Los datos conocidos producen A=5, B=3 y C=1; la consulta ordena por unidades DESC e ID ASC para desempatar.
 La Parte 4 está en `ProductoControllerTest` y `PublicarProductoUseCaseTest`: 404, regla rota con 400 y verificaciones `never()`.
 
@@ -18,7 +19,6 @@ En `SeguridadProductoEndpointTest` probamos `PUT /api/productos/{id}/publicar` y
 Usamos `@SpringBootTest` y MockMvc para cargar nuestra configuración completa, incluidos los filtros de seguridad.
 Con `jwt()` simulamos un usuario ya autenticado; aquí no hacemos login porque ese flujo tiene otras pruebas.
 Las authorities son exactamente `ROLE_COMPRADOR` y `ROLE_ADMINISTRADOR`, como en nuestro SecurityConfig.
-Lo más delicado fue separar permisos de reglas del producto: el caso 200 necesita un producto existente y todavía no publicado.
 
 ### 2. @DataJpaTest vs @SpringBootTest
 `@DataJpaTest` es un slice: carga entidades y repositorios JPA, sin levantar toda la capa web.
