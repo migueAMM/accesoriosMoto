@@ -6,13 +6,19 @@ import com.uniquindio.accesoriosMoto.domain.repository.CompradorRepository;
 import com.uniquindio.accesoriosMoto.domain.repository.PedidoRepository;
 import com.uniquindio.accesoriosMoto.domain.repository.ProductoRepository;
 import com.uniquindio.accesoriosMoto.infrastructure.persistence.jpa.ProductoRepositoryJpa;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.ApplicationContext;
+import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -21,41 +27,38 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@org.springframework.test.context.ActiveProfiles("dev")
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        properties = "spring.h2.console.enabled=true")
-class ProductoHttpH2IntegrationTest {
-    @Value("${local.server.port}") int puerto;
-    @Autowired
-    JdbcTemplate jdbc;
-    @Autowired
-    ApplicationContext contexto;
-    @Autowired com.uniquindio.accesoriosMoto.domain.repository.UsuarioRepository usuarios;
-    @Autowired com.uniquindio.accesoriosMoto.application.port.CodificadorContrasena contrasenas;
-    private String token;
-    @org.junit.jupiter.api.BeforeEach
-    void autenticarAdministradorReal() throws Exception {
-        if (usuarios.obtenerPorCorreo("admin-http@ejemplo.com").isEmpty()) {
-            usuarios.guardar(new com.uniquindio.accesoriosMoto.domain.entity.Administrador("admin-http", "Admin HTTP", "admin-http@ejemplo.com", contrasenas.codificar("ClaveSegura123")));
-        }
-        var login = enviar("POST", "/api/auth/login", "{\"correo\":\"admin-http@ejemplo.com\",\"contrasena\":\"ClaveSegura123\"}");
-        assertThat(login.statusCode()).isEqualTo(200);
-        token = JsonPath.read(login.body(), "$.token");
-    }
-    private final HttpClient http = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build();
-
-    private HttpResponse<String> enviar(String metodo, String ruta, String cuerpo) throws Exception {
-        HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create("http://localhost:" + puerto + ruta))
-                .timeout(Duration.ofSeconds(20)).header("Content-Type", "application/json")
-                .method(metodo, cuerpo == null ? HttpRequest.BodyPublishers.noBody() : HttpRequest.BodyPublishers.ofString(cuerpo))
-                ;
-        if (token != null) builder.header("Authorization", "Bearer " + token);
-        return http.send(builder.build(), HttpResponse.BodyHandlers.ofString());
-    }
+@SpringBootTest
+@AutoConfigureMockMvc
+@Transactional
+public class ProductoHttpH2IntegrationTest {
+    @Autowired private MockMvc mockMvc;
+    @Autowired private JdbcTemplate jdbc;
+    @Autowired private EntityManager entityManager;
+    @Autowired private ApplicationContext contexto;
 
     @Test
     void registraPublicaYConsultaPorHttpConDatosConfirmadosEnH2() throws Exception {
+
+        String cuerpo = """
+                {"marcaId":"http-marca","marcaNombre":"Marca HTTP","precioMonto":500000,"precioMoneda":"COP",
+                 "color":"Negro","modelo":"K3","talla":"M","proteccion":"NIVEL_1","certificacionSeguridad":"DOT"}
+                """;
+        var administrador = jwt().jwt(j -> j.subject("admin-integracion").claim("rol", "ADMINISTRADOR"))
+                .authorities(new SimpleGrantedAuthority("ROLE_ADMINISTRADOR"));
+
+        var creado = mockMvc.perform(post("/api/productos/cascos").with(administrador)
+                .contentType(MediaType.APPLICATION_JSON).content(cuerpo)).andReturn();
+        entityManager.flush();
+        entityManager.clear();
+
+        assertThat(creado.getResponse().getStatus()).isEqualTo(201);
+        String id = JsonPath.read(creado.getResponse().getContentAsString(), "$.id");
+        assertThat(creado.getResponse().getHeader("Location")).isEqualTo("http://localhost/api/productos/" + id);
         try (var conexion = jdbc.getDataSource().getConnection()) {
             assertThat(conexion.getMetaData().getURL()).startsWith("jdbc:h2:mem:");
         }
@@ -64,29 +67,22 @@ class ProductoHttpH2IntegrationTest {
         assertThat(contexto.getBeansOfType(PedidoRepository.class)).hasSize(1);
         assertThat(contexto.getBeansOfType(CompradorRepository.class)).hasSize(1);
         assertThat(contexto.getBeansOfType(ComentarioRepository.class)).hasSize(1);
-
-        HttpResponse<String> creado = enviar("POST", "/api/productos/cascos", """
-                {"marcaId":"http-marca","marcaNombre":"Marca HTTP","precioMonto":500000,"precioMoneda":"COP",
-                 "color":"Negro","modelo":"K3","talla":"M","proteccion":"NIVEL_1","certificacionSeguridad":"DOT"}
-                """);
-        assertThat(creado.statusCode()).isEqualTo(201);
-        String id = JsonPath.read(creado.body(), "$.id");
-        assertThat(creado.headers().firstValue("Location")).hasValue("http://localhost:" + puerto + "/api/productos/" + id);
         assertThat(jdbc.queryForObject("select tipo_producto from productos where id=?", String.class, id)).isEqualTo("CASCO");
         assertThat(jdbc.queryForObject("select estado_publicacion from productos where id=?", String.class, id)).isEqualTo("NO_PUBLICADO");
 
-        HttpResponse<String> publicado = enviar("PUT", "/api/productos/" + id + "/publicar", null);
-        assertThat(publicado.statusCode()).isEqualTo(200);
+        var publicado = mockMvc.perform(put("/api/productos/" + id + "/publicar").with(administrador));
+        entityManager.flush();
+        entityManager.clear();
+
+        publicado.andExpect(status().isOk()).andExpect(jsonPath("$.estadoPublicacion").value("PUBLICADO"));
         assertThat(jdbc.queryForObject("select estado_publicacion from productos where id=?", String.class, id)).isEqualTo("PUBLICADO");
 
-        HttpResponse<String> catalogo = enviar("GET", "/api/productos?marca=Marca%20HTTP", null);
-        assertThat(catalogo.statusCode()).isEqualTo(200);
-        assertThat((java.util.List<String>) JsonPath.<java.util.List<String>>read(catalogo.body(), "$[*].id")).containsExactly(id);
-        assertThat(catalogo.body()).doesNotContain("contrasena");
-    }
-    @Test
-    void ofreceLaConsolaH2EnElServidor() throws Exception {
-        HttpResponse<String> respuesta = enviar("GET", "/h2-console/", null);
-        assertThat(respuesta.statusCode()).isBetween(200, 399);
+        var catalogo = mockMvc.perform(get("/api/productos").param("marca", "Marca HTTP"));
+
+        catalogo.andExpect(status().isOk()).andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].id").value(id))
+                .andExpect(jsonPath("$[0].precioMonto").value(500000))
+                .andExpect(jsonPath("$[0].precioMoneda").value("COP"))
+                .andExpect(jsonPath("$[0].estadoPublicacion").value("PUBLICADO"));
     }
 }

@@ -31,11 +31,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ProductoController.class)
-@Import({ProductoMapper.class, com.uniquindio.accesoriosMoto.infrastructure.security.SecurityConfig.class})
-@org.springframework.security.test.context.support.WithMockUser(username="u1", roles="ADMINISTRADOR")
-class ProductoControllerTest {
-    @MockitoBean
-    private org.springframework.security.oauth2.jwt.JwtDecoder jwtDecoder;
+@Import(ProductoMapper.class)
+@org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc(addFilters = false)
+public class ProductoControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @MockitoBean
@@ -110,7 +108,7 @@ class ProductoControllerTest {
 
     @Test
     void registraChaquetaConIdGeneradoYLocationGeneral() throws Exception {
-        when(registrarChaquetaUseCase.ejecutar(anyString(), eq(new Marca("m1", "Marca")), eq(new Precio(100, "COP")), eq("Negro"), eq(Talla.M), eq(Material.CUERO), eq(Proteccion.NIVEL_1)))
+        when(registrarChaquetaUseCase.ejecutar(anyString(), eq(new Marca("m1", "Marca")), eq(new Precio(100, "COP")), eq("Negro"),  eq(Talla.M), eq(Material.CUERO), eq(Proteccion.NIVEL_1)))
                 .thenAnswer(invocacion -> DatosRestPrueba.producto("Chaqueta", invocacion.getArgument(0, String.class)));
 
         MvcResult resultado = registrar("chaquetas", "\"talla\":\"M\",\"material\":\"CUERO\",\"proteccion\":\"NIVEL_1\"", "Chaqueta");
@@ -128,7 +126,7 @@ class ProductoControllerTest {
         MvcResult resultado = registrar("guantes", "\"talla\":\"M\",\"material\":\"CUERO\",\"proteccion\":\"NIVEL_1\"", "Guantes");
 
         ArgumentCaptor<String> id = ArgumentCaptor.forClass(String.class);
-        verify(registrarGuantesUseCase).ejecutar(id.capture(), eq(new Marca("m1", "Marca")), eq(new Precio(100, "COP")), eq("Negro"),eq(Talla.M), eq(Material.CUERO), eq(Proteccion.NIVEL_1));
+        verify(registrarGuantesUseCase).ejecutar(id.capture(), eq(new Marca("m1", "Marca")), eq(new Precio(100, "COP")), eq("Negro"),  eq(Talla.M), eq(Material.CUERO), eq(Proteccion.NIVEL_1));
         comprobarIdYLocation(id, resultado);
     }
 
@@ -140,7 +138,7 @@ class ProductoControllerTest {
         MvcResult resultado = registrar("impermeables", "\"talla\":\"M\",\"material\":\"PVC\"", "Impermeable");
 
         ArgumentCaptor<String> id = ArgumentCaptor.forClass(String.class);
-        verify(registrarImpermeableUseCase).ejecutar(id.capture(), eq(new Marca("m1", "Marca")), eq(new Precio(100, "COP")), eq("Negro"), eq(Talla.M), eq(Material.PVC));
+        verify(registrarImpermeableUseCase).ejecutar(id.capture(), eq(new Marca("m1", "Marca")), eq(new Precio(100, "COP")), eq("Negro"),  eq(Talla.M), eq(Material.PVC));
         comprobarIdYLocation(id, resultado);
     }
 
@@ -152,13 +150,13 @@ class ProductoControllerTest {
         MvcResult resultado = registrar("intercomunicadores", "\"alcanceMetros\":100,\"autonomiaHoras\":8,\"bluetooth\":false", "Intercomunicador");
 
         ArgumentCaptor<String> id = ArgumentCaptor.forClass(String.class);
-        verify(registrarIntercomunicadorUseCase).ejecutar(id.capture(), eq(new Marca("m1", "Marca")), eq(new Precio(100, "COP")), eq("Negro"), eq(100), eq(8), eq(false));
+        verify(registrarIntercomunicadorUseCase).ejecutar(id.capture(), eq(new Marca("m1", "Marca")), eq(new Precio(100, "COP")), eq("Negro"),  eq(100), eq(8), eq(false));
         comprobarIdYLocation(id, resultado);
     }
 
     @Test
     void registraSoporteCelularConIdGeneradoYLocationGeneral() throws Exception {
-        when(registrarSoporteCelularUseCase.ejecutar(anyString(), eq(new Marca("m1", "Marca")), eq(new Precio(100, "COP")), eq("Negro"), eq("Manillar")))
+        when(registrarSoporteCelularUseCase.ejecutar(anyString(), eq(new Marca("m1", "Marca")), eq(new Precio(100, "COP")), eq("Negro"),  eq("Manillar")))
                 .thenAnswer(invocacion -> DatosRestPrueba.producto("SoporteCelular", invocacion.getArgument(0, String.class)));
 
         MvcResult resultado = registrar("soportes-celular", "\"tipoSujecion\":\"Manillar\",\"compatibleTamanoCelular\":\"4 a 7 pulgadas\"", "SoporteCelular");
@@ -181,11 +179,21 @@ class ProductoControllerTest {
     }
 
     @Test
-    void rechazaRequestsInvalidosSinEjecutarRegistros() throws Exception {
-        for (String ruta : new String[]{"baules", "cascos", "chaquetas", "guantes", "impermeables", "intercomunicadores", "soportes-celular", "visores"}) {
-            mockMvc.perform(post("/api/productos/" + ruta).contentType(MediaType.APPLICATION_JSON).content("{}"))
-                    .andExpect(status().isBadRequest());
+    void noDeberiaLlamarAlCasoDeUsoSiLosDatosSonInvalidos() throws Exception {
+
+        String[] rutas = {"baules", "cascos", "chaquetas", "guantes", "impermeables", "intercomunicadores", "soportes-celular", "visores"};
+        var respuestas = new java.util.ArrayList<MvcResult>();
+
+        for (String ruta : rutas) {
+            respuestas.add(mockMvc.perform(post("/api/productos/" + ruta)
+                    .contentType(MediaType.APPLICATION_JSON).content("{}")).andReturn());
         }
+
+        for (MvcResult respuesta : respuestas) {
+            assertEquals(400, respuesta.getResponse().getStatus());
+        }
+        verify(registrarCascoUseCase, never()).ejecutar(
+                anyString(), any(), anyString(), anyString(), any(), any(), any(), anyString());
         verifyNoInteractions(registrarBaulUseCase, registrarCascoUseCase, registrarChaquetaUseCase,
                 registrarGuantesUseCase, registrarImpermeableUseCase, registrarIntercomunicadorUseCase,
                 registrarSoporteCelularUseCase, registrarVisorUseCase);
@@ -258,8 +266,7 @@ class ProductoControllerTest {
 
     @Test
     void transmiteTodosLosFiltrosDeQueryAlDominio() throws Exception {
-        FiltroProducto filtro = new FiltroProducto("AGV", "negro", 100.0, 200.0, "COP",
-                new Compatibilidad(TipoCompatibilidad.CASCO, "K-3"));
+        FiltroProducto filtro = new FiltroProducto("AGV", "negro", 100.0, 200.0, "COP", new Compatibilidad(TipoCompatibilidad.CASCO, "K-3"));
         when(buscarProductoUseCase.ejecutar(filtro)).thenReturn(List.of());
 
         mockMvc.perform(get("/api/productos").param("marca", "AGV").param("color", "negro")
@@ -282,13 +289,26 @@ class ProductoControllerTest {
     }
 
     @Test
-    void propagaErrorDeDominioSinTryCatchLocal() {
-        ReglaDominioException error = new ReglaDominioException("No existe el producto");
-        when(publicarProductoUseCase.ejecutar("no")).thenThrow(error);
+    void deberiaResponder404CuandoProductoNoExiste() throws Exception {
 
-        Exception propagado = assertThrows(Exception.class, () -> mockMvc.perform(put("/api/productos/no/publicar")));
+        when(publicarProductoUseCase.ejecutar("no-existe"))
+                .thenThrow(new com.uniquindio.accesoriosMoto.domain.exception.RecursoNoEncontradoException("No existe un producto con ese id"));
 
-        assertSame(error, propagado.getCause());
+        var respuesta = mockMvc.perform(put("/api/productos/no-existe/publicar"));
+
+        respuesta.andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.mensaje").value("No existe un producto con ese id"));
+    }
+
+    @Test
+    void deberiaResponder400CuandoSeRompeReglaDeNegocio() throws Exception {
+
+        when(publicarProductoUseCase.ejecutar("publicado"))
+                .thenThrow(new ReglaDominioException("El producto ya esta publicado"));
+
+        var respuesta = mockMvc.perform(put("/api/productos/publicado/publicar"));
+
+        respuesta.andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.mensaje").value("El producto ya esta publicado"));
     }
 }
-

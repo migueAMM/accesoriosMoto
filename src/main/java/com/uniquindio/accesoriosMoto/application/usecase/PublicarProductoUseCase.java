@@ -18,7 +18,7 @@ public class PublicarProductoUseCase {
 
     public Producto ejecutar(String id) {
         Producto producto = productoRepository.obtenerPorId(id)
-                .orElseThrow(() -> new ReglaDominioException("No existe un producto con ese id"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("No existe un producto con ese id"));
         producto.publicar();
         productoRepository.guardar(producto);
         return producto;
