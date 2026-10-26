@@ -26,8 +26,13 @@ public class DejarComentarioUseCase {
     public Comentario ejecutar(String idComentario, String compradorId, String idPedido, String idProducto, int calificacion, String texto) {
         Comprador comprador = compradorRepository.obtenerPorId(compradorId)
                 .orElseThrow(() -> new ReglaDominioException("No existe un comprador con ese id"));
+
         Pedido pedido = pedidoRepository.obtenerPorId(idPedido)
                 .orElseThrow(() -> new ReglaDominioException("No existe un pedido con ese id"));
+
+        if (!pedido.getComprador().getId().equals(compradorId)) {
+            throw new com.uniquindio.accesoriosMoto.application.exception.AccesoDenegadoException();
+        }
         Comentario comentario = Comentario.dejar(idComentario, comprador, pedido, idProducto, calificacion, texto);
         comentarioRepository.guardar(comentario);
         return comentario;

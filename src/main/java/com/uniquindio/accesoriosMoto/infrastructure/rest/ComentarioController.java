@@ -5,7 +5,9 @@ import com.uniquindio.accesoriosMoto.application.dto.response.ComentarioResponse
 import com.uniquindio.accesoriosMoto.application.usecase.DejarComentarioUseCase;
 import com.uniquindio.accesoriosMoto.domain.entity.Comentario;
 import com.uniquindio.accesoriosMoto.infrastructure.rest.mapper.ComentarioMapper;
+import com.uniquindio.accesoriosMoto.infrastructure.security.IdentidadComprador;
 import jakarta.validation.Valid;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,9 +30,8 @@ public class ComentarioController {
     }
 
     @PostMapping
-    public ResponseEntity<ComentarioResponse> crear(@Valid @RequestBody DejarComentarioRequest request) {
-        Comentario comentario = dejarComentarioUseCase.ejecutar(UUID.randomUUID().toString(),
-                request.compradorId(), request.pedidoId(), request.productoId(), request.calificacion(), request.texto());
+    public ResponseEntity<ComentarioResponse> crear(@Valid @RequestBody DejarComentarioRequest request, Authentication autenticacion) {
+        Comentario comentario = dejarComentarioUseCase.ejecutar(UUID.randomUUID().toString(), IdentidadComprador.verificar(autenticacion, request.compradorId()), request.pedidoId(), request.productoId(), request.calificacion(), request.texto());
         URI location = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/api/comentarios/{id}").buildAndExpand(comentario.getId()).toUri();
         return ResponseEntity.created(location).body(mapper.toResponse(comentario));
