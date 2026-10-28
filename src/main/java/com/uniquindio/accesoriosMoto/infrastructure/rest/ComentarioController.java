@@ -5,7 +5,6 @@ import com.uniquindio.accesoriosMoto.application.dto.response.ComentarioResponse
 import com.uniquindio.accesoriosMoto.application.usecase.DejarComentarioUseCase;
 import com.uniquindio.accesoriosMoto.domain.entity.Comentario;
 import com.uniquindio.accesoriosMoto.infrastructure.rest.mapper.ComentarioMapper;
-import com.uniquindio.accesoriosMoto.infrastructure.security.IdentidadComprador;
 import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
 import org.springframework.http.ResponseEntity;

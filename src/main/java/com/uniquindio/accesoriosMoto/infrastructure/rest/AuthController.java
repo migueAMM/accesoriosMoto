@@ -7,6 +7,7 @@ import com.uniquindio.accesoriosMoto.application.dto.response.UsuarioResponse;
 import com.uniquindio.accesoriosMoto.application.usecase.IniciarSesionUseCase;
 import com.uniquindio.accesoriosMoto.application.usecase.RegistrarCompradorUseCase;
 import com.uniquindio.accesoriosMoto.infrastructure.rest.mapper.UsuarioMapper;
+import com.uniquindio.accesoriosMoto.infrastructure.security.AutenticacionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
