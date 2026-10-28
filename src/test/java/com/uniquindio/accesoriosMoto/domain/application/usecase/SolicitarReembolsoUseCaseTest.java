@@ -12,8 +12,10 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -31,58 +33,81 @@ public class SolicitarReembolsoUseCaseTest {
     }
 
     @Test
-    void solicitaYConservaReembolsoEnRepositorioEnMemoria() {
+    public void solicitaYConservaReembolsoEnRepositorioEnMemoria() {
         PedidoRepositoryEnMemoria repository = new PedidoRepositoryEnMemoria();
         repository.registrar(pedido(true));
         SolicitarReembolsoUseCase caso = new SolicitarReembolsoUseCase(repository);
 
-        Pedido resultado = caso.ejecutar("p1", "u1", "Accesorio dañado");
-
+        caso.ejecutar("p1", "u1", "Accesorio dañado");
         Pedido guardado = repository.obtenerPorId("p1").orElseThrow();
-        assertSame(resultado, guardado);
+
+        assertNotNull(guardado);
         assertEquals(EstadoPedido.REEMBOLSADA, guardado.getEstadoPedido());
         assertEquals("Accesorio dañado", guardado.getMotivoReembolso());
         assertEquals(1, repository.cantidadRegistrada());
     }
 
     @Test
-    void guardaSoloDespuesDeUnaSolicitudValida() {
+    public void guardaSoloDespuesDeUnaSolicitudValida() {
+        var observacion0 = new java.util.ArrayList<Pedido>();
+        var observacion1 = new java.util.ArrayList<EstadoPedido>();
+        var observacion2 = new java.util.ArrayList<String>();
+
         Pedido pedido = pedido(true);
-        class RepositorioPrueba implements PedidoRepository {
+        class RepositorioPrueba extends PedidoRepositoryEnMemoria {
             int registros;
-            public Optional<Pedido> obtenerPorId(String id) { return Optional.of(pedido); }
+            public Optional<Pedido> obtenerPorId(String id) {
+                return Optional.of(pedido);
+            }
             public void registrar(Pedido recibido) {
-                assertSame(pedido, recibido);
-                assertEquals(EstadoPedido.REEMBOLSADA, recibido.getEstadoPedido());
-                assertEquals("Motivo válido", recibido.getMotivoReembolso());
+                observacion0.add( recibido);
+                observacion1.add( recibido.getEstadoPedido());
+                observacion2.add( recibido.getMotivoReembolso());
                 registros++;
             }
         }
         RepositorioPrueba repository = new RepositorioPrueba();
         SolicitarReembolsoUseCase caso = new SolicitarReembolsoUseCase(repository);
 
-        assertThrows(ReglaDominioException.class, () -> caso.ejecutar("p1", "u1", " "));
-        assertEquals(0, repository.registros);
-        assertSame(pedido, caso.ejecutar("p1", "u1","Motivo válido"));
-        assertEquals(1, repository.registros);
-        assertThrows(ReglaDominioException.class, () -> caso.ejecutar("p1", "u1", "Otro motivo"));
-        assertEquals(1, repository.registros);
+        var error1 = catchThrowable(() -> caso.ejecutar("p1", "u1", " "));
+        var contador2 =  repository.registros;
+        caso.ejecutar("p1", "u1","Motivo válido");
+        var contador3 =  repository.registros;
+        var error4 = catchThrowable(() -> caso.ejecutar("p1", "u1", "Otro motivo"));
+        var contador5 =  repository.registros;
+
+        assertInstanceOf(ReglaDominioException.class, error1);
+        assertEquals(0, contador2);
+        assertEquals(1, contador3);
+        assertInstanceOf(ReglaDominioException.class, error4);
+        assertEquals(1, contador5);
+        for (var observacion : observacion0) { assertSame(pedido, observacion); }
+        for (var observacion : observacion1) { assertEquals(EstadoPedido.REEMBOLSADA, observacion); }
+        for (var observacion : observacion2) { assertEquals("Motivo válido", observacion); }
     }
 
     @Test
-    void noRegistraCuandoPedidoNoExisteOEstaPendiente() {
+    public void noRegistraCuandoPedidoNoExisteOEstaPendiente() {
+        var llamadasProhibidas = new java.util.ArrayList<String>();
+
         Pedido pendiente = pedido(false);
-        PedidoRepository repository = new PedidoRepository() {
+        PedidoRepository repository = new PedidoRepositoryEnMemoria() {
             public Optional<Pedido> obtenerPorId(String id) {
                 return "p1".equals(id) ? Optional.of(pendiente) : Optional.empty();
             }
-            public void registrar(Pedido pedido) { fail("No debe registrar una solicitud inválida"); }
+            public void registrar(Pedido pedido) {
+                llamadasProhibidas.add("No debe registrar una solicitud inválida");
+            }
         };
         SolicitarReembolsoUseCase caso = new SolicitarReembolsoUseCase(repository);
 
-        assertThrows(ReglaDominioException.class, () -> caso.ejecutar("inexistente", "u1", "Motivo"));
-        assertThrows(ReglaDominioException.class, () -> caso.ejecutar("p1", "u1", "Motivo"));
+        var accion1Error = catchThrowable(() -> caso.ejecutar("inexistente", "u1", "Motivo"));
+        var accion2Error = catchThrowable(() -> caso.ejecutar("p1", "u1", "Motivo"));
+
+        assertInstanceOf(NoSuchElementException.class, accion1Error);
+        assertInstanceOf(ReglaDominioException.class, accion2Error);
         assertEquals(EstadoPedido.PENDIENTE, pendiente.getEstadoPedido());
         assertNull(pendiente.getMotivoReembolso());
+        assertTrue(llamadasProhibidas.isEmpty(), llamadasProhibidas.toString());
     }
 }

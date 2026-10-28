@@ -40,130 +40,162 @@ public class ValidacionRequestTest {
     }
 
     @Test
-    void compatibilidadAceptaAmbosDestinos() {
-        for (TipoCompatibilidad tipo : TipoCompatibilidad.values()) {
-            GestionarCompatibilidadRequest request = new GestionarCompatibilidadRequest( tipo, "K-3");
+    public void compatibilidadAceptaAmbosDestinos() {
+        var entradas = java.util.Arrays.stream(TipoCompatibilidad.values()).map(tipo -> new GestionarCompatibilidadRequest(tipo, "K-3")).toList();
 
-            assertTrue(validator.validate(request).isEmpty());
-        }
+        var resultados = entradas.stream().map(this::camposInvalidos).toList();
+
+        resultados.forEach(campos -> assertTrue(campos.isEmpty()));
     }
 
     @Test
-    void compatibilidadExigeProductoTipoYModelo() {
-        assertEquals(Set.of("tipo", "modelo"),
-                camposInvalidos(new GestionarCompatibilidadRequest(null, null)));
-        assertEquals(Set.of("modelo"),
-                camposInvalidos(new GestionarCompatibilidadRequest( TipoCompatibilidad.MOTO, " ")));
+    public void compatibilidadExigeProductoTipoYModelo() {
+
+        var resultado1 = camposInvalidos(new GestionarCompatibilidadRequest(null, null));
+        var resultado2 = camposInvalidos(new GestionarCompatibilidadRequest( TipoCompatibilidad.MOTO, " "));
+
+        assertEquals(Set.of("tipo", "modelo"), resultado1);
+        assertEquals(Set.of("modelo"), resultado2);
     }
 
     @Test
-    void busquedaPermiteTodosLosFiltrosOmitidos() {
+    public void busquedaPermiteTodosLosFiltrosOmitidos() {
         BuscarProductoRequest request = new BuscarProductoRequest(null, null, null, null, null, null, null);
 
-        assertTrue(validator.validate(request).isEmpty());
+        var resultado1 = validator.validate(request).isEmpty();
+
+        assertTrue(resultado1);
     }
 
     @Test
-    void busquedaAceptaCeroYLimitesIndependientes() {
+    public void busquedaAceptaCeroYLimitesIndependientes() {
         List<BuscarProductoRequest> requests = List.of(
                 new BuscarProductoRequest("AGV", "Negro", 0.0, 100.0, "COP", TipoCompatibilidad.CASCO, "K-3"),
                 new BuscarProductoRequest(null, null, 100.0, null, "COP", null, null),
                 new BuscarProductoRequest(null, null, null, 0.0, "COP", null, null));
 
-        for (BuscarProductoRequest request : requests) {
-            assertTrue(validator.validate(request).isEmpty());
-        }
+        var resultados = requests.stream().map(this::camposInvalidos).toList();
+
+        resultados.forEach(campos -> assertTrue(campos.isEmpty()));
     }
 
     @Test
-    void busquedaRechazaPreciosNegativos() {
+    public void busquedaRechazaPreciosNegativos() {
         BuscarProductoRequest request = new BuscarProductoRequest(null, null, -1.0, -2.0, "COP", null, null);
 
-        assertEquals(Set.of("precioMinimo", "precioMaximo"), camposInvalidos(request));
+        var resultado1 = camposInvalidos(request);
+
+        assertEquals(Set.of("precioMinimo", "precioMaximo"), resultado1);
     }
 
     @Test
-    void reembolsoAceptaMotivoSinImponerLongitudDelProyectoEjemplo() {
+    public void reembolsoAceptaMotivoSinImponerLongitudDelProyectoEjemplo() {
         SolicitarReembolsoRequest request = new SolicitarReembolsoRequest("Dañado");
 
-        assertTrue(validator.validate(request).isEmpty());
+        var resultado1 = validator.validate(request).isEmpty();
+
+        assertTrue(resultado1);
     }
 
     @Test
-    void reembolsoExigeMotivo() {
-        for (String texto : new String[]{null, "", " "}) {
-            assertEquals(Set.of("motivo"), camposInvalidos(new SolicitarReembolsoRequest(texto)));
-        }
+    public void reembolsoExigeMotivo() {
+        var entradas = java.util.stream.Stream.of((String) null, "", " ").map(SolicitarReembolsoRequest::new).toList();
+
+        var resultados = entradas.stream().map(this::camposInvalidos).toList();
+
+        resultados.forEach(campos -> assertEquals(Set.of("motivo"), campos));
     }
 
     @Test
-    void itemAceptaCantidadPositiva() {
-        assertTrue(validator.validate(new ItemPedidoRequest("p1", 1)).isEmpty());
+    public void itemAceptaCantidadPositiva() {
+
+        var resultado1 = validator.validate(new ItemPedidoRequest("p1", 1)).isEmpty();
+
+        assertTrue(resultado1);
     }
 
     @Test
-    void itemExigeProductoYCantidad() {
-        assertEquals(Set.of("productoId", "cantidad"), camposInvalidos(new ItemPedidoRequest(null, null)));
-        assertEquals(Set.of("productoId"), camposInvalidos(new ItemPedidoRequest(" ", 1)));
+    public void itemExigeProductoYCantidad() {
+
+        var resultado1 = camposInvalidos(new ItemPedidoRequest(null, null));
+        var resultado2 = camposInvalidos(new ItemPedidoRequest(" ", 1));
+
+        assertEquals(Set.of("productoId", "cantidad"), resultado1);
+        assertEquals(Set.of("productoId"), resultado2);
     }
 
     @Test
-    void itemRechazaCantidadCeroONegativa() {
-        for (int cantidad : new int[]{0, -1}) {
-            assertEquals(Set.of("cantidad"), camposInvalidos(new ItemPedidoRequest("p1", cantidad)));
-        }
+    public void itemRechazaCantidadCeroONegativa() {
+        var entradas = java.util.stream.IntStream.of(0, -1).mapToObj(cantidad -> new ItemPedidoRequest("p1", cantidad)).toList();
+
+        var resultados = entradas.stream().map(this::camposInvalidos).toList();
+
+        resultados.forEach(campos -> assertEquals(Set.of("cantidad"), campos));
     }
 
     @Test
-    void pedidoAceptaVariosItemsValidos() {
+    public void pedidoAceptaVariosItemsValidos() {
         RegistrarPedidoRequest request = new RegistrarPedidoRequest("u1", List.of(new ItemPedidoRequest("p1", 1), new ItemPedidoRequest("p2", 2)));
 
-        assertTrue(validator.validate(request).isEmpty());
+        var resultado1 = validator.validate(request).isEmpty();
+
+        assertTrue(resultado1);
     }
 
     @Test
-    void pedidoExigeCompradorEItemsNoVacios() {
-        assertEquals(Set.of("compradorId", "items"), camposInvalidos(new RegistrarPedidoRequest(null, null)));
-        assertEquals(Set.of("compradorId", "items"), camposInvalidos(new RegistrarPedidoRequest(" ", List.of())));
+    public void pedidoExigeCompradorEItemsNoVacios() {
+
+        var resultado1 = camposInvalidos(new RegistrarPedidoRequest(null, null));
+        var resultado2 = camposInvalidos(new RegistrarPedidoRequest(" ", List.of()));
+
+        assertEquals(Set.of("compradorId", "items"), resultado1);
+        assertEquals(Set.of("compradorId", "items"), resultado2);
     }
 
     @Test
-    void pedidoValidaLosCamposDeCadaItemAnidado() {
+    public void pedidoValidaLosCamposDeCadaItemAnidado() {
         RegistrarPedidoRequest request = new RegistrarPedidoRequest("u1", List.of(new ItemPedidoRequest(" ", 0), new ItemPedidoRequest(null, null)));
 
-        assertEquals(Set.of("items[0].productoId", "items[0].cantidad", "items[1].productoId", "items[1].cantidad"), camposInvalidos(request));
+        var resultado1 = camposInvalidos(request);
+
+        assertEquals(Set.of("items[0].productoId", "items[0].cantidad", "items[1].productoId", "items[1].cantidad"), resultado1);
     }
 
     @Test
-    void pedidoRechazaElementoNuloDentroDeLaLista() {
+    public void pedidoRechazaElementoNuloDentroDeLaLista() {
         RegistrarPedidoRequest request = new RegistrarPedidoRequest("u1", Arrays.asList((ItemPedidoRequest) null));
 
         Set<String> campos = camposInvalidos(request);
+
         assertEquals(1, campos.size());
         assertTrue(campos.iterator().next().startsWith("items[0]"));
     }
 
     @Test
-    void comentarioAceptaCalificacionesDeUnoACinco() {
-        for (int calificacion = 1; calificacion <= 5; calificacion++) {
-            DejarComentarioRequest request = new DejarComentarioRequest("u1", "ped1", "p1", calificacion, "Opinión");
+    public void comentarioAceptaCalificacionesDeUnoACinco() {
+        var entradas = java.util.stream.IntStream.rangeClosed(1, 5).mapToObj(calificacion -> new DejarComentarioRequest("u1", "ped1", "p1", calificacion, "Opinión")).toList();
 
-            assertTrue(validator.validate(request).isEmpty());
-        }
+        var resultados = entradas.stream().map(this::camposInvalidos).toList();
+
+        resultados.forEach(campos -> assertTrue(campos.isEmpty()));
     }
 
     @Test
-    void comentarioExigeTodosSusCampos() {
-        assertEquals(Set.of("compradorId", "pedidoId", "productoId", "calificacion", "texto"), camposInvalidos(new DejarComentarioRequest(null, null, null, null, null)));
-        assertEquals(Set.of("compradorId", "pedidoId", "productoId", "texto"), camposInvalidos(new DejarComentarioRequest(" ", " ", " ", 3, " ")));
+    public void comentarioExigeTodosSusCampos() {
+
+        var resultado1 = camposInvalidos(new DejarComentarioRequest(null, null, null, null, null));
+        var resultado2 = camposInvalidos(new DejarComentarioRequest(" ", " ", " ", 3, " "));
+
+        assertEquals(Set.of("compradorId", "pedidoId", "productoId", "calificacion", "texto"), resultado1);
+        assertEquals(Set.of("compradorId", "pedidoId", "productoId", "texto"), resultado2);
     }
 
     @Test
-    void comentarioRechazaCalificacionesFueraDelRango() {
-        for (int calificacion : new int[]{-1, 0, 6}) {
-            DejarComentarioRequest request = new DejarComentarioRequest("u1", "ped1", "p1", calificacion, "Opinión");
+    public void comentarioRechazaCalificacionesFueraDelRango() {
+        var entradas = java.util.stream.IntStream.of(-1, 0, 6).mapToObj(calificacion -> new DejarComentarioRequest("u1", "ped1", "p1", calificacion, "Opinión")).toList();
 
-            assertEquals(Set.of("calificacion"), camposInvalidos(request));
-        }
+        var resultados = entradas.stream().map(this::camposInvalidos).toList();
+
+        resultados.forEach(campos -> assertEquals(Set.of("calificacion"), campos));
     }
 }
