@@ -5,10 +5,11 @@ import com.uniquindio.accesoriosMoto.domain.entity.ItemPedido;
 import com.uniquindio.accesoriosMoto.domain.entity.Producto;
 import com.uniquindio.accesoriosMoto.domain.exception.ReglaDominioException;
 import com.uniquindio.accesoriosMoto.domain.valueObject.*;
+import org.junit.jupiter.api.function.Executable;
+import java.util.ArrayList;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ItemPedidoTest {
 
@@ -17,7 +18,8 @@ public class ItemPedidoTest {
     }
 
     @Test
-    void calculaSubtotalConCantidadYPrecioDelProducto() {
+    public void calculaSubtotalConCantidadYPrecioDelProducto() {
+
         ItemPedido item = ItemPedido.crear("i1", producto(), 2);
 
         assertEquals(new Precio(1000000, "COP"), item.getSubtotal());
@@ -25,28 +27,47 @@ public class ItemPedidoTest {
     }
 
     @Test
-    void rechazaCantidadCeroONegativa() {
+    public void rechazaCantidadCeroONegativa() {
         Producto producto = producto();
-        for (int cantidad : new int[]{0, -1}) {
-            assertThrows(ReglaDominioException.class, () -> ItemPedido.crear("i1", producto, cantidad));
+
+        var entradas1 = new int[]{0, -1};
+
+        var acciones = new ArrayList<Executable>();
+        for (int cantidad : entradas1) {
+            acciones.add(() -> ItemPedido.crear("i1", producto, cantidad));
+        }
+
+        for (var accion : acciones) {
+            assertThrows(ReglaDominioException.class, accion);
         }
     }
 
     @Test
-    void rechazaProductoNulo() {
-        assertThrows(ReglaDominioException.class, () -> ItemPedido.crear("i1", null, 1));
+    public void rechazaProductoNulo() {
+
+        var accion1Error = catchThrowable(() -> ItemPedido.crear("i1", null, 1));
+
+        assertInstanceOf(ReglaDominioException.class, accion1Error);
     }
 
     @Test
-    void rechazaIdentificadorInvalido() {
+    public void rechazaIdentificadorInvalido() {
         Producto producto = producto();
-        for (String id : new String[]{null, "", " "}) {
-            assertThrows(ReglaDominioException.class, () -> ItemPedido.crear(id, producto, 1));
+
+        var entradas1 = new String[]{null, "", " "};
+
+        var acciones = new ArrayList<Executable>();
+        for (String id : entradas1) {
+            acciones.add(() -> ItemPedido.crear(id, producto, 1));
+        }
+
+        for (var accion : acciones) {
+            assertThrows(ReglaDominioException.class, accion);
         }
     }
 
     @Test
-    void conservaSubtotalHistoricoAunqueCambiePrecioDelProducto() {
+    public void conservaSubtotalHistoricoAunqueCambiePrecioDelProducto() {
         class ProductoConPrecioVariable extends Producto {
             ProductoConPrecioVariable() {
                 super("p1", new Marca("m1", "Marca"), new Precio(100, "USD"), "Negro", EstadoPublicacion.NO_PUBLICADO);

@@ -3,13 +3,14 @@ package com.uniquindio.accesoriosMoto.domain.domain.entity;
 import com.uniquindio.accesoriosMoto.domain.entity.*;
 import com.uniquindio.accesoriosMoto.domain.exception.ReglaDominioException;
 import com.uniquindio.accesoriosMoto.domain.valueObject.*;
-import org.junit.jupiter.api.Test;
-
-import java.time.LocalDateTime;
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
+import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
+import java.time.LocalDateTime;
 
 public class ComentarioTest {
 
@@ -29,36 +30,45 @@ public class ComentarioTest {
 
     @Test
     public void dosComentariosConDatosDistintosMismoIdSonIguales(){
+
         Producto producto = productoPrueba();
         Comprador comprador = compradorPrueba();
         Pedido pedido = pedido(comprador, producto);
         Comentario original = Comentario.dejar("COM1", comprador, pedido, producto.getId(), 5, "Excelente");
+
         Comentario otro = Comentario.dejar("COM1", comprador, pedido, producto.getId(), 1, "Malo");
 
         assertEquals(original, otro);
-
     }
 
     @Test
     public void unComentarioConCalificacionFueraDeRango(){
         Producto producto = productoPrueba();
         Comprador comprador = compradorPrueba();
-
         Pedido pedido = pedido(comprador, producto);
 
-        assertThrows(ReglaDominioException.class, () -> {
+        var accion1Error = catchThrowable(() -> {
             Comentario.dejar("COM2", comprador, pedido, producto.getId(), 7, "Calificacion invalida");
         });
+
+        assertInstanceOf(ReglaDominioException.class, accion1Error);
     }
 
     @Test
-    void aceptaLimitesDeCalificacionYConservaDatosDeCompra() {
+    public void aceptaLimitesDeCalificacionYConservaDatosDeCompra() {
         Comprador comprador = compradorPrueba();
         Producto producto = productoPrueba();
         Pedido pedido = pedido(comprador, producto);
-        for (int calificacion : new int[]{1, 5}) {
-            Comentario comentario = Comentario.dejar("COM" + calificacion, comprador, pedido, producto.getId(), calificacion, "Mi opinión");
-            assertEquals(calificacion, comentario.getCalificacion());
+        int[] calificaciones = {1, 5};
+
+        var comentarios = new ArrayList<Comentario>();
+        for (int calificacion : calificaciones) {
+            comentarios.add(Comentario.dejar("COM" + calificacion, comprador, pedido, producto.getId(), calificacion, "Mi opinión"));
+        }
+
+        for (int indice = 0; indice < calificaciones.length; indice++) {
+            Comentario comentario = comentarios.get(indice);
+            assertEquals(calificaciones[indice], comentario.getCalificacion());
             assertEquals("Mi opinión", comentario.getTexto());
             assertEquals(comprador, comentario.getComprador());
             assertEquals(producto, comentario.getProducto());
@@ -66,52 +76,75 @@ public class ComentarioTest {
     }
 
     @Test
-    void rechazaCalificacionInvalidaTextoVacioEIdentidadAusente() {
+    public void rechazaCalificacionInvalidaTextoVacioEIdentidadAusente() {
         Comprador comprador = compradorPrueba();
         Producto producto = productoPrueba();
         Pedido pedido = pedido(comprador, producto);
-        for (int calificacion : new int[]{0, -1, 6}) {
-            assertThrows(ReglaDominioException.class, () -> Comentario.dejar("c1", comprador, pedido, producto.getId(), calificacion, "Opinión"));
+
+        var entradas1 = new int[]{0, -1, 6};
+        var entradas2 = new String[]{null, "", " "};
+        var entradas3 = new String[]{null, "", " "};
+
+        var acciones = new ArrayList<Executable>();
+        for (int calificacion : entradas1) {
+            acciones.add(() -> Comentario.dejar("c1", comprador, pedido, producto.getId(), calificacion, "Opinión"));
         }
-        for (String texto : new String[]{null, "", " "}) {
-            assertThrows(ReglaDominioException.class, () -> Comentario.dejar("c1", comprador, pedido, producto.getId(), 5, texto));
+        for (String texto : entradas2) {
+            acciones.add(() -> Comentario.dejar("c1", comprador, pedido, producto.getId(), 5, texto));
         }
-        for (String id : new String[]{null, "", " "}) {
-            assertThrows(ReglaDominioException.class, () -> Comentario.dejar(id, comprador, pedido, producto.getId(), 5, "Opinión"));
+        for (String id : entradas3) {
+            acciones.add(() -> Comentario.dejar(id, comprador, pedido, producto.getId(), 5, "Opinión"));
+        }
+
+        for (var accion : acciones) {
+            assertThrows(ReglaDominioException.class, accion);
         }
     }
 
     @Test
-    void rechazaCompraAjenaProductoNoCompradoYPedidoAusente() {
+    public void rechazaCompraAjenaProductoNoCompradoYPedidoAusente() {
         Comprador comprador = compradorPrueba();
         Producto producto = productoPrueba();
         Pedido pedido = pedido(comprador, producto);
         Comprador otro = new Comprador("otro", "Otra persona", "otro@correo.com", "clave");
-        assertThrows(ReglaDominioException.class, () -> Comentario.dejar("c1", otro, pedido, producto.getId(), 5, "Opinión"));
-        assertThrows(ReglaDominioException.class, () -> Comentario.dejar("c1", null, pedido, producto.getId(), 5, "Opinión"));
-        assertThrows(ReglaDominioException.class, () -> Comentario.dejar("c1", comprador, pedido, "no-comprado", 5, "Opinión"));
-        assertThrows(ReglaDominioException.class, () -> Comentario.dejar("c1", comprador, pedido, null, 5, "Opinión"));
-        assertThrows(ReglaDominioException.class, () -> Comentario.dejar("c1", comprador, null, producto.getId(), 5, "Opinión"));
+
+        var accion1Error = catchThrowable(() -> Comentario.dejar("c1", otro, pedido, producto.getId(), 5, "Opinión"));
+        var accion2Error = catchThrowable(() -> Comentario.dejar("c1", null, pedido, producto.getId(), 5, "Opinión"));
+        var accion3Error = catchThrowable(() -> Comentario.dejar("c1", comprador, pedido, "no-comprado", 5, "Opinión"));
+        var accion4Error = catchThrowable(() -> Comentario.dejar("c1", comprador, pedido, null, 5, "Opinión"));
+        var accion5Error = catchThrowable(() -> Comentario.dejar("c1", comprador, null, producto.getId(), 5, "Opinión"));
+
+        assertInstanceOf(ReglaDominioException.class, accion1Error);
+        assertInstanceOf(ReglaDominioException.class, accion2Error);
+        assertInstanceOf(ReglaDominioException.class, accion3Error);
+        assertInstanceOf(ReglaDominioException.class, accion4Error);
+        assertInstanceOf(ReglaDominioException.class, accion5Error);
     }
 
     @Test
-    void rechazaPedidosPendientesYReembolsados() {
+    public void rechazaPedidosPendientesYReembolsados() {
         Comprador comprador = compradorPrueba();
         Producto producto = productoPrueba();
         Pedido pendiente = Pedido.registrar("p2", comprador, List.of(ItemPedido.crear("i1", producto, 1)), LocalDateTime.now());
-        assertThrows(ReglaDominioException.class, () -> Comentario.dejar("c1", comprador, pendiente, producto.getId(), 5, "Opinión"));
+
+        var accion1Error = catchThrowable(() -> Comentario.dejar("c1", comprador, pendiente, producto.getId(), 5, "Opinión"));
         Pedido reembolsado = pedido(comprador, producto);
         reembolsado.solicitarReembolso("Devolución");
-        assertThrows(ReglaDominioException.class, () -> Comentario.dejar("c1", comprador, reembolsado, producto.getId(), 5, "Opinión"));
+        var accion2Error = catchThrowable(() -> Comentario.dejar("c1", comprador, reembolsado, producto.getId(), 5, "Opinión"));
+
+        assertInstanceOf(ReglaDominioException.class, accion1Error);
+        assertInstanceOf(ReglaDominioException.class, accion2Error);
     }
 
     @Test
-    void permiteComentarProductoDespublicadoYCompradorConMismaIdentidad() {
+    public void permiteComentarProductoDespublicadoYCompradorConMismaIdentidad() {
         Comprador comprador = compradorPrueba();
         Producto producto = productoPrueba();
         Pedido pedido = pedido(comprador, producto);
         Comprador mismaIdentidad = new Comprador("C1", "Nombre actualizado", "nuevo@correo.com", "clave");
+
         Comentario comentario = Comentario.dejar("c1", mismaIdentidad, pedido, producto.getId(), 4, "Opinión");
+
         assertEquals(producto, comentario.getProducto());
     }
 }

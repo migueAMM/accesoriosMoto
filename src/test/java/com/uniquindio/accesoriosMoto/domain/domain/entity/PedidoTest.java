@@ -4,13 +4,14 @@ import com.uniquindio.accesoriosMoto.domain.entity.*;
 import com.uniquindio.accesoriosMoto.domain.exception.ReglaDominioException;
 import com.uniquindio.accesoriosMoto.domain.valueObject.*;
 import org.junit.jupiter.api.Test;
-
+import org.junit.jupiter.api.function.Executable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 
 public class PedidoTest {
 
@@ -20,7 +21,8 @@ public class PedidoTest {
     }
 
     @Test
-    void calculaTotalDeUnItemYConservaFechaYEstadoInicial() {
+    public void calculaTotalDeUnItemYConservaFechaYEstadoInicial() {
+
         LocalDateTime fecha = LocalDateTime.of(2026, 10, 21, 10, 0);
         ItemPedido item = item("i1", 100, "COP", 3);
 
@@ -32,7 +34,8 @@ public class PedidoTest {
     }
 
     @Test
-    void calculaTotalComoSumaDeVariosSubtotales() {
+    public void calculaTotalComoSumaDeVariosSubtotales() {
+
         List<ItemPedido> items = List.of(item("i1", 100, "USD", 2), item("i2", 50, "USD", 3), item("i3", 25, "USD", 1));
 
         Pedido pedido = Pedido.registrar("p1", compradorPrueba(), items, LocalDateTime.now());
@@ -42,67 +45,101 @@ public class PedidoTest {
     }
 
     @Test
-    void rechazaListaNula() {
-        assertThrows(ReglaDominioException.class, () -> Pedido.registrar("p1", compradorPrueba(), null, LocalDateTime.now()));
+    public void rechazaListaNula() {
+
+        var accion1Error = catchThrowable(() -> Pedido.registrar("p1", compradorPrueba(), null, LocalDateTime.now()));
+
+        assertInstanceOf(ReglaDominioException.class, accion1Error);
     }
 
     @Test
-    void rechazaListaVacia() {
-        assertThrows(ReglaDominioException.class, () -> Pedido.registrar("p1", compradorPrueba(), List.of(), LocalDateTime.now()));
+    public void rechazaListaVacia() {
+
+        var accion1Error = catchThrowable(() -> Pedido.registrar("p1", compradorPrueba(), List.of(), LocalDateTime.now()));
+
+        assertInstanceOf(ReglaDominioException.class, accion1Error);
     }
 
     @Test
-    void rechazaElementoNulo() {
+    public void rechazaElementoNulo() {
+
         List<ItemPedido> items = Arrays.asList(itemPrueba(), null);
+        var accion1Error = catchThrowable(() -> Pedido.registrar("p1", compradorPrueba(), items, LocalDateTime.now()));
 
-        assertThrows(ReglaDominioException.class, () -> Pedido.registrar("p1", compradorPrueba(), items, LocalDateTime.now()));
+        assertInstanceOf(ReglaDominioException.class, accion1Error);
     }
 
     @Test
-    void rechazaCompradorNulo() {
-        assertThrows(ReglaDominioException.class, () -> Pedido.registrar("p1", null, List.of(itemPrueba()), LocalDateTime.now()));
+    public void rechazaCompradorNulo() {
+
+        var accion1Error = catchThrowable(() -> Pedido.registrar("p1", null, List.of(itemPrueba()), LocalDateTime.now()));
+
+        assertInstanceOf(ReglaDominioException.class, accion1Error);
     }
 
     @Test
-    void rechazaIdentificadorInvalido() {
+    public void rechazaIdentificadorInvalido() {
+
         List<ItemPedido> items = List.of(itemPrueba());
-        for (String id : new String[]{null, "", " "}) {
-            assertThrows(ReglaDominioException.class, () -> Pedido.registrar(id, compradorPrueba(), items, LocalDateTime.now()));
+
+        var entradas1 = new String[]{null, "", " "};
+
+
+        var acciones = new ArrayList<Executable>();
+        for (String id : entradas1) {
+            acciones.add(() -> Pedido.registrar(id, compradorPrueba(), items, LocalDateTime.now()));
+        }
+
+        for (var accion : acciones) {
+            assertThrows(ReglaDominioException.class, accion);
         }
     }
 
     @Test
-    void rechazaItemsConMonedasDiferentes() {
+    public void rechazaItemsConMonedasDiferentes() {
+
         List<ItemPedido> items = List.of(item("i1", 100, "COP", 1), item("i2", 100, "USD", 1));
 
-        assertThrows(ReglaDominioException.class, () -> Pedido.registrar("p1", compradorPrueba(), items, LocalDateTime.now()));
+        var accion1Error = catchThrowable(() -> Pedido.registrar("p1", compradorPrueba(), items, LocalDateTime.now()));
+
+        assertInstanceOf(ReglaDominioException.class, accion1Error);
     }
 
     @Test
-    void rechazaDesbordamientoDelTotal() {
+    public void rechazaDesbordamientoDelTotal() {
+
         List<ItemPedido> items = List.of(item("i1", Double.MAX_VALUE, "COP", 1), item("i2", Double.MAX_VALUE, "COP", 1));
 
-        assertThrows(ReglaDominioException.class, () -> Pedido.registrar("p1", compradorPrueba(), items, LocalDateTime.now()));
+        var accion1Error = catchThrowable(() -> Pedido.registrar("p1", compradorPrueba(), items, LocalDateTime.now()));
+
+        assertInstanceOf(ReglaDominioException.class, accion1Error);
     }
 
     @Test
-    void protegeListaYTotalFrenteACambiosExternos() {
+    public void protegeListaYTotalFrenteACambiosExternos() {
+
         ItemPedido item = itemPrueba();
         List<ItemPedido> entrada = new ArrayList<>(List.of(item));
         Pedido pedido = Pedido.registrar("p1", compradorPrueba(), entrada, LocalDateTime.now());
 
         entrada.clear();
-
-        assertNotSame(entrada, pedido.getItems());
-        assertEquals(List.of(item), pedido.getItems());
-        assertEquals(new Precio(200000, "COP"), pedido.getTotal());
-        assertThrows(UnsupportedOperationException.class, () -> pedido.getItems().clear());
-        assertThrows(UnsupportedOperationException.class, () -> pedido.getItems().set(0, item));
+        var resultado1 = pedido.getItems();
+        var resultado2 = pedido.getItems();
+        var resultado3 = pedido.getTotal();
+        var accion4Error = catchThrowable(() -> pedido.getItems().clear());
+        var accion5Error = catchThrowable(() -> pedido.getItems().set(0, item));
         pedido.validarParaRegistro();
+
+        assertNotSame(entrada, resultado1);
+        assertEquals(List.of(item), resultado2);
+        assertEquals(new Precio(200000, "COP"), resultado3);
+        assertInstanceOf(UnsupportedOperationException.class, accion4Error);
+        assertInstanceOf(UnsupportedOperationException.class, accion5Error);
     }
 
     @Test
-    void conservaTotalHistoricoAunqueCambiePrecioDelProducto() {
+    public void conservaTotalHistoricoAunqueCambiePrecioDelProducto() {
+
         class ProductoConPrecioVariable extends Producto {
             ProductoConPrecioVariable() {
                 super("p1", new Marca("m1", "Marca"), new Precio(100, "COP"), "Negro", EstadoPublicacion.NO_PUBLICADO);
@@ -135,42 +172,64 @@ public class PedidoTest {
 
     @Test
     public void noSePuedeSolicitarReembolsoDeUnPedidoPendiente(){
+
         Pedido pedido = pedidoPendiente();
-        assertThrows(ReglaDominioException.class, () -> pedido.solicitarReembolso("No llego a tiempo"));
+
+        // Act
+        var accion1Error = catchThrowable(() -> pedido.solicitarReembolso("No llego a tiempo"));
+
+        // Assert
+        assertInstanceOf(ReglaDominioException.class, accion1Error);
         assertEquals(EstadoPedido.PENDIENTE, pedido.getEstadoPedido());
     }
 
     @Test
     public void noSePuedeSolicitarReembolosoDeUnPedidoYaReembolsado(){
+
         Pedido pedido = pedidoPendiente();
         pedido.completar();
         pedido.solicitarReembolso("Primer reembolso");
 
-        assertThrows(ReglaDominioException.class, () -> pedido.solicitarReembolso("otra vez"));
+
+        var accion1Error = catchThrowable(() -> pedido.solicitarReembolso("otra vez"));
+
+        assertInstanceOf(ReglaDominioException.class, accion1Error);
         assertEquals(EstadoPedido.REEMBOLSADA, pedido.getEstadoPedido());
         assertEquals("Primer reembolso", pedido.getMotivoReembolso());
     }
 
     @Test
-    void unPedidoCompletadoConservaElMotivoDelReembolso() {
+    public void unPedidoCompletadoConservaElMotivoDelReembolso() {
+
         Pedido pedido = pedidoPendiente();
         pedido.completar();
 
+
         pedido.solicitarReembolso("  El accesorio llegó dañado  ");
+
 
         assertEquals(EstadoPedido.REEMBOLSADA, pedido.getEstadoPedido());
         assertEquals("El accesorio llegó dañado", pedido.getMotivoReembolso());
     }
 
     @Test
-    void unMotivoInvalidoNoModificaElPedido() {
+    public void unMotivoInvalidoNoModificaElPedido() {
+
         Pedido pedido = pedidoPendiente();
         pedido.completar();
+        String[] motivos = {null, "", "   "};
+        record Intento(Throwable error, EstadoPedido estado, String motivo) {}
 
-        for (String motivo : new String[]{null, "", "   "}) {
-            assertThrows(ReglaDominioException.class, () -> pedido.solicitarReembolso(motivo));
-            assertEquals(EstadoPedido.COMPLETADA, pedido.getEstadoPedido());
-            assertNull(pedido.getMotivoReembolso());
+        var intentos = new ArrayList<Intento>();
+        for (String motivo : motivos) {
+            var error = catchThrowable(() -> pedido.solicitarReembolso(motivo));
+            intentos.add(new Intento(error, pedido.getEstadoPedido(), pedido.getMotivoReembolso()));
+        }
+
+        for (var intento : intentos) {
+            assertInstanceOf(ReglaDominioException.class, intento.error());
+            assertEquals(EstadoPedido.COMPLETADA, intento.estado());
+            assertNull(intento.motivo());
         }
     }
 }

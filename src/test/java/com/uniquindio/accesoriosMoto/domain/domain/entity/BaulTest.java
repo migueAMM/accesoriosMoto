@@ -17,26 +17,46 @@ public class BaulTest {
     }
 
     @Test
-    void permiteCapacidadesValidasSinImponerColorODimensiones() {
-        assertNotNull(crear(Material.ABS, 30, 5));
+    public void permiteCapacidadesValidasSinImponerColorODimensiones() {
+
+        var resultado1 = crear(Material.ABS, 30, 5);
+
+        assertNotNull(resultado1);
     }
 
     @Test
-    void rechazaMaterialNulo() {
-        assertThrows(ReglaDominioException.class, () -> crear(null, 30, 5));
+    public void rechazaMaterialNulo() {
+
+        var accion1Error = org.assertj.core.api.Assertions.catchThrowable(() -> crear(null, 30, 5));
+
+        org.junit.jupiter.api.Assertions.assertInstanceOf(ReglaDominioException.class, accion1Error);
     }
 
     @Test
-    void rechazaCapacidadEnLitrosNoPositivaONoFinita() {
-        for (double litros : new double[]{0, -1, Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY}) {
-            assertThrows(ReglaDominioException.class, () -> crear(Material.ABS, litros, 5));
+    public void rechazaCapacidadEnLitrosNoPositivaONoFinita() {
+        var entradas1 = new double[]{0, -1, Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY};
+
+        var acciones = new java.util.ArrayList<org.junit.jupiter.api.function.Executable>();
+        for (double litros : entradas1) {
+            acciones.add(() -> crear(Material.ABS, litros, 5));
+        }
+
+        for (var accion : acciones) {
+            assertThrows(ReglaDominioException.class, accion);
         }
     }
 
     @Test
-    void rechazaCargaNoPositivaONoFinita() {
-        for (double carga : new double[]{0, -1, Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY}) {
-            assertThrows(ReglaDominioException.class, () -> crear(Material.ABS, 30, carga));
+    public void rechazaCargaNoPositivaONoFinita() {
+        var entradas1 = new double[]{0, -1, Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY};
+
+        var acciones = new java.util.ArrayList<org.junit.jupiter.api.function.Executable>();
+        for (double carga : entradas1) {
+            acciones.add(() -> crear(Material.ABS, 30, carga));
+        }
+
+        for (var accion : acciones) {
+            assertThrows(ReglaDominioException.class, accion);
         }
     }
 }
