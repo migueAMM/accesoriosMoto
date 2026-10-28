@@ -1,5 +1,7 @@
 package com.uniquindio.accesoriosMoto.application.dto.response;
 
+import com.uniquindio.accesoriosMoto.domain.repository.ProductoVentas;
+
 public record ProductoVentasResponse(String productoId, long cantidadVendida) {
 
     public static ProductoVentasResponse desde(ProductoVentas fila) {

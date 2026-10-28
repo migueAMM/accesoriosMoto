@@ -21,6 +21,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/comentarios")
 public class ComentarioController {
+
     private final DejarComentarioUseCase dejarComentarioUseCase;
     private final ComentarioMapper mapper;
 
@@ -31,7 +32,8 @@ public class ComentarioController {
 
     @PostMapping
     public ResponseEntity<ComentarioResponse> crear(@Valid @RequestBody DejarComentarioRequest request, Authentication autenticacion) {
-        Comentario comentario = dejarComentarioUseCase.ejecutar(UUID.randomUUID().toString(), IdentidadComprador.verificar(autenticacion, request.compradorId()), request.pedidoId(), request.productoId(), request.calificacion(), request.texto());
+        if (!autenticacion.getName().equals(request.compradorId())) throw new org.springframework.security.access.AccessDeniedException("No tiene permiso para realizar esta operación");
+        Comentario comentario = dejarComentarioUseCase.ejecutar(UUID.randomUUID().toString(), autenticacion.getName(), request.pedidoId(), request.productoId(), request.calificacion(), request.texto());
         URI location = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/api/comentarios/{id}").buildAndExpand(comentario.getId()).toUri();
         return ResponseEntity.created(location).body(mapper.toResponse(comentario));

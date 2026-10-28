@@ -1,12 +1,15 @@
 package com.uniquindio.accesoriosMoto.infrastructure.rest;
 
 import com.uniquindio.accesoriosMoto.application.dto.request.*;
+import com.uniquindio.accesoriosMoto.application.dto.response.PageResponse;
 import com.uniquindio.accesoriosMoto.application.dto.response.ProductoResponse;
+import com.uniquindio.accesoriosMoto.application.dto.response.ProductoVentasResponse;
 import com.uniquindio.accesoriosMoto.application.usecase.*;
 import com.uniquindio.accesoriosMoto.domain.entity.Producto;
 import com.uniquindio.accesoriosMoto.domain.valueObject.*;
 import com.uniquindio.accesoriosMoto.infrastructure.rest.mapper.ProductoMapper;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -17,6 +20,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/productos")
+@RequiredArgsConstructor
 public class ProductoController {
     private final RegistrarBaulUseCase registrarBaulUseCase;
     private final RegistrarCascoUseCase registrarCascoUseCase;
@@ -31,35 +35,6 @@ public class ProductoController {
     private final GestionarCompatibilidadUseCase gestionarCompatibilidadUseCase;
     private final BuscarProductoUseCase buscarProductoUseCase;
     private final ProductoMapper mapper;
-
-    public ProductoController(
-            RegistrarBaulUseCase registrarBaulUseCase,
-            RegistrarCascoUseCase registrarCascoUseCase,
-            RegistrarChaquetaUseCase registrarChaquetaUseCase,
-            RegistrarGuantesUseCase registrarGuantesUseCase,
-            RegistrarImpermeableUseCase registrarImpermeableUseCase,
-            RegistrarIntercomunicadorUseCase registrarIntercomunicadorUseCase,
-            RegistrarSoporteCelularUseCase registrarSoporteCelularUseCase,
-            RegistrarVisorUseCase registrarVisorUseCase,
-            PublicarProductoUseCase publicarProductoUseCase,
-            DespublicarProductoUseCase despublicarProductoUseCase,
-            GestionarCompatibilidadUseCase gestionarCompatibilidadUseCase,
-            BuscarProductoUseCase buscarProductoUseCase,
-            ProductoMapper mapper) {
-        this.registrarBaulUseCase = registrarBaulUseCase;
-        this.registrarCascoUseCase = registrarCascoUseCase;
-        this.registrarChaquetaUseCase = registrarChaquetaUseCase;
-        this.registrarGuantesUseCase = registrarGuantesUseCase;
-        this.registrarImpermeableUseCase = registrarImpermeableUseCase;
-        this.registrarIntercomunicadorUseCase = registrarIntercomunicadorUseCase;
-        this.registrarSoporteCelularUseCase = registrarSoporteCelularUseCase;
-        this.registrarVisorUseCase = registrarVisorUseCase;
-        this.publicarProductoUseCase = publicarProductoUseCase;
-        this.despublicarProductoUseCase = despublicarProductoUseCase;
-        this.gestionarCompatibilidadUseCase = gestionarCompatibilidadUseCase;
-        this.buscarProductoUseCase = buscarProductoUseCase;
-        this.mapper = mapper;
-    }
 
     @PostMapping("/baules")
     public ResponseEntity<ProductoResponse> registrarBaul(@Valid @RequestBody RegistrarBaulRequest request) {
@@ -83,8 +58,7 @@ public class ProductoController {
     public ResponseEntity<ProductoResponse> registrarChaqueta(@Valid @RequestBody RegistrarChaquetaRequest request) {
         Producto producto = registrarChaquetaUseCase.ejecutar(
                 UUID.randomUUID().toString(),
-                new Marca(request.marcaId(), request.marcaNombre()), new Precio(request.precioMonto(),
-                        request.precioMoneda()), request.color(), request.talla(), request.material(), request.proteccion());
+                new Marca(request.marcaId(), request.marcaNombre()), new Precio(request.precioMonto(), request.precioMoneda()), request.color(), request.talla(), request.material(), request.proteccion());
         return creado(producto);
     }
 
@@ -92,8 +66,7 @@ public class ProductoController {
     public ResponseEntity<ProductoResponse> registrarGuantes(@Valid @RequestBody RegistrarGuantesRequest request) {
         Producto producto = registrarGuantesUseCase.ejecutar(
                 UUID.randomUUID().toString(),
-                new Marca(request.marcaId(), request.marcaNombre()), new Precio(request.precioMonto(),
-                        request.precioMoneda()), request.color(), request.talla(), request.material(), request.proteccion());
+                new Marca(request.marcaId(), request.marcaNombre()), new Precio(request.precioMonto(), request.precioMoneda()), request.color(), request.talla(), request.material(), request.proteccion());
         return creado(producto);
     }
 
@@ -101,8 +74,7 @@ public class ProductoController {
     public ResponseEntity<ProductoResponse> registrarImpermeable(@Valid @RequestBody RegistrarImpermeableRequest request) {
         Producto producto = registrarImpermeableUseCase.ejecutar(
                 UUID.randomUUID().toString(),
-                new Marca(request.marcaId(), request.marcaNombre()), new Precio(request.precioMonto(),
-                        request.precioMoneda()), request.color(), request.talla(), request.material());
+                new Marca(request.marcaId(), request.marcaNombre()), new Precio(request.precioMonto(), request.precioMoneda()), request.color(), request.talla(), request.material());
         return creado(producto);
     }
 
@@ -110,8 +82,7 @@ public class ProductoController {
     public ResponseEntity<ProductoResponse> registrarIntercomunicador(@Valid @RequestBody RegistrarIntercomunicadorRequest request) {
         Producto producto = registrarIntercomunicadorUseCase.ejecutar(
                 UUID.randomUUID().toString(),
-                new Marca(request.marcaId(), request.marcaNombre()), new Precio(request.precioMonto(),
-                        request.precioMoneda()), request.color(), request.alcanceMetros(), request.autonomiaHoras(),
+                new Marca(request.marcaId(), request.marcaNombre()), new Precio(request.precioMonto(), request.precioMoneda()), request.color(), request.alcanceMetros(), request.autonomiaHoras(),
                 request.bluetooth());
         return creado(producto);
     }
@@ -120,8 +91,7 @@ public class ProductoController {
     public ResponseEntity<ProductoResponse> registrarSoporteCelular(@Valid @RequestBody RegistrarSoporteCelularRequest request) {
         Producto producto = registrarSoporteCelularUseCase.ejecutar(
                 UUID.randomUUID().toString(),
-                new Marca(request.marcaId(), request.marcaNombre()), new Precio(request.precioMonto(),
-                        request.precioMoneda()), request.color(), request.tipoSujecion());
+                new Marca(request.marcaId(), request.marcaNombre()), new Precio(request.precioMonto(), request.precioMoneda()), request.color(), request.tipoSujecion());
         return creado(producto);
     }
 
@@ -129,8 +99,7 @@ public class ProductoController {
     public ResponseEntity<ProductoResponse> registrarVisor(@Valid @RequestBody RegistrarVisorRequest request) {
         Producto producto = registrarVisorUseCase.ejecutar(
                 UUID.randomUUID().toString(),
-                new Marca(request.marcaId(), request.marcaNombre()), new Precio(request.precioMonto(),
-                        request.precioMoneda()), request.color(), request.tipoVisor(),
+                new Marca(request.marcaId(), request.marcaNombre()), new Precio(request.precioMonto(), request.precioMoneda()), request.color(), request.tipoVisor(),
                 request.modelosCascoCompatibles());
         return creado(producto);
     }
@@ -162,23 +131,35 @@ public class ProductoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductoResponse>> buscar(
+    public PageResponse<ProductoResponse> buscar(
             @RequestParam(name = "marca", required = false) String marca,
             @RequestParam(name = "color", required = false) String color,
             @RequestParam(name = "precioMinimo", required = false) Double precioMinimo,
             @RequestParam(name = "precioMaximo", required = false) Double precioMaximo,
             @RequestParam(name = "moneda", required = false) String moneda,
             @RequestParam(name = "tipoCompatibilidad", required = false) TipoCompatibilidad tipoCompatibilidad,
-            @RequestParam(name = "modeloCompatibilidad", required = false) String modeloCompatibilidad) {
+            @RequestParam(name = "modeloCompatibilidad", required = false) String modeloCompatibilidad,
+            @RequestParam(name = "pagina", defaultValue = "0") int pagina,
+            @RequestParam(name = "tamano", defaultValue = "5") int tamano) {
         Compatibilidad compatibilidad = tipoCompatibilidad == null && modeloCompatibilidad == null
                 ? null : new Compatibilidad(tipoCompatibilidad, modeloCompatibilidad);
         FiltroProducto filtro = new FiltroProducto(marca, color, precioMinimo, precioMaximo, moneda, compatibilidad);
-        return ResponseEntity.ok(buscarProductoUseCase.ejecutar(filtro).stream().map(mapper::toResponse).toList());
+        return PageResponse.desde(buscarProductoUseCase.buscar(filtro, pagina, tamano), ProductoResponse::desde);
     }
 
+    @GetMapping("/{id}")
+    public ProductoResponse obtener(@PathVariable("id") String id) {
+        return ProductoResponse.desde(buscarProductoUseCase.obtener(id));
+    }
+
+    @GetMapping("/mas-vendidos")
+    public List<ProductoVentasResponse> masVendidos(
+            @RequestParam(name = "limite", defaultValue = "10") int limite) {
+        return buscarProductoUseCase.masVendidos(limite).stream().map(ProductoVentasResponse::desde).toList();
+    }
     private ResponseEntity<ProductoResponse> creado(Producto producto) {
-        URI location = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/api/productos/{id}").buildAndExpand(producto.getId()).toUri();
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest().replacePath("/api/productos").replaceQuery(null)
+                .path("/{id}").buildAndExpand(producto.getId()).toUri();
         return ResponseEntity.created(location).body(mapper.toResponse(producto));
     }
 }

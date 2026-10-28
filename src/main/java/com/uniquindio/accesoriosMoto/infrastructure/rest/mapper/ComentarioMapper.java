@@ -6,8 +6,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ComentarioMapper {
+
     public ComentarioResponse toResponse(Comentario comentario) {
-        return new ComentarioResponse(comentario.getId(), comentario.getProducto().getId(),
-                comentario.getCalificacion(), comentario.getTexto());
+        return new ComentarioResponse(comentario.getId(), comentario.getProducto().getId(), comentario.getCalificacion(), comentario.getTexto());
     }
 }
