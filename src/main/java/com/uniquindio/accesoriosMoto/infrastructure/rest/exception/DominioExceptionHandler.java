@@ -1,6 +1,5 @@
 package com.uniquindio.accesoriosMoto.infrastructure.rest.exception;
 
-import com.uniquindio.accesoriosMoto.domain.exception.RecursoNoEncontradoException;
 import com.uniquindio.accesoriosMoto.domain.exception.ReglaDominioException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

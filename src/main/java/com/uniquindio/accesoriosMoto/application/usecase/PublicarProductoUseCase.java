@@ -1,8 +1,6 @@
 package com.uniquindio.accesoriosMoto.application.usecase;
 
 import com.uniquindio.accesoriosMoto.domain.entity.Producto;
-import com.uniquindio.accesoriosMoto.domain.exception.RecursoNoEncontradoException;
-import com.uniquindio.accesoriosMoto.domain.exception.ReglaDominioException;
 import com.uniquindio.accesoriosMoto.domain.repository.ProductoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

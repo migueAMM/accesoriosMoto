@@ -25,10 +25,12 @@ public class JwtConfig {
     private SecretKey clave(JwtProperties properties) {
         return new SecretKeySpec(properties.secret().getBytes(StandardCharsets.UTF_8), "HmacSHA256");
     }
-    @Bean public JwtEncoder jwtEncoder(JwtProperties properties) {
+    @Bean
+    public JwtEncoder jwtEncoder(JwtProperties properties) {
         return new NimbusJwtEncoder(new ImmutableSecret<>(clave(properties)));
     }
-    @Bean public JwtDecoder jwtDecoder(JwtProperties properties, Clock relojJwt) {
+    @Bean
+    public JwtDecoder jwtDecoder(JwtProperties properties, Clock relojJwt) {
         NimbusJwtDecoder decoder = NimbusJwtDecoder.withSecretKey(clave(properties)).macAlgorithm(MacAlgorithm.HS256).build();
         JwtTimestampValidator tiempo = new JwtTimestampValidator(Duration.ZERO);
         tiempo.setClock(relojJwt);
