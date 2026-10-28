@@ -11,8 +11,10 @@ import com.uniquindio.accesoriosMoto.infrastructure.persistence.ProductoReposito
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -26,56 +28,99 @@ public class GestionarCompatibilidadUseCaseTest {
     }
 
     @Test
-    void indicaYRetiraConRepositorioEnMemoria() {
+    public void indicaYRetiraConRepositorioEnMemoria() {
         ProductoRepository repository = new ProductoRepositoryEnMemoria();
         Visor producto = visor();
         repository.guardar(producto);
         GestionarCompatibilidadUseCase caso = new GestionarCompatibilidadUseCase(repository);
+
         caso.indicar("v1", TipoCompatibilidad.CASCO, "K-3");
-        assertSame(producto, repository.obtenerPorId("v1").orElseThrow());
-        assertEquals(1, producto.getCompatibilidades().size());
+        var resultado1 = repository.obtenerPorId("v1").orElseThrow();
+
+        int cantidadIndicada = producto.getCompatibilidades().size();
         caso.retirar("v1", TipoCompatibilidad.CASCO, "K-3");
+
+        assertSame(producto, resultado1);
+        assertEquals(1, cantidadIndicada);
         assertTrue(producto.getCompatibilidades().isEmpty());
     }
 
     @Test
-    void rechazaProductoSinCapacidadSinGuardar() {
+    public void rechazaProductoSinCapacidadSinGuardar() {
+        var llamadasProhibidas = new java.util.ArrayList<String>();
+
         Producto producto = Guantes.crear("g1", new Marca("m", "Marca"), new Precio(10, "COP"), "Negro", Talla.M, Material.CUERO, Proteccion.NIVEL_1);
-        ProductoRepository repository = new ProductoRepository() {
-            public List<Producto> buscar(FiltroProducto filtro) { throw new UnsupportedOperationException(); }
-            public Optional<Producto> obtenerPorId(String id) { return Optional.of(producto); }
-            public void guardar(Producto p) { fail("No debe guardar un producto sin compatibilidad"); }
+        ProductoRepository repository = new ProductoRepositoryEnMemoria() {
+            public List<Producto> buscar(FiltroProducto filtro) {
+                throw new UnsupportedOperationException();
+            }
+            public Optional<Producto> obtenerPorId(String id) {
+                return Optional.of(producto);
+            }
+            public void guardar(Producto p) {
+                llamadasProhibidas.add("No debe guardar un producto sin compatibilidad");
+            }
         };
         GestionarCompatibilidadUseCase caso = new GestionarCompatibilidadUseCase(repository);
-        assertThrows(ReglaDominioException.class, () -> caso.indicar("g1", TipoCompatibilidad.MOTO, "NKD"));
-        assertThrows(ReglaDominioException.class, () -> caso.retirar("g1", TipoCompatibilidad.MOTO, "NKD"));
+
+        var accion1Error = catchThrowable(() -> caso.indicar("g1", TipoCompatibilidad.MOTO, "NKD"));
+        var accion2Error = catchThrowable(() -> caso.retirar("g1", TipoCompatibilidad.MOTO, "NKD"));
+
+        assertInstanceOf(ReglaDominioException.class, accion1Error);
+        assertInstanceOf(ReglaDominioException.class, accion2Error);
+        assertTrue(llamadasProhibidas.isEmpty(), llamadasProhibidas.toString());
     }
 
     @Test
-    void rechazaProductoInexistenteEnAmbasOperaciones() {
+    public void rechazaProductoInexistenteEnAmbasOperaciones() {
         GestionarCompatibilidadUseCase caso = new GestionarCompatibilidadUseCase(new ProductoRepositoryEnMemoria());
-        assertThrows(ReglaDominioException.class, () -> caso.indicar("no", TipoCompatibilidad.CASCO, "K-3"));
-        assertThrows(ReglaDominioException.class, () -> caso.retirar("no", TipoCompatibilidad.CASCO, "K-3"));
+
+        var accion1Error = catchThrowable(() -> caso.indicar("no", TipoCompatibilidad.CASCO, "K-3"));
+        var accion2Error = catchThrowable(() -> caso.retirar("no", TipoCompatibilidad.CASCO, "K-3"));
+
+        assertInstanceOf(NoSuchElementException.class, accion1Error);
+        assertInstanceOf(NoSuchElementException.class, accion2Error);
     }
 
     @Test
-    void guardaSoloDespuesDeOperacionValida() {
+    public void guardaSoloDespuesDeOperacionValida() {
+        var observacion0 = new java.util.ArrayList<Producto>();
+
         Visor producto = visor();
-        class RepositorioPrueba implements ProductoRepository {
-            public List<Producto> buscar(FiltroProducto filtro) { throw new UnsupportedOperationException(); }
+        class RepositorioPrueba extends ProductoRepositoryEnMemoria {
+            public List<Producto> buscar(FiltroProducto filtro) {
+                throw new UnsupportedOperationException();
+            }
             int guardados;
-            public Optional<Producto> obtenerPorId(String id) { return Optional.of(producto); }
-            public void guardar(Producto p) { assertSame(producto, p); guardados++; }
+            public Optional<Producto> obtenerPorId(String id) {
+                return Optional.of(producto);
+            }
+            public void guardar(Producto p) {
+                observacion0.add( p); guardados++;
+            }
         }
         RepositorioPrueba repository = new RepositorioPrueba();
         GestionarCompatibilidadUseCase caso = new GestionarCompatibilidadUseCase(repository);
-        assertSame(producto, caso.indicar("v1", TipoCompatibilidad.CASCO, "K-3"));
-        assertEquals(1, repository.guardados);
-        assertThrows(ReglaDominioException.class, () -> caso.indicar("v1", TipoCompatibilidad.CASCO, "k-3"));
-        assertThrows(ReglaDominioException.class, () -> caso.indicar("v1", TipoCompatibilidad.MOTO, "NKD"));
-        assertThrows(ReglaDominioException.class, () -> caso.retirar("v1", TipoCompatibilidad.CASCO, "K-5"));
-        assertEquals(1, repository.guardados);
-        assertSame(producto, caso.retirar("v1", TipoCompatibilidad.CASCO, "K-3"));
-        assertEquals(2, repository.guardados);
+
+        var producto1 =  caso.indicar("v1", TipoCompatibilidad.CASCO, "K-3");
+        var contador2 =  repository.guardados;
+        var error3 = catchThrowable(() -> caso.indicar("v1", TipoCompatibilidad.CASCO, "k-3"));
+        var error4 = catchThrowable(() -> caso.indicar("v1", TipoCompatibilidad.MOTO, "NKD"));
+        var error5 = catchThrowable(() -> caso.retirar("v1", TipoCompatibilidad.CASCO, "K-5"));
+        var contador6 =  repository.guardados;
+        var producto7 =  caso.retirar("v1", TipoCompatibilidad.CASCO, "K-3");
+        var contador8 =  repository.guardados;
+
+        assertSame(producto, producto1);
+        assertEquals(1, contador2);
+        assertInstanceOf(ReglaDominioException.class, error3);
+        assertInstanceOf(ReglaDominioException.class, error4);
+        assertInstanceOf(ReglaDominioException.class, error5);
+        assertEquals(1, contador6);
+        assertSame(producto, producto7);
+        assertEquals(2, contador8);
+        for (var observacion : observacion0) {
+            assertSame(producto, observacion);
+        }
     }
 }

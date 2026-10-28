@@ -52,42 +52,57 @@ public class RegistrarAccesoriosRequestTest {
                 .map(violacion -> violacion.getPropertyPath().toString()).collect(Collectors.toSet());
     }
 
-    private void comprobarCampos(Object request, Set<String> esperados) {
-        assertEquals(esperados, camposInvalidos(request), request.getClass().getSimpleName());
-    }
 
     @Test
-    void aceptaDatosValidosEnLosSieteRequests() {
-        for (Object request : requests("m1", "Marca", 100.0, "COP", "Negro")) {
-            comprobarCampos(request, Set.of());
+    public void aceptaDatosValidosEnLosSieteRequests() {
+        var entradas = requests("m1", "Marca", 100.0, "COP", "Negro");
+        Set<String> esperados = Set.of();
+
+        var resultados = entradas.stream().map(this::camposInvalidos).toList();
+
+        for (int indice = 0; indice < entradas.size(); indice++) {
+            assertEquals(esperados, resultados.get(indice), entradas.get(indice).getClass().getSimpleName());
         }
     }
 
     @Test
-    void exigeTodosLosCamposComunes() {
-        for (Object request : requests(null, null, null, null, null)) {
-            comprobarCampos(request, Set.of("marcaId", "marcaNombre", "precioMonto", "precioMoneda", "color"));
+    public void exigeTodosLosCamposComunes() {
+        var entradas = requests(null, null, null, null, null);
+        Set<String> esperados = Set.of("marcaId", "marcaNombre", "precioMonto", "precioMoneda", "color");
+
+        var resultados = entradas.stream().map(this::camposInvalidos).toList();
+
+        for (int indice = 0; indice < entradas.size(); indice++) {
+            assertEquals(esperados, resultados.get(indice), entradas.get(indice).getClass().getSimpleName());
         }
     }
 
     @Test
-    void rechazaTextosComunesEnBlanco() {
-        for (Object request : requests(" ", " ", 100.0, " ", " ")) {
-            comprobarCampos(request, Set.of("marcaId", "marcaNombre", "precioMoneda", "color"));
+    public void rechazaTextosComunesEnBlanco() {
+        var entradas = requests(" ", " ", 100.0, " ", " ");
+        Set<String> esperados = Set.of("marcaId", "marcaNombre", "precioMoneda", "color");
+
+        var resultados = entradas.stream().map(this::camposInvalidos).toList();
+
+        for (int indice = 0; indice < entradas.size(); indice++) {
+            assertEquals(esperados, resultados.get(indice), entradas.get(indice).getClass().getSimpleName());
         }
     }
 
     @Test
-    void rechazaPrecioCeroONegativoEnTodosLosRequests() {
-        for (double monto : new double[]{0, -1}) {
-            for (Object request : requests("m1", "Marca", monto, "COP", "Negro")) {
-                comprobarCampos(request, Set.of("precioMonto"));
-            }
+    public void rechazaPrecioCeroONegativoEnTodosLosRequests() {
+        var entradas = java.util.stream.DoubleStream.of(0, -1).boxed().flatMap(monto -> requests("m1", "Marca", monto, "COP", "Negro").stream()).toList();
+        Set<String> esperados = Set.of("precioMonto");
+
+        var resultados = entradas.stream().map(this::camposInvalidos).toList();
+
+        for (int indice = 0; indice < entradas.size(); indice++) {
+            assertEquals(esperados, resultados.get(indice), entradas.get(indice).getClass().getSimpleName());
         }
     }
 
     @Test
-    void exigeCamposEspecificosIncluidosEnumsBluetoothYListaDelVisor() {
+    public void exigeCamposEspecificosIncluidosEnumsBluetoothYListaDelVisor() {
         Map<Object, Set<String>> casos = Map.of(
                 new RegistrarCascoRequest("m1", "Marca", 100.0, "COP", "Negro", null, null, null, null),
                 Set.of("modelo", "talla", "proteccion", "certificacionSeguridad"),
@@ -104,44 +119,66 @@ public class RegistrarAccesoriosRequestTest {
                 new RegistrarVisorRequest("m1", "Marca", 100.0, "COP", "Negro", null, null),
                 Set.of("tipoVisor", "modelosCascoCompatibles"));
 
-        casos.forEach(this::comprobarCampos);
+        var resultados = new java.util.HashMap<Object, Set<String>>();
+        casos.keySet().forEach(request -> resultados.put(request, camposInvalidos(request)));
+
+        casos.forEach((request, esperados) -> assertEquals(esperados, resultados.get(request), request.getClass().getSimpleName()));
     }
 
     @Test
-    void rechazaTextosEspecificosEnBlanco() {
-        comprobarCampos(new RegistrarCascoRequest("m1", "Marca", 100.0, "COP", "Negro", " ", Talla.M, Proteccion.NIVEL_1, " "), Set.of("modelo", "certificacionSeguridad"));
-        comprobarCampos(new RegistrarSoporteCelularRequest("m1", "Marca", 100.0, "COP", "Negro", " "), Set.of("tipoSujecion"));
-        comprobarCampos(new RegistrarVisorRequest("m1", "Marca", 100.0, "COP", "Negro", " ", List.of()), Set.of("tipoVisor"));
-    }
+    public void rechazaTextosEspecificosEnBlanco() {
+        var entradas = List.of(new RegistrarCascoRequest("m1", "Marca", 100.0, "COP", "Negro", " ", Talla.M, Proteccion.NIVEL_1, " "), new RegistrarSoporteCelularRequest("m1", "Marca", 100.0, "COP", "Negro", " "), new RegistrarVisorRequest("m1", "Marca", 100.0, "COP", "Negro", " ", List.of()));
+        var esperados = List.of(Set.of("modelo", "certificacionSeguridad"), Set.of("tipoSujecion"), Set.of("tipoVisor"));
 
-    @Test
-    void rechazaAlcanceYAutonomiaNoPositivos() {
-        for (int numero : new int[]{0, -1}) {
-            RegistrarIntercomunicadorRequest request = new RegistrarIntercomunicadorRequest("m1", "Marca", 100.0, "COP", "Negro", numero, numero, true);
+        var resultados = entradas.stream().map(this::camposInvalidos).toList();
 
-            comprobarCampos(request, Set.of("alcanceMetros", "autonomiaHoras"));
+        for (int indice = 0; indice < entradas.size(); indice++) {
+            assertEquals(esperados.get(indice), resultados.get(indice), entradas.get(indice).getClass().getSimpleName());
         }
     }
 
     @Test
-    void aceptaBluetoothFalse() {
-        RegistrarIntercomunicadorRequest request = new RegistrarIntercomunicadorRequest("m1", "Marca", 100.0, "COP", "Negro", 100, 8, false);
+    public void rechazaAlcanceYAutonomiaNoPositivos() {
+        var entradas = java.util.stream.IntStream.of(0, -1).mapToObj(numero -> (Object) new RegistrarIntercomunicadorRequest("m1", "Marca", 100.0, "COP", "Negro", numero, numero, true)).toList();
+        Set<String> esperados = Set.of("alcanceMetros", "autonomiaHoras");
 
-        comprobarCampos(request, Set.of());
+        var resultados = entradas.stream().map(this::camposInvalidos).toList();
+
+        for (int indice = 0; indice < entradas.size(); indice++) {
+            assertEquals(esperados, resultados.get(indice), entradas.get(indice).getClass().getSimpleName());
+        }
     }
 
     @Test
-    void aceptaVisorSinCompatibilidadesIniciales() {
-        RegistrarVisorRequest request = new RegistrarVisorRequest("m1", "Marca", 100.0, "COP", "Negro", "Integral", List.of());
+    public void aceptaBluetoothFalse() {
+        var entradas = List.of(new RegistrarIntercomunicadorRequest("m1", "Marca", 100.0, "COP", "Negro", 100, 8, false));
+        Set<String> esperados = Set.of();
 
-        comprobarCampos(request, Set.of());
+        var resultados = entradas.stream().map(this::camposInvalidos).toList();
+
+        for (int indice = 0; indice < entradas.size(); indice++) {
+            assertEquals(esperados, resultados.get(indice), entradas.get(indice).getClass().getSimpleName());
+        }
     }
 
     @Test
-    void rechazaModelosDeCascoVaciosEnBlancoONulos() {
+    public void aceptaVisorSinCompatibilidadesIniciales() {
+        var entradas = List.of(new RegistrarVisorRequest("m1", "Marca", 100.0, "COP", "Negro", "Integral", List.of()));
+        Set<String> esperados = Set.of();
+
+        var resultados = entradas.stream().map(this::camposInvalidos).toList();
+
+        for (int indice = 0; indice < entradas.size(); indice++) {
+            assertEquals(esperados, resultados.get(indice), entradas.get(indice).getClass().getSimpleName());
+        }
+    }
+
+    @Test
+    public void rechazaModelosDeCascoVaciosEnBlancoONulos() {
         RegistrarVisorRequest request = new RegistrarVisorRequest("m1", "Marca", 100.0, "COP", "Negro", "Integral", Arrays.asList("", " ", null));
 
         Set<String> campos = camposInvalidos(request);
+
         assertEquals(3, campos.size());
         for (int indice = 0; indice < 3; indice++) {
             String prefijo = "modelosCascoCompatibles[" + indice + "]";

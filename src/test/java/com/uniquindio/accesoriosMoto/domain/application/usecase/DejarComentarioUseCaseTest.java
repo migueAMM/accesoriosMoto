@@ -1,11 +1,11 @@
 package com.uniquindio.accesoriosMoto.domain.application.usecase;
 
-import com.uniquindio.accesoriosMoto.application.exception.AccesoDenegadoException;
 import com.uniquindio.accesoriosMoto.application.usecase.DejarComentarioUseCase;
 import com.uniquindio.accesoriosMoto.domain.entity.*;
 import com.uniquindio.accesoriosMoto.domain.exception.ReglaDominioException;
 import com.uniquindio.accesoriosMoto.domain.repository.ComentarioRepository;
 import com.uniquindio.accesoriosMoto.domain.repository.PedidoRepository;
+import com.uniquindio.accesoriosMoto.domain.service.VerificadorDeCompra;
 import com.uniquindio.accesoriosMoto.domain.valueObject.EstadoPedido;
 import com.uniquindio.accesoriosMoto.domain.valueObject.Marca;
 import com.uniquindio.accesoriosMoto.domain.valueObject.Precio;
@@ -13,15 +13,16 @@ import com.uniquindio.accesoriosMoto.infrastructure.persistence.ComentarioReposi
 import com.uniquindio.accesoriosMoto.infrastructure.persistence.CompradorRepositoryEnMemoria;
 import com.uniquindio.accesoriosMoto.infrastructure.persistence.PedidoRepositoryEnMemoria;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.access.AccessDeniedException;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class DejarComentarioUseCaseTest {
 
@@ -35,18 +36,21 @@ public class DejarComentarioUseCaseTest {
     }
 
     @Test
-    void guardaComentarioDeCompraCompletadaEnMemoria() {
+    public void guardaComentarioDeCompraCompletadaEnMemoria() {
         CompradorRepositoryEnMemoria compradores = new CompradorRepositoryEnMemoria();
         compradores.guardar(comprador);
         PedidoRepositoryEnMemoria pedidos = new PedidoRepositoryEnMemoria();
         ComentarioRepositoryEnMemoria comentarios = new ComentarioRepositoryEnMemoria();
         Pedido pedido = pedido(true);
         pedidos.registrar(pedido);
-        DejarComentarioUseCase caso = new DejarComentarioUseCase(compradores, pedidos, comentarios);
+        DejarComentarioUseCase caso = new DejarComentarioUseCase(compradores, pedidos, comentarios, new com.uniquindio.accesoriosMoto.domain.service.VerificadorDeCompra(pedidos));
 
         Comentario resultado = caso.ejecutar("c1", comprador.getId(), "p1", "v1", 5, "Excelente visor");
+        var resultado1 = comentarios.obtenerPorId("c1").orElseThrow();
 
-        assertSame(resultado, comentarios.obtenerPorId("c1").orElseThrow());
+        var resultado9 = comentarios.obtenerPorId("inexistente").isEmpty();
+
+        assertSame(resultado, resultado1);
         assertEquals("c1", resultado.getId());
         assertEquals(5, resultado.getCalificacion());
         assertEquals("Excelente visor", resultado.getTexto());
@@ -54,46 +58,71 @@ public class DejarComentarioUseCaseTest {
         assertSame(pedido.getItems().getFirst().getProducto(), resultado.getProducto());
         assertEquals(EstadoPedido.COMPLETADA, pedido.getEstadoPedido());
         assertEquals(1, pedidos.cantidadRegistrada());
-        assertTrue(comentarios.obtenerPorId("inexistente").isEmpty());
+        assertTrue(resultado9);
     }
 
     @Test
-    void noGuardaCuandoNoExistePedidoOFallaUnaRegla() {
+    public void noGuardaCuandoNoExistePedidoOFallaUnaRegla() {
+        var llamadasProhibidas = new java.util.ArrayList<String>();
+
         CompradorRepositoryEnMemoria compradores = new CompradorRepositoryEnMemoria();
         compradores.guardar(comprador);
         compradores.guardar(new Comprador("u2", "Otro", "otro@correo.com", "clave"));
         PedidoRepositoryEnMemoria pedidos = new PedidoRepositoryEnMemoria();
         ComentarioRepository comentarios = new ComentarioRepository() {
-            public void guardar(Comentario comentario) { fail("No debe guardar un comentario inválido"); }
+            public void guardar(Comentario comentario) { llamadasProhibidas.add("No debe guardar un comentario inválido"); }
             public Optional<Comentario> obtenerPorId(String id) { return Optional.empty(); }
         };
-        DejarComentarioUseCase caso = new DejarComentarioUseCase(compradores, pedidos, comentarios);
-        assertThrows(ReglaDominioException.class, () -> caso.ejecutar("c1", "u1", "no", "v1", 5, "Opinión"));
+        DejarComentarioUseCase caso = new DejarComentarioUseCase(compradores, pedidos, comentarios, new VerificadorDeCompra(pedidos));
+
+        var error1 = catchThrowable( () -> caso.ejecutar("c1", "u1", "no", "v1", 5, "Opinión"));
         pedidos.registrar(pedido(false));
-        assertThrows(ReglaDominioException.class, () -> caso.ejecutar("c1", "u1", "p1", "v1", 5, "Opinión"));
+        var error2 = catchThrowable( () -> caso.ejecutar("c1", "u1", "p1", "v1", 5, "Opinión"));
         pedidos.registrar(pedido(true));
-        assertThrows(ReglaDominioException.class, () -> caso.ejecutar("c1", "u1", "p1", "otro", 5, "Opinión"));
-        assertThrows(AccesoDenegadoException.class, () -> caso.ejecutar("c1", "u2", "p1", "v1", 5, "Opinión"));
-        assertThrows(ReglaDominioException.class, () -> caso.ejecutar("c1", "u1", "p1", "v1", 6, "Opinión"));
-        assertThrows(ReglaDominioException.class, () -> caso.ejecutar("c1", "u1", "p1", "v1", 5, " "));
+        var error3 =catchThrowable( () -> caso.ejecutar("c1", "u1", "p1", "otro", 5, "Opinión"));
+        var error4 = catchThrowable( () -> caso.ejecutar("c1", "u2", "p1", "v1", 5, "Opinión"));
+        var error5 = catchThrowable( () -> caso.ejecutar("c1", "u1", "p1", "v1", 6, "Opinión"));
+        var error6 = catchThrowable( () -> caso.ejecutar("c1", "u1", "p1", "v1", 5, " "));
+
+        assertInstanceOf(NoSuchElementException.class, error1);
+        assertInstanceOf(ReglaDominioException.class, error2);
+        assertInstanceOf(ReglaDominioException.class, error3);
+        assertInstanceOf(AccessDeniedException.class, error4);
+        assertInstanceOf(ReglaDominioException.class, error5);
+        assertInstanceOf(ReglaDominioException.class, error6);
+        assertTrue(llamadasProhibidas.isEmpty(), llamadasProhibidas.toString());
     }
 
     @Test
-    void noGuardaNiConsultaPedidoSiCompradorNoExiste() {
+    public void noGuardaNiConsultaPedidoSiCompradorNoExiste() {
+        var llamadasProhibidas = new java.util.ArrayList<String>();
+
         CompradorRepositoryEnMemoria compradores = new CompradorRepositoryEnMemoria();
-        PedidoRepository pedidos = new PedidoRepository() {
-            public Optional<Pedido> obtenerPorId(String id) { fail("No debe consultar el pedido sin comprador"); return Optional.empty(); }
-            public void registrar(Pedido pedido) { fail("Comentar no registra pedidos"); }
+
+        PedidoRepository pedidos = new PedidoRepositoryEnMemoria() {
+
+            public Optional<Pedido> obtenerPorId(String id) {
+                llamadasProhibidas.add("No debe consultar el pedido sin comprador"); return Optional.empty();
+            }
+            public void registrar(Pedido pedido) {
+                llamadasProhibidas.add("Comentar no registra pedidos");
+            }
         };
         ComentarioRepository comentarios = new ComentarioRepository() {
-            public void guardar(Comentario comentario) { fail("No debe guardar si no existe comprador"); }
-            public Optional<Comentario> obtenerPorId(String id) { return Optional.empty(); }
+            public void guardar(Comentario comentario) {
+                llamadasProhibidas.add("No debe guardar si no existe comprador");
+            }
+            public Optional<Comentario> obtenerPorId(String id) {
+                return Optional.empty();
+            }
         };
-        DejarComentarioUseCase caso = new DejarComentarioUseCase(compradores, pedidos, comentarios);
+        DejarComentarioUseCase caso = new DejarComentarioUseCase(compradores, pedidos, comentarios, new VerificadorDeCompra(pedidos));
 
-        ReglaDominioException error = assertThrows(ReglaDominioException.class,
-                () -> caso.ejecutar("c1", "inexistente", "p1", "v1", 5, "Opinión"));
+        var error = catchThrowable(() -> caso.ejecutar("c1", "inexistente", "p1", "v1", 5, "Opinión"));
 
-        assertEquals("No existe un comprador con ese id", error.getMessage());
+        assertInstanceOf(NoSuchElementException.class, error);
+
+        assertNotNull(error);
+        assertTrue(llamadasProhibidas.isEmpty(), llamadasProhibidas.toString());
     }
 }

@@ -32,13 +32,16 @@ public class RegistrarBaulRequestTest {
     }
 
     @Test
-    void aceptaDatosValidos() {
+    public void aceptaDatosValidos() {
         RegistrarBaulRequest request = new RegistrarBaulRequest("m1", "Givi", Material.ABS, 30.0, 5.0, "40 x 40 x 30 cm", "Negro", 250000.0, "COP");
-        assertTrue(validator.validate(request).isEmpty());
+
+        var resultado1 = validator.validate(request).isEmpty();
+
+        assertTrue(resultado1);
     }
 
     @Test
-    void rechazaCamposOmitidos() {
+    public void rechazaCamposOmitidos() {
         RegistrarBaulRequest request = new RegistrarBaulRequest(null, null, null, null, null, null, null, null, null);
 
         Set<String> campos = validator.validate(request).stream()
@@ -48,7 +51,7 @@ public class RegistrarBaulRequestTest {
     }
 
     @Test
-    void rechazaTextosEnBlancoYCantidadesNoPositivas() {
+    public void rechazaTextosEnBlancoYCantidadesNoPositivas() {
         RegistrarBaulRequest request = new RegistrarBaulRequest(" ", " ", Material.ABS, 0.0, -1.0, " ", " ", 0.0, " ");
 
         Set<String> campos = validator.validate(request).stream()

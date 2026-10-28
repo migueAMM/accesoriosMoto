@@ -15,13 +15,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class RegistrarSoporteCelularUseCaseTest {
 
     @Test
-    void registraSoporteConSujecionYTamanoCompatible() {
+    public void registraSoporteConSujecion() {
         ProductoRepositoryEnMemoria repository = new ProductoRepositoryEnMemoria();
         RegistrarSoporteCelularUseCase caso = new RegistrarSoporteCelularUseCase(repository);
 
         SoporteCelular resultado = caso.ejecutar("s1", new Marca("m1", "Marca"), new Precio(100, "COP"), "Negro", "Manillar");
+        var resultado1 = repository.obtenerPorId("s1").orElseThrow();
 
-        assertSame(resultado, repository.obtenerPorId("s1").orElseThrow());
+        assertSame(resultado, resultado1);
         assertEquals("s1", resultado.getId());
         assertFalse(resultado.estaPublicado());
         assertEquals("Manillar", ReflectionTestUtils.getField(resultado, "tipoSujecion"));

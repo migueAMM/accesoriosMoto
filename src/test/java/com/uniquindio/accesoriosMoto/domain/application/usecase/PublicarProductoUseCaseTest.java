@@ -10,6 +10,7 @@ import com.uniquindio.accesoriosMoto.domain.valueObject.Proteccion;
 import com.uniquindio.accesoriosMoto.domain.valueObject.Talla;
 import org.junit.jupiter.api.Test;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,7 +18,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.never;
 
-class PublicarProductoUseCaseTest {
+public class PublicarProductoUseCaseTest {
     @Test
     void noDeberiaGuardarSiElProductoNoExiste() {
         // Arrange
@@ -26,7 +27,7 @@ class PublicarProductoUseCaseTest {
         PublicarProductoUseCase useCase = new PublicarProductoUseCase(repository);
 
         // Act
-        RecursoNoEncontradoException error = assertThrows(RecursoNoEncontradoException.class,
+        NoSuchElementException error = assertThrows(NoSuchElementException.class,
                 () -> useCase.ejecutar("no-existe"));
 
         // Assert
@@ -35,20 +36,16 @@ class PublicarProductoUseCaseTest {
     }
 
     @Test
-    void noDeberiaGuardarSiElProductoYaEstaPublicado() {
-        // Arrange
+    public void noDeberiaGuardarSiElProductoYaEstaPublicado() {
         ProductoRepository repository = mock(ProductoRepository.class);
-        Casco casco = Casco.crear("casco", new Marca("m", "AGV"), "K3", "Negro", Talla.M,
-                new Precio(500000, "COP"), Proteccion.NIVEL_1, "DOT");
+        Casco casco = Casco.crear("casco", new Marca("m", "AGV"), "K3", "Negro", Talla.M, new Precio(500000, "COP"), Proteccion.NIVEL_1, "DOT");
         casco.publicar();
         when(repository.obtenerPorId("casco")).thenReturn(Optional.of(casco));
         PublicarProductoUseCase useCase = new PublicarProductoUseCase(repository);
 
-        // Act
         ReglaDominioException error = assertThrows(ReglaDominioException.class,
                 () -> useCase.ejecutar("casco"));
 
-        // Assert
         assertEquals("El producto ya esta publicado", error.getMessage());
         assertTrue(casco.estaPublicado());
         verify(repository, never()).guardar(any());

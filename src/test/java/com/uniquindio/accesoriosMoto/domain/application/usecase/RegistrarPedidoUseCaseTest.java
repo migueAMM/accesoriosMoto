@@ -13,10 +13,13 @@ import com.uniquindio.accesoriosMoto.infrastructure.persistence.PedidoRepository
 import com.uniquindio.accesoriosMoto.infrastructure.persistence.ProductoRepositoryEnMemoria;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 
+import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -45,7 +48,7 @@ public class RegistrarPedidoUseCaseTest {
     }
 
     @BeforeEach
-    void prepararDatos() {
+    public void prepararDatos() {
         compradores.guardar(comprador);
         visor = Visor.crear("v1", new Marca("m1", "AGV"), new Precio(100, "COP"), "Claro", "Integral", List.of());
         productos.guardar(visor);
@@ -58,8 +61,12 @@ public class RegistrarPedidoUseCaseTest {
     }
 
     @Test
-    void registraPedidoRecuperandoEntidadesEImportesDelDominio() {
-        Pedido resultado = caso.ejecutar("ped1", "u1", List.of(new ItemPedidoRequest("v1", 2)));
+    public void registraPedidoRecuperandoEntidadesEImportesDelDominio() {
+
+        Pedido resultado = caso.ejecutar("ped1", "u1", List.of(new RegistrarPedidoUseCase.ItemSolicitado("v1", 2)));
+
+        var resultado11 = pedidos.obtenerPorId("ped1").orElseThrow();
+        var resultado12 = pedidos.registros;
 
         assertSame(comprador, resultado.getComprador());
         assertSame(visor, resultado.getItems().getFirst().getProducto());
@@ -71,20 +78,24 @@ public class RegistrarPedidoUseCaseTest {
         assertFalse(resultado.getItems().getFirst().getId().isBlank());
         assertEquals(EstadoPedido.PENDIENTE, resultado.getEstadoPedido());
         assertNotNull(resultado.getFecha());
-        assertSame(resultado, pedidos.obtenerPorId("ped1").orElseThrow());
-        assertEquals(1, pedidos.registros);
+        assertSame(resultado, resultado11);
+        assertEquals(1, resultado12);
     }
 
     @Test
-    void registraVariosProductosConIdsInternosDistintos() {
+    public void registraVariosProductosConIdsInternosDistintos() {
         Producto baul = Baul.crear("b1", new Marca("m2", "Givi"), Material.ABS, 30, "40x40", new Precio(50, "COP"), 5, "Negro");
         productos.guardar(baul);
 
-        Pedido resultado = caso.ejecutar("ped1", "u1", List.of(new ItemPedidoRequest("v1", 2), new ItemPedidoRequest("b1", 3)));
+        Pedido resultado = caso.ejecutar("ped1", "u1", List.of(new RegistrarPedidoUseCase.ItemSolicitado("v1", 2), new RegistrarPedidoUseCase.ItemSolicitado("b1", 3)));
 
-        assertEquals(2, resultado.getItems().size());
         ItemPedido primero = resultado.getItems().get(0);
         ItemPedido segundo = resultado.getItems().get(1);
+
+        var resultado12 = pedidos.obtenerPorId("ped1").orElseThrow();
+        var resultado13 = pedidos.registros;
+
+        assertEquals(2, resultado.getItems().size());
         assertSame(visor, primero.getProducto());
         assertSame(baul, segundo.getProducto());
         assertEquals(new Precio(200, "COP"), primero.getSubtotal());
@@ -95,76 +106,102 @@ public class RegistrarPedidoUseCaseTest {
         assertFalse(primero.getId().isBlank());
         assertFalse(segundo.getId().isBlank());
         assertNotEquals(primero.getId(), segundo.getId());
-        assertSame(resultado, pedidos.obtenerPorId("ped1").orElseThrow());
-        assertEquals(1, pedidos.registros);
+        assertSame(resultado, resultado12);
+        assertEquals(1, resultado13);
     }
 
     @Test
-    void noRegistraSiCompradorNoExiste() {
-        ReglaDominioException error = assertThrows(ReglaDominioException.class, () -> caso.ejecutar("ped1", "inexistente", List.of(new ItemPedidoRequest("v1", 1))));
+    public void noRegistraSiCompradorNoExiste() {
+
+        var error = catchThrowable(() -> caso.ejecutar("ped1", "inexistente", List.of(new RegistrarPedidoUseCase.ItemSolicitado("v1", 1))));
+
+        assertInstanceOf(NoSuchElementException.class, error);
 
         assertEquals("No existe un comprador con ese id", error.getMessage());
         comprobarQueNoRegistro();
     }
 
     @Test
-    void noRegistraSiProductoNoExiste() {
-        ReglaDominioException error = assertThrows(ReglaDominioException.class, () -> caso.ejecutar("ped1", "u1", List.of(new ItemPedidoRequest("inexistente", 1))));
+    public void noRegistraSiProductoNoExiste() {
+
+        var error = catchThrowable(() -> caso.ejecutar("ped1", "u1", List.of(new RegistrarPedidoUseCase.ItemSolicitado("inexistente", 1))));
+
+        assertInstanceOf(NoSuchElementException.class, error);
 
         assertEquals("No existe un producto con el id: inexistente", error.getMessage());
         comprobarQueNoRegistro();
     }
 
     @Test
-    void noRegistraParcialmenteSiFallaUnProductoPosterior() {
-        assertThrows(ReglaDominioException.class, () -> caso.ejecutar("ped1", "u1", List.of(new ItemPedidoRequest("v1", 1), new ItemPedidoRequest("inexistente", 1))));
+    public void noRegistraParcialmenteSiFallaUnProductoPosterior() {
 
+        var accion1Error = catchThrowable(() -> caso.ejecutar("ped1", "u1", List.of(new RegistrarPedidoUseCase.ItemSolicitado("v1", 1), new RegistrarPedidoUseCase.ItemSolicitado("inexistente", 1))));
+
+        assertInstanceOf(NoSuchElementException.class, accion1Error);
         comprobarQueNoRegistro();
     }
 
     @Test
-    void noRegistraCuandoDominioRechazaCantidad() {
-        for (int cantidad : new int[]{0, -1}) {
-            assertThrows(ReglaDominioException.class, () -> caso.ejecutar("ped1", "u1", List.of(new ItemPedidoRequest("v1", cantidad))));
+    public void noRegistraCuandoDominioRechazaCantidad() {
+        int[] cantidades = {0, -1};
+
+        var acciones = java.util.Arrays.stream(cantidades)
+                .mapToObj(cantidad -> (Executable) () -> caso.ejecutar("ped1", "u1", List.of(new RegistrarPedidoUseCase.ItemSolicitado("v1", cantidad))))
+                .toList();
+
+        for (var accion : acciones) {
+            assertThrows(ReglaDominioException.class, accion);
             comprobarQueNoRegistro();
         }
     }
 
     @Test
-    void noRegistraCuandoDominioRechazaMonedasIncompatibles() {
+    public void noRegistraCuandoDominioRechazaMonedasIncompatibles() {
         productos.guardar(Visor.crear("v2", new Marca("m1", "AGV"), new Precio(10, "USD"), "Claro", "Integral", List.of()));
 
-        assertThrows(ReglaDominioException.class, () -> caso.ejecutar("ped1", "u1", List.of(new ItemPedidoRequest("v1", 1), new ItemPedidoRequest("v2", 1))));
+        var accion1Error = catchThrowable(() -> caso.ejecutar("ped1", "u1", List.of(new RegistrarPedidoUseCase.ItemSolicitado("v1", 1), new RegistrarPedidoUseCase.ItemSolicitado("v2", 1))));
 
+        assertInstanceOf(ReglaDominioException.class, accion1Error);
         comprobarQueNoRegistro();
     }
 
     @Test
-    void dejaAlDominioRechazarPedidoSinItems() {
-        assertThrows(ReglaDominioException.class, () -> caso.ejecutar("ped1", "u1", List.of()));
+    public void dejaAlDominioRechazarPedidoSinItems() {
 
+        var accion1Error = catchThrowable(() -> caso.ejecutar("ped1", "u1", List.of()));
+
+        assertInstanceOf(ReglaDominioException.class, accion1Error);
         comprobarQueNoRegistro();
     }
 
     @Test
-    void rechazaListaNulaConErrorClaroSinRegistrar() {
-        ReglaDominioException error = assertThrows(ReglaDominioException.class, () -> caso.ejecutar("ped1", "u1", null));
+    public void rechazaListaNulaConErrorClaroSinRegistrar() {
+
+        var error = catchThrowable(() -> caso.ejecutar("ped1", "u1", null));
+
+        assertInstanceOf(ReglaDominioException.class, error);
 
         assertEquals("Debe proporcionar la lista de ítems del pedido", error.getMessage());
         comprobarQueNoRegistro();
     }
 
     @Test
-    void rechazaElementoNuloConErrorClaroSinRegistrar() {
-        ReglaDominioException error = assertThrows(ReglaDominioException.class, () -> caso.ejecutar("ped1", "u1", Arrays.asList((ItemPedidoRequest) null)));
+    public void rechazaElementoNuloConErrorClaroSinRegistrar() {
+
+        var error = catchThrowable(() -> caso.ejecutar("ped1", "u1", Arrays.asList((RegistrarPedidoUseCase.ItemSolicitado) null)));
+
+        assertInstanceOf(ReglaDominioException.class, error);
 
         assertEquals("Los ítems solicitados no pueden ser nulos", error.getMessage());
         comprobarQueNoRegistro();
     }
 
     @Test
-    void rechazaCantidadOmitidaConErrorClaroSinRegistrar() {
-        ReglaDominioException error = assertThrows(ReglaDominioException.class, () -> caso.ejecutar("ped1", "u1", List.of(new ItemPedidoRequest("v1", null))));
+    public void rechazaCantidadOmitidaConErrorClaroSinRegistrar() {
+
+        var error = catchThrowable(() -> caso.ejecutar("ped1", "u1", List.of(new RegistrarPedidoUseCase.ItemSolicitado("v1", null))));
+
+        assertInstanceOf(ReglaDominioException.class, error);
 
         assertEquals("Debe indicar la cantidad del ítem", error.getMessage());
         comprobarQueNoRegistro();
