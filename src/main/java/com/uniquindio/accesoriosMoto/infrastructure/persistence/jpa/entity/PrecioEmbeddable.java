@@ -11,6 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Embeddable
 @AllArgsConstructor
+
 public class PrecioEmbeddable {
     private double monto;
     private String moneda;

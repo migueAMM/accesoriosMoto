@@ -12,6 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @DiscriminatorValue("SOPORTE_CELULAR")
+
 public class SoporteCelularEntity extends ProductoEntity {
     @Column(name="soportecelular_tipo_sujecion")
     private String tipoSujecion;

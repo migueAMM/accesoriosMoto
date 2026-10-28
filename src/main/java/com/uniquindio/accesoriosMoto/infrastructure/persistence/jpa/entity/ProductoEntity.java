@@ -13,6 +13,7 @@ import lombok.Setter;
 @Table(name="productos")
 @Inheritance(strategy= InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name="tipo_producto")
+
 public abstract class ProductoEntity {
     @Id private String id;
     @Embedded

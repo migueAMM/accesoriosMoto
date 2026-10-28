@@ -13,6 +13,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @DiscriminatorValue("VISOR")
+
 public class VisorEntity extends ProductoEntity {
     @Column(name="visor_tipo_visor")
     private String tipoVisor;

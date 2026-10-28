@@ -12,6 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @DiscriminatorValue("INTERCOMUNICADOR")
+
 public class IntercomunicadorEntity extends ProductoEntity {
     @Column(name="intercomunicador_alcance_metros")
     private int alcanceMetros;

@@ -15,6 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name="pedidos")
+
 public class PedidoEntity {
     @Id
     private String id;

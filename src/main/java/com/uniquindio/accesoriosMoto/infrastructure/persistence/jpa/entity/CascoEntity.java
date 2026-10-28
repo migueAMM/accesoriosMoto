@@ -12,6 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @DiscriminatorValue("CASCO")
+
 public class CascoEntity extends ProductoEntity {
     @Column(name="casco_modelo")
     private String modelo;

@@ -11,6 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Embeddable
 @AllArgsConstructor
+
 public class MarcaEmbeddable {
     private String id;
     private String nombre;

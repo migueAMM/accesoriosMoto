@@ -12,6 +12,7 @@ import lombok.*;
 @Embeddable
 @AllArgsConstructor
 @EqualsAndHashCode
+
 public class CompatibilidadEmbeddable {
     @Enumerated(EnumType.STRING)
     private TipoCompatibilidad tipo;

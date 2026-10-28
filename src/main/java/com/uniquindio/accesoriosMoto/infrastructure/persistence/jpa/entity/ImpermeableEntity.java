@@ -12,6 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @DiscriminatorValue("IMPERMEABLE")
+
 public class ImpermeableEntity extends ProductoEntity {
     @Enumerated(EnumType.STRING)
     @Column(name="impermeable_talla")

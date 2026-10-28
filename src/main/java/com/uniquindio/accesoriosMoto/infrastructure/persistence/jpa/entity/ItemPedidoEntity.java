@@ -10,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(name="items_pedido")
+
 public class ItemPedidoEntity {
     @Id
     private String id;

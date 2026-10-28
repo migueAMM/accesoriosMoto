@@ -13,5 +13,11 @@ import lombok.Setter;
 @Entity
 @Table(name="administradores")
 @DiscriminatorValue("ADMINISTRADOR")
+
 public class AdministradorEntity extends UsuarioEntity {
+
+    @Override
+    public RolSeguridad getRol() {
+        return RolSeguridad.ADMINISTRADOR;
+    }
 }

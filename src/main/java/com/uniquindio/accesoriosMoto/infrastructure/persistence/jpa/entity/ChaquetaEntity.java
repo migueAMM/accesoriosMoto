@@ -13,6 +13,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @DiscriminatorValue("CHAQUETA")
+
 public class ChaquetaEntity extends ProductoEntity {
     @Enumerated(EnumType.STRING)
     @Column(name="chaqueta_talla")

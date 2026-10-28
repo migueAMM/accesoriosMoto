@@ -9,9 +9,12 @@ import lombok.Setter;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-@Getter @Setter @NoArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 @DiscriminatorValue("BAUL")
+
 public class BaulEntity extends ProductoEntity {
     @Enumerated(EnumType.STRING)
     @Column(name="baul_material")
