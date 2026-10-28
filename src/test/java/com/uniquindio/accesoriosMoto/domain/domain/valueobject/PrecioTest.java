@@ -3,53 +3,83 @@ package com.uniquindio.accesoriosMoto.domain.domain.valueobject;
 import com.uniquindio.accesoriosMoto.domain.exception.ReglaDominioException;
 import com.uniquindio.accesoriosMoto.domain.valueObject.Precio;
 import org.junit.jupiter.api.Test;
-
+import org.junit.jupiter.api.function.Executable;
+import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 public class PrecioTest {
 
     @Test
-    void rechazaMontosNoFinitos() {
-        for (double monto : new double[]{Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY}) {
-            assertThrows(ReglaDominioException.class, () -> new Precio(monto, "COP"));
+    public void rechazaMontosNoFinitos() {
+
+        var entradas1 = new double[]{Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY};
+
+        var acciones = new ArrayList<Executable>();
+        for (double monto : entradas1) {
+            acciones.add(() -> new Precio(monto, "COP"));
+        }
+
+        for (var accion : acciones) {
+            assertThrows(ReglaDominioException.class, accion);
         }
     }
 
     @Test
-    void rechazaMonedaNulaVaciaOEnBlanco() {
-        for (String moneda : new String[]{null, "", " "}) {
-            assertThrows(ReglaDominioException.class, () -> new Precio(100, moneda));
+    public void rechazaMonedaNulaVaciaOEnBlanco() {
+
+        var entradas1 = new String[]{null, "", " "};
+
+        var acciones = new ArrayList<Executable>();
+        for (String moneda : entradas1) {
+            acciones.add(() -> new Precio(100, moneda));
+        }
+
+        for (var accion : acciones) {
+            assertThrows(ReglaDominioException.class, accion);
         }
     }
 
     @Test
-    void multiplicaConservandoMonedaSinModificarOriginal() {
+    public void multiplicaConservandoMonedaSinModificarOriginal() {
+
         Precio original = new Precio(12.5, "USD");
 
         Precio resultado = original.multiplicarPor(3);
+        var resultado1 = original.multiplicarPor(1);
 
         assertEquals(new Precio(37.5, "USD"), resultado);
         assertEquals(new Precio(12.5, "USD"), original);
-        assertNotSame(original, original.multiplicarPor(1));
+        assertNotSame(original, resultado1);
     }
 
     @Test
-    void rechazaMultiplicacionPorCantidadNoPositiva() {
+    public void rechazaMultiplicacionPorCantidadNoPositiva() {
+
         Precio precio = new Precio(100, "COP");
-        assertThrows(ReglaDominioException.class, () -> precio.multiplicarPor(0));
-        assertThrows(ReglaDominioException.class, () -> precio.multiplicarPor(-1));
+
+        var accion1Error = catchThrowable(() -> precio.multiplicarPor(0));
+        var accion2Error = catchThrowable(() -> precio.multiplicarPor(-1));
+
+        assertInstanceOf(ReglaDominioException.class, accion1Error);
+        assertInstanceOf(ReglaDominioException.class, accion2Error);
     }
 
     @Test
-    void rechazaDesbordamientoEnMultiplicacion() {
+    public void rechazaDesbordamientoEnMultiplicacion() {
+
         Precio precio = new Precio(Double.MAX_VALUE, "COP");
-        assertThrows(ReglaDominioException.class, () -> precio.multiplicarPor(2));
+
+        var accion1Error = catchThrowable(() -> precio.multiplicarPor(2));
+
+        assertInstanceOf(ReglaDominioException.class, accion1Error);
     }
 
     @Test
-    void sumaConservandoMonedaYOperandos() {
+    public void sumaConservandoMonedaYOperandos() {
+
         Precio primero = new Precio(10.5, "USD");
         Precio segundo = new Precio(2.5, "USD");
 
@@ -62,31 +92,57 @@ public class PrecioTest {
     }
 
     @Test
-    void rechazaSumaNulaOMonedasDistintas() {
+    public void rechazaSumaNulaOMonedasDistintas() {
+
         Precio precio = new Precio(100, "COP");
-        assertThrows(ReglaDominioException.class, () -> precio.sumar(null));
-        assertThrows(ReglaDominioException.class, () -> precio.sumar(new Precio(100, "USD")));
+
+        var accion1Error = catchThrowable(() -> precio.sumar(null));
+        var accion2Error = catchThrowable(() -> precio.sumar(new Precio(100, "USD")));
+
+        assertInstanceOf(ReglaDominioException.class, accion1Error);
+        assertInstanceOf(ReglaDominioException.class, accion2Error);
     }
 
     @Test
-    void rechazaDesbordamientoEnSuma() {
+    public void rechazaDesbordamientoEnSuma() {
+
         Precio precio = new Precio(Double.MAX_VALUE, "COP");
-        assertThrows(ReglaDominioException.class, () -> precio.sumar(precio));
+
+        var accion1Error = catchThrowable(() -> precio.sumar(precio));
+
+        assertInstanceOf(ReglaDominioException.class, accion1Error);
     }
 
     @Test
     void unPrecioPositivoConservaSuMonto() {
-        org.junit.jupiter.api.Assertions.assertEquals(100, new Precio(100, "COP").monto());
+
+        Precio precio = new Precio(100, "COP");
+
+        double monto = precio.monto();
+
+        assertEquals(100, monto);
     }
 
     @Test
     void unPrecioNegativoLanzaReglaDominioException() {
-        assertThrows(ReglaDominioException.class, () -> new Precio(-100, "COP"));
+
+        double monto = -100;
+        String moneda = "COP";
+
+        var error = catchThrowable(() -> new Precio(monto, moneda));
+
+        assertInstanceOf(ReglaDominioException.class, error);
     }
 
     @Test
     void unPrecioEnCeroLanzaReglaDominioException() {
-        assertThrows(ReglaDominioException.class, () -> new Precio(0, "COP"));
+
+        double monto = 0;
+        String moneda = "COP";
+
+        var error = catchThrowable(() -> new Precio(monto, moneda));
+
+        assertInstanceOf(ReglaDominioException.class, error);
     }
 
 }
