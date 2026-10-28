@@ -106,7 +106,7 @@ public class ComentarioTest {
         Comprador comprador = compradorPrueba();
         Producto producto = productoPrueba();
         Pedido pedido = pedido(comprador, producto);
-        Comprador otro = new Comprador("otro", "Otra persona", "otro@correo.com", "clave");
+        Comprador otro = new Comprador("90738", "Juan", "juan@gmail.com", "123");
 
         var accion1Error = catchThrowable(() -> Comentario.dejar("c1", otro, pedido, producto.getId(), 5, "Opinión"));
         var accion2Error = catchThrowable(() -> Comentario.dejar("c1", null, pedido, producto.getId(), 5, "Opinión"));
@@ -141,7 +141,7 @@ public class ComentarioTest {
         Comprador comprador = compradorPrueba();
         Producto producto = productoPrueba();
         Pedido pedido = pedido(comprador, producto);
-        Comprador mismaIdentidad = new Comprador("C1", "Nombre actualizado", "nuevo@correo.com", "clave");
+        Comprador mismaIdentidad = new Comprador("C1", "Diana", "diana@gmail.com", "345");
 
         Comentario comentario = Comentario.dejar("c1", mismaIdentidad, pedido, producto.getId(), 4, "Opinión");
 

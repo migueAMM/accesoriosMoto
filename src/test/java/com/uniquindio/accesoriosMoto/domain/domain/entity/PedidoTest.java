@@ -175,10 +175,8 @@ public class PedidoTest {
 
         Pedido pedido = pedidoPendiente();
 
-        // Act
         var accion1Error = catchThrowable(() -> pedido.solicitarReembolso("No llego a tiempo"));
 
-        // Assert
         assertInstanceOf(ReglaDominioException.class, accion1Error);
         assertEquals(EstadoPedido.PENDIENTE, pedido.getEstadoPedido());
     }

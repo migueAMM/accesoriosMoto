@@ -6,9 +6,10 @@ import com.uniquindio.accesoriosMoto.domain.valueObject.Marca;
 import com.uniquindio.accesoriosMoto.domain.valueObject.Material;
 import com.uniquindio.accesoriosMoto.domain.valueObject.Precio;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BaulTest {
 
@@ -27,16 +28,16 @@ public class BaulTest {
     @Test
     public void rechazaMaterialNulo() {
 
-        var accion1Error = org.assertj.core.api.Assertions.catchThrowable(() -> crear(null, 30, 5));
+        var accion1Error = catchThrowable(() -> crear(null, 30, 5));
 
-        org.junit.jupiter.api.Assertions.assertInstanceOf(ReglaDominioException.class, accion1Error);
+        assertInstanceOf(ReglaDominioException.class, accion1Error);
     }
 
     @Test
     public void rechazaCapacidadEnLitrosNoPositivaONoFinita() {
         var entradas1 = new double[]{0, -1, Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY};
 
-        var acciones = new java.util.ArrayList<org.junit.jupiter.api.function.Executable>();
+        var acciones = new java.util.ArrayList<Executable>();
         for (double litros : entradas1) {
             acciones.add(() -> crear(Material.ABS, litros, 5));
         }
@@ -50,7 +51,7 @@ public class BaulTest {
     public void rechazaCargaNoPositivaONoFinita() {
         var entradas1 = new double[]{0, -1, Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY};
 
-        var acciones = new java.util.ArrayList<org.junit.jupiter.api.function.Executable>();
+        var acciones = new java.util.ArrayList<Executable>();
         for (double carga : entradas1) {
             acciones.add(() -> crear(Material.ABS, 30, carga));
         }
