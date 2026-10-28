@@ -2,7 +2,6 @@ package com.uniquindio.accesoriosMoto.domain.application.usecase;
 
 import com.uniquindio.accesoriosMoto.application.usecase.PublicarProductoUseCase;
 import com.uniquindio.accesoriosMoto.domain.entity.Casco;
-import com.uniquindio.accesoriosMoto.domain.exception.RecursoNoEncontradoException;
 import com.uniquindio.accesoriosMoto.domain.exception.ReglaDominioException;
 import com.uniquindio.accesoriosMoto.domain.repository.ProductoRepository;
 import com.uniquindio.accesoriosMoto.domain.valueObject.Marca;
