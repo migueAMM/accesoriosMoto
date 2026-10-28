@@ -39,9 +39,10 @@ public class UsuariosJpaTest {
 
     @Test
     public void ambosTiposSeRecuperanSinDuplicarCredenciales() {
+
         String hash = encoder.encode("ClaveSegura123");
 
-        usuarios.guardar(new Comprador("c1", "Ana", "ana@gmail.com", hash));
+        usuarios.guardar(new Comprador("c1", "Ana", "ana@correo.com", hash));
         usuarios.guardar(new Administrador("a1", "Admin", "admin@correo.com", hash));
         em.flush();
         em.clear();
@@ -59,6 +60,7 @@ public class UsuariosJpaTest {
         assertThat(resultado5).isEqualTo(2L);
         assertThat(resultado6).isEmpty();
     }
+
     @Test
     public void correoEsUnicoEntreCompradorYAdministradorEnLaBase() {
         String hash = encoder.encode("ClaveSegura123");
