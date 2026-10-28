@@ -4,4 +4,6 @@ import com.uniquindio.accesoriosMoto.infrastructure.persistence.jpa.entity.Pedid
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PedidoJpaDataRepository extends JpaRepository<PedidoEntity, String> {
+    java.util.List<PedidoEntity> findByComprador_IdOrderByFechaDescIdAsc(String compradorId);
+
 }

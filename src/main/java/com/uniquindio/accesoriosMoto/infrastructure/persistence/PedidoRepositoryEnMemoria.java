@@ -21,6 +21,11 @@ public class PedidoRepositoryEnMemoria implements PedidoRepository {
         pedidos.put(pedido.getId(), pedido);
     }
 
+    public java.util.List<Pedido> listarPorComprador(String compradorId) {
+        return pedidos.values().stream().filter(p -> p.getComprador().getId().equals(compradorId))
+                .sorted(java.util.Comparator.comparing(Pedido::getFecha).reversed().thenComparing(Pedido::getId)).toList();
+    }
+
     public int cantidadRegistrada() {
         return pedidos.size();
     }
