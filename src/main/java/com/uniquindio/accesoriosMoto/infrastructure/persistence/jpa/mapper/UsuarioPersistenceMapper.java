@@ -10,8 +10,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class UsuarioPersistenceMapper {
+
     private final CompradorPersistenceMapper compradores;
-    public UsuarioPersistenceMapper(CompradorPersistenceMapper compradores) { this.compradores = compradores; }
+
+    public UsuarioPersistenceMapper(CompradorPersistenceMapper compradores) {
+        this.compradores = compradores;
+    }
+
     public UsuarioEntity toEntity(Usuario usuario) {
         if (usuario instanceof Comprador comprador) return compradores.toEntity(comprador);
         if (!(usuario instanceof Administrador)) throw new IllegalArgumentException("Tipo de usuario no soportado");
@@ -22,6 +27,7 @@ public class UsuarioPersistenceMapper {
         entidad.setContrasena(usuario.getContrasena());
         return entidad;
     }
+
     public Usuario toDomain(UsuarioEntity original) {
         UsuarioEntity entidad = (UsuarioEntity) org.hibernate.Hibernate.unproxy(original);
         if (entidad instanceof CompradorEntity comprador) return compradores.toDomain(comprador);

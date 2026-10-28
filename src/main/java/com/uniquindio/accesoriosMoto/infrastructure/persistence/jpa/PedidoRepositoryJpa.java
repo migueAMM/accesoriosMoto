@@ -29,6 +29,10 @@ public class PedidoRepositoryJpa implements PedidoRepository {
     }
 
     @Override
+    public java.util.List<Pedido> listarPorComprador(String compradorId) {
+        return repository.findByComprador_IdOrderByFechaDescIdAsc(compradorId).stream().map(mapper::toDomain).toList();
+    }
+
     public Optional<Pedido> obtenerPorId(String id) {
         return repository.findById(id).map(mapper::toDomain);
     }

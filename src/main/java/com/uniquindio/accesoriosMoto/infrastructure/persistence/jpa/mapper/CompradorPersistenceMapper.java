@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CompradorPersistenceMapper {
+
     public CompradorEntity toEntity(Comprador comprador) {
         CompradorEntity entidad = new CompradorEntity();
         entidad.setId(comprador.getId());
@@ -14,6 +15,7 @@ public class CompradorPersistenceMapper {
         entidad.setContrasena(comprador.getContrasena());
         return entidad;
     }
+
     public Comprador toDomain(CompradorEntity entidad) {
         return new Comprador(entidad.getId(), entidad.getNombre(), entidad.getCorreo(), entidad.getContrasena());
     }

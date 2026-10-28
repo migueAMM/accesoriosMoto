@@ -12,6 +12,7 @@ import com.uniquindio.accesoriosMoto.infrastructure.persistence.jpa.entity.Visor
 import com.uniquindio.accesoriosMoto.infrastructure.persistence.jpa.mapper.ProductoPersistenceMapper;
 import jakarta.persistence.criteria.*;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,21 +46,21 @@ public class ProductoRepositoryJpa implements ProductoRepository {
 
     @Override
     public List<Producto> buscar(FiltroProducto filtro) {
-        if (filtro == null) { throw new com.uniquindio.accesoriosMoto.domain.exception.ReglaDominioException("Debe proporcionar los criterios de búsqueda"); }
-        return repository.findAll(criterios(filtro), org.springframework.data.domain.Sort.by("id")).stream().map(mapper::toDomain).toList();
+        if (filtro == null) {
+            throw new ReglaDominioException("Debe proporcionar los criterios de búsqueda");
+        }
+        return repository.findAll(criterios(filtro), Sort.by("id")).stream().map(mapper::toDomain).toList();
     }
-
     @Override
     public Pagina<Producto> buscar(FiltroProducto filtro, int pagina, int tamano) {
-        if (pagina < 0 || tamano < 1 || tamano > 50 || (long) pagina * tamano > Integer.MAX_VALUE) throw new com.uniquindio.accesoriosMoto.domain.exception.ReglaDominioException("Paginación inválida");
-        var resultado = repository.findAll(criterios(filtro), PageRequest.of(pagina, tamano, org.springframework.data.domain.Sort.by("id")));
-        return new com.uniquindio.accesoriosMoto.domain.repository.Pagina<>(resultado.getContent().stream().map(mapper::toDomain).toList(), resultado.getTotalElements(), resultado.getTotalPages(), pagina, tamano);
+        if (pagina < 0 || tamano < 1 || tamano > 50 || (long) pagina * tamano > Integer.MAX_VALUE) throw new ReglaDominioException("Paginación inválida");
+        var resultado = repository.findAll(criterios(filtro), PageRequest.of(pagina, tamano, Sort.by("id")));
+        return new Pagina<>(resultado.getContent().stream().map(mapper::toDomain).toList(), resultado.getTotalElements(), resultado.getTotalPages(), pagina, tamano);
     }
-
     @Override
     public List<ProductoVentas> masVendidos(int limite) {
-        if (limite < 1 || limite > 20) throw new com.uniquindio.accesoriosMoto.domain.exception.ReglaDominioException("El límite debe estar entre 1 y 20");
-        return repository.masVendidos(EstadoPedido.COMPLETADA, org.springframework.data.domain.PageRequest.of(0, limite));
+        if (limite < 1 || limite > 20) throw new ReglaDominioException("El límite debe estar entre 1 y 20");
+        return repository.masVendidos(EstadoPedido.COMPLETADA, PageRequest.of(0, limite));
     }    private static Specification<ProductoEntity> criterios(FiltroProducto filtro) {
         if (filtro == null) throw new ReglaDominioException("Debe proporcionar los criterios de búsqueda");
         return (producto, consulta, cb) -> {

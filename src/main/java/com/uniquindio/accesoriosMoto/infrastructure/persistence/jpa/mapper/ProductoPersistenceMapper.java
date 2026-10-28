@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 @Component
 public class ProductoPersistenceMapper {
+
     public ProductoEntity toEntity(Producto producto) {
         ProductoEntity entidad = switch (producto) {
             case Baul p -> {
@@ -61,7 +62,6 @@ public class ProductoPersistenceMapper {
             case SoporteCelular p -> {
                 SoporteCelularEntity e = new SoporteCelularEntity();
                 e.setTipoSujecion(p.getTipoSujecion());
-                e.setCompatibleTamanoCelular(p.getCompatibleTamanoCelular());
                 yield e;
             }
             case Visor p -> {
@@ -81,7 +81,6 @@ public class ProductoPersistenceMapper {
     }
 
     public Producto toDomain(ProductoEntity entidad) {
-        // Hibernate devuelve proxies para las relaciones polimórficas.
         ProductoEntity e = (ProductoEntity) org.hibernate.Hibernate.unproxy(entidad);
         Marca marca = new Marca(e.getMarca().getId(), e.getMarca().getNombre());
         Precio precio = new Precio(e.getPrecio().getMonto(), e.getPrecio().getMoneda());

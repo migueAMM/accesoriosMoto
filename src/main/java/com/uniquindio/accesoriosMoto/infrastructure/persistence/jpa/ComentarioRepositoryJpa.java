@@ -32,7 +32,6 @@ public class ComentarioRepositoryJpa implements ComentarioRepository {
     @Override
     @Transactional
     public void guardar(Comentario objeto) {
-        repository.save(mapper.toEntity(objeto, compradores.getReferenceById(objeto.getComprador().getId()),
-                productos.getReferenceById(objeto.getProducto().getId())));
+        repository.save(mapper.toEntity(objeto, compradores.getReferenceById(objeto.getComprador().getId()), productos.getReferenceById(objeto.getProducto().getId())));
     }
 }

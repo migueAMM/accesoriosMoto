@@ -8,12 +8,14 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ComentarioPersistenceMapper {
+
     private final CompradorPersistenceMapper compradores;
     private final ProductoPersistenceMapper productos;
     public ComentarioPersistenceMapper(CompradorPersistenceMapper compradores, ProductoPersistenceMapper productos) {
         this.compradores = compradores;
         this.productos = productos;
     }
+
     public ComentarioEntity toEntity(Comentario comentario, CompradorEntity comprador, ProductoEntity producto) {
         ComentarioEntity entidad = new ComentarioEntity();
         entidad.setId(comentario.getId());
@@ -24,9 +26,8 @@ public class ComentarioPersistenceMapper {
         entidad.setRespuestaVendedor(comentario.getRespuestaVendedor());
         return entidad;
     }
+
     public Comentario toDomain(ComentarioEntity entidad) {
-        return Comentario.reconstruir(entidad.getId(), compradores.toDomain(entidad.getComprador()),
-                productos.toDomain(entidad.getProducto()), entidad.getCalificacion(), entidad.getTexto(),
-                entidad.getRespuestaVendedor());
+        return Comentario.reconstruir(entidad.getId(), compradores.toDomain(entidad.getComprador()), productos.toDomain(entidad.getProducto()), entidad.getCalificacion(), entidad.getTexto(), entidad.getRespuestaVendedor());
     }
 }

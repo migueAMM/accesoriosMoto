@@ -12,8 +12,10 @@ import java.util.Objects;
 
 @Component
 public class PedidoPersistenceMapper {
+
     private final CompradorPersistenceMapper compradores;
     private final ProductoPersistenceMapper productos;
+
     public PedidoPersistenceMapper(CompradorPersistenceMapper compradores, ProductoPersistenceMapper productos) {
         this.compradores = compradores;
         this.productos = productos;
@@ -37,12 +39,9 @@ public class PedidoPersistenceMapper {
         }
         return entidad;
     }
+
     public Pedido toDomain(PedidoEntity entidad) {
-        List<ItemPedido> items = entidad.getItems().stream().map(e -> ItemPedido.reconstruir(
-                e.getId(), productos.toDomain(e.getProducto()), e.getCantidad(),
-                new Precio(e.getSubtotal().getMonto(), e.getSubtotal().getMoneda()))).toList();
-        return Pedido.reconstruir(entidad.getId(), compradores.toDomain(entidad.getComprador()), items,
-                entidad.getEstadoPedido(), entidad.getFecha(),
-                new Precio(entidad.getTotal().getMonto(), entidad.getTotal().getMoneda()), entidad.getMotivoReembolso());
+        List<ItemPedido> items = entidad.getItems().stream().map(e -> ItemPedido.reconstruir(e.getId(), productos.toDomain(e.getProducto()), e.getCantidad(), new Precio(e.getSubtotal().getMonto(), e.getSubtotal().getMoneda()))).toList();
+        return Pedido.reconstruir(entidad.getId(), compradores.toDomain(entidad.getComprador()), items, entidad.getEstadoPedido(), entidad.getFecha(), new Precio(entidad.getTotal().getMonto(), entidad.getTotal().getMoneda()), entidad.getMotivoReembolso());
     }
 }
