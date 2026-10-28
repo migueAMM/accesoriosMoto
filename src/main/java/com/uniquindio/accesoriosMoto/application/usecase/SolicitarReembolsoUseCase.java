@@ -1,28 +1,24 @@
 package com.uniquindio.accesoriosMoto.application.usecase;
 
 import com.uniquindio.accesoriosMoto.domain.entity.Pedido;
-import com.uniquindio.accesoriosMoto.domain.exception.ReglaDominioException;
 import com.uniquindio.accesoriosMoto.domain.repository.PedidoRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
+@RequiredArgsConstructor
 public class SolicitarReembolsoUseCase {
-    private final PedidoRepository pedidoRepository;
 
-    public SolicitarReembolsoUseCase(PedidoRepository pedidoRepository) {
-        this.pedidoRepository = pedidoRepository;
-    }
+    private final PedidoRepository repository;
 
-    public Pedido ejecutar(String idPedido, String compradorId, String motivo) {
-        Pedido pedido = pedidoRepository.obtenerPorId(idPedido)
-                .orElseThrow(() -> new ReglaDominioException("No existe un pedido con ese id"));
-        if (!pedido.getComprador().getId().equals(compradorId)) {
-            throw new com.uniquindio.accesoriosMoto.application.exception.AccesoDenegadoException();
-        }
+    @Transactional
+    public void ejecutar(String pedidoId, String compradorId, String motivo) {
+        Pedido pedido = repository.obtenerPorId(pedidoId).orElseThrow();
+        if (!pedido.getComprador().getId().equals(compradorId))
+            throw new AccessDeniedException("No tiene permiso para realizar esta operación");
         pedido.solicitarReembolso(motivo);
-        pedidoRepository.registrar(pedido);
-        return pedido;
+        repository.registrar(pedido);
     }
 }

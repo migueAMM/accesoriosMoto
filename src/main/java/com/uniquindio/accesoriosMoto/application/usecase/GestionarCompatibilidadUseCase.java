@@ -6,19 +6,19 @@ import com.uniquindio.accesoriosMoto.domain.exception.ReglaDominioException;
 import com.uniquindio.accesoriosMoto.domain.repository.ProductoRepository;
 import com.uniquindio.accesoriosMoto.domain.valueObject.Compatibilidad;
 import com.uniquindio.accesoriosMoto.domain.valueObject.TipoCompatibilidad;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.NoSuchElementException;
+
 @Service
-@Transactional
+@RequiredArgsConstructor
 public class GestionarCompatibilidadUseCase {
+
     private final ProductoRepository productoRepository;
 
-    public GestionarCompatibilidadUseCase(ProductoRepository productoRepository){
-        this.productoRepository = productoRepository;
-    }
-
-
+    @Transactional
     public Producto indicar(String idProducto, TipoCompatibilidad tipo, String modelo){
         Producto producto = obtenerProducto(idProducto);
         obtenerCompatible(producto).indicarCompatibilidad(new Compatibilidad(tipo, modelo));
@@ -35,6 +35,7 @@ public class GestionarCompatibilidadUseCase {
     }
 
 
+    @Transactional
     public Producto retirar(String idProducto, TipoCompatibilidad tipo, String modelo) {
         Producto producto = obtenerProducto(idProducto);
         obtenerCompatible(producto).retirarCompatibilidad(new Compatibilidad(tipo, modelo));
@@ -45,6 +46,6 @@ public class GestionarCompatibilidadUseCase {
 
     private Producto obtenerProducto(String id){
         return productoRepository.obtenerPorId(id)
-                .orElseThrow(() -> new ReglaDominioException("No existe un producto con ese id"));
+                .orElseThrow(() -> new NoSuchElementException("No existe un producto con ese id"));
     }
 }

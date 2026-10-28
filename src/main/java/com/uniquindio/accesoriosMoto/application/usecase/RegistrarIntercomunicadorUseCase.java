@@ -3,18 +3,17 @@ package com.uniquindio.accesoriosMoto.application.usecase;
 import com.uniquindio.accesoriosMoto.domain.entity.Intercomunicador;
 import com.uniquindio.accesoriosMoto.domain.repository.ProductoRepository;
 import com.uniquindio.accesoriosMoto.domain.valueObject.*;
-import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
+@RequiredArgsConstructor
 public class RegistrarIntercomunicadorUseCase {
+
     private final ProductoRepository repository;
 
-    public RegistrarIntercomunicadorUseCase(ProductoRepository repository) {
-        this.repository = repository;
-    }
-
+    @Transactional
     public Intercomunicador ejecutar(String id, Marca marca, Precio precio, String color, int alcanceMetros, int autonomiaHoras,boolean bluetooth) {
         Intercomunicador intercomunicador = Intercomunicador.crear(id, marca, precio, color, alcanceMetros, autonomiaHoras, bluetooth);
         repository.guardar(intercomunicador);

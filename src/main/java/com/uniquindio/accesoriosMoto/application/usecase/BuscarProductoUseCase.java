@@ -1,23 +1,40 @@
 package com.uniquindio.accesoriosMoto.application.usecase;
 
 import com.uniquindio.accesoriosMoto.domain.entity.Producto;
+import com.uniquindio.accesoriosMoto.domain.exception.ReglaDominioException;
 import com.uniquindio.accesoriosMoto.domain.repository.ProductoRepository;
 import com.uniquindio.accesoriosMoto.domain.valueObject.FiltroProducto;
+import com.uniquindio.accesoriosMoto.infrastructure.persistence.jpa.ProductoVentas;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-@Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class BuscarProductoUseCase {
-    private final ProductoRepository productoRepository;
 
-    public BuscarProductoUseCase(ProductoRepository productoRepository) {
-        this.productoRepository = productoRepository;
+    private static final int TAMANO_MAXIMO = 50;
+    private static final int RANKING_MAXIMO = 20;
+    private final ProductoRepository repository;
+
+    @Transactional(readOnly = true)
+    public Pagina<Producto> buscar(FiltroProducto filtro, int pagina, int tamano) {
+        if (pagina < 0 || tamano < 1 || tamano > TAMANO_MAXIMO || (long) pagina * tamano > Integer.MAX_VALUE)
+            throw new ReglaDominioException("La página debe ser no negativa, el tamaño entre 1 y " + TAMANO_MAXIMO + " y el desplazamiento no puede superar " + Integer.MAX_VALUE);
+        return repository.buscar(filtro, pagina, tamano);
     }
 
-    public List<Producto> ejecutar(FiltroProducto filtro) {
-        return productoRepository.buscar(filtro);
+    @Transactional(readOnly = true)
+    public Producto obtener(String id) {
+        return repository.obtenerPorId(id).filter(Producto::estaPublicado).orElseThrow();
+    }
+    
+    @Transactional(readOnly = true)
+    public List<ProductoVentas> masVendidos(int limite) {
+        if (limite < 1 || limite > RANKING_MAXIMO)
+            throw new ReglaDominioException("El límite debe estar entre 1 y " + RANKING_MAXIMO);
+        return repository.masVendidos(limite);
     }
 }
