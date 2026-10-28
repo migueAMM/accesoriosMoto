@@ -4,7 +4,6 @@ import com.uniquindio.accesoriosMoto.application.dto.request.LoginRequest;
 import com.uniquindio.accesoriosMoto.application.dto.request.RegistrarCompradorRequest;
 import com.uniquindio.accesoriosMoto.application.dto.response.TokenResponse;
 import com.uniquindio.accesoriosMoto.application.dto.response.UsuarioResponse;
-import com.uniquindio.accesoriosMoto.application.usecase.IniciarSesionUseCase;
 import com.uniquindio.accesoriosMoto.application.usecase.RegistrarCompradorUseCase;
 import com.uniquindio.accesoriosMoto.infrastructure.rest.mapper.UsuarioMapper;
 import com.uniquindio.accesoriosMoto.infrastructure.security.AutenticacionService;

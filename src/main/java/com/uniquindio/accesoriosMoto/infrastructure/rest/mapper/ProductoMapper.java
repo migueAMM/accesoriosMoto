@@ -4,7 +4,6 @@ import com.uniquindio.accesoriosMoto.application.dto.response.ProductoResponse;
 import com.uniquindio.accesoriosMoto.application.dto.response.ProductoVentasResponse;
 import com.uniquindio.accesoriosMoto.domain.entity.Producto;
 import com.uniquindio.accesoriosMoto.domain.repository.ProductoVentas;
-import com.uniquindio.accesoriosMoto.domain.valueObject.EstadoPublicacion;
 import org.springframework.stereotype.Component;
 
 @Component

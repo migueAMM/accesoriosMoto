@@ -2,7 +2,6 @@ package com.uniquindio.accesoriosMoto.infrastructure.security;
 
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
@@ -14,7 +13,6 @@ import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 
-import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.time.Clock;
@@ -25,8 +23,7 @@ public class JwtConfig {
     private final String jwtSecret;
     private final String issuer;
 
-    public JwtConfig(@Value("${security.jwt.secret}") String jwtSecret,
-                     @Value("${security.jwt.issuer}") String issuer) {
+    public JwtConfig(@Value("${security.jwt.secret}") String jwtSecret, @Value("${security.jwt.issuer}") String issuer) {
         if (jwtSecret == null || jwtSecret.getBytes(StandardCharsets.UTF_8).length < 32)
             throw new IllegalArgumentException("JWT_SECRET debe contener al menos 32 bytes");
         if (issuer == null || issuer.isBlank())
@@ -35,14 +32,19 @@ public class JwtConfig {
         this.issuer = issuer;
     }
 
-    @Bean public Clock relojJwt() { return Clock.systemUTC(); }
+    @Bean
+    public Clock relojJwt() {
+        return Clock.systemUTC();
+    }
 
-    @Bean public JwtEncoder jwtEncoder() {
+    @Bean
+    public JwtEncoder jwtEncoder() {
         return new NimbusJwtEncoder(new ImmutableSecret<>(
                 new SecretKeySpec(jwtSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256")));
     }
 
-    @Bean public JwtDecoder jwtDecoder(Clock relojJwt) {
+    @Bean
+    public JwtDecoder jwtDecoder(Clock relojJwt) {
         var decoder = NimbusJwtDecoder.withSecretKey(
                         new SecretKeySpec(jwtSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256"))
                 .macAlgorithm(MacAlgorithm.HS256).build();
@@ -61,7 +63,8 @@ public class JwtConfig {
         return decoder;
     }
 
-    @Bean public JwtAuthenticationConverter jwtAuthenticationConverter() {
+    @Bean
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
         var authorities = new JwtGrantedAuthoritiesConverter();
         authorities.setAuthoritiesClaimName("rol");
         authorities.setAuthorityPrefix("ROLE_");
