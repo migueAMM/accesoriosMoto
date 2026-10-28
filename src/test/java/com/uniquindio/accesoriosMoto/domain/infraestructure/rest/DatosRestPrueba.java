@@ -13,6 +13,7 @@ public class DatosRestPrueba {
     public static Producto producto(String tipo, String id) {
         Marca marca = new Marca("m1", "Marca");
         Precio precio = new Precio(100, "COP");
+
         return switch (tipo) {
             case "Baul" -> Baul.crear(id, marca, Material.ABS, 30, "40x40", precio, 5, "Negro");
             case "Casco" -> Casco.crear(id, marca, "K-3", "Negro", Talla.M, precio, Proteccion.NIVEL_1, "DOT");

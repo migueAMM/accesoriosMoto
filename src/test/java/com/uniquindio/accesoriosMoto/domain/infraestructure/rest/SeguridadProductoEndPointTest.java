@@ -20,15 +20,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-class SeguridadProductoEndpointTest {
+public class SeguridadProductoEndPointTest {
+
     @Autowired
     private MockMvc mockMvc;
-    @Autowired private ProductoRepository productos;
-    @Autowired private EntityManager entityManager;
+    @Autowired
+    private ProductoRepository productos;
+    @Autowired
+    private EntityManager entityManager;
 
     private void prepararProducto() {
-        productos.guardar(Casco.crear("casco-seguridad", new Marca("m", "AGV"), "K3", "Negro",
-                Talla.M, new Precio(100, "COP"), Proteccion.NIVEL_1, "DOT"));
+        productos.guardar(Casco.crear("casco-seguridad", new Marca("m", "AGV"), "K3", "Negro", Talla.M, new Precio(100, "COP"), Proteccion.NIVEL_1, "DOT"));
         entityManager.flush();
         entityManager.clear();
     }
@@ -40,43 +42,38 @@ class SeguridadProductoEndpointTest {
     }
 
     @Test
-    void sinTokenDeberiaResponder401() throws Exception {
-        // Arrange
+    public void sinTokenDeberiaResponder401() throws Exception {
         prepararProducto();
 
-        // Act
         var respuesta = mockMvc.perform(put("/api/productos/casco-seguridad/publicar"));
+        EstadoPublicacion estado = estadoPersistido();
 
-        // Assert
         respuesta.andExpect(status().isUnauthorized());
-        assertEquals(EstadoPublicacion.NO_PUBLICADO, estadoPersistido());
+        assertEquals(EstadoPublicacion.NO_PUBLICADO, estado);
     }
 
     @Test
-    void conRolIncorrectoDeberiaResponder403() throws Exception {
-        // Arrange
+    public void conRolIncorrectoDeberiaResponder403() throws Exception {
         prepararProducto();
+        var identidad = jwt().authorities(new SimpleGrantedAuthority("ROLE_COMPRADOR"));
 
-        // Act
-        var respuesta = mockMvc.perform(put("/api/productos/casco-seguridad/publicar")
-                .with(jwt().authorities(new SimpleGrantedAuthority("ROLE_COMPRADOR"))));
+        var respuesta = mockMvc.perform(put("/api/productos/casco-seguridad/publicar").with(identidad));
+        EstadoPublicacion estado = estadoPersistido();
 
-        // Assert
         respuesta.andExpect(status().isForbidden());
-        assertEquals(EstadoPublicacion.NO_PUBLICADO, estadoPersistido());
+        assertEquals(EstadoPublicacion.NO_PUBLICADO, estado);
     }
 
     @Test
-    void conRolCorrectoDeberiaResponder200() throws Exception {
-        // Arrange
+    public void conRolCorrectoDeberiaResponder200() throws Exception {
         prepararProducto();
+        var identidad = jwt().authorities(new SimpleGrantedAuthority("ROLE_ADMINISTRADOR"));
 
-        // Act
-        var respuesta = mockMvc.perform(put("/api/productos/casco-seguridad/publicar")
-                .with(jwt().authorities(new SimpleGrantedAuthority("ROLE_ADMINISTRADOR"))));
+        var respuesta = mockMvc.perform(put("/api/productos/casco-seguridad/publicar").with(identidad));
+        EstadoPublicacion estado = estadoPersistido();
 
-        // Assert
         respuesta.andExpect(status().isOk());
-        assertEquals(EstadoPublicacion.PUBLICADO, estadoPersistido());
+        assertEquals(EstadoPublicacion.PUBLICADO, estado);
     }
 }
+

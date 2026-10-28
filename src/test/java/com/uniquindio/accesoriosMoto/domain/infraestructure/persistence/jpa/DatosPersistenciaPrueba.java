@@ -15,6 +15,7 @@ public final class DatosPersistenciaPrueba {
         Precio precio = new Precio(500000, "COP");
         Baul baul = Baul.crear("baul", marca, Material.ABS, 40, "40x30x30", precio, 8, "Negro");
         baul.indicarCompatibilidad(new Compatibilidad(TipoCompatibilidad.MOTO, "MT-07"));
+
         return Stream.of(
                 baul,
                 Casco.crear("casco", marca, "K3", "Negro", Talla.M, precio, Proteccion.NIVEL_1, "DOT"),

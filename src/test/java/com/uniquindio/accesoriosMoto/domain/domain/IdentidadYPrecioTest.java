@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static java.util.Arrays.stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
@@ -53,7 +54,7 @@ public class IdentidadYPrecioTest {
         Precio original = new Precio(100,"COP");
         Proteccion[] protecciones = Proteccion.values();
 
-        var resultados = java.util.Arrays.stream(protecciones).map(original::conProteccion).toList();
+        var resultados = stream(protecciones).map(original::conProteccion).toList();
 
         for (int indice = 0; indice < protecciones.length; indice++) {
             Precio resultado = resultados.get(indice);

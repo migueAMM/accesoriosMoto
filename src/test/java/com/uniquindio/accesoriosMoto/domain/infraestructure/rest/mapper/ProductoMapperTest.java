@@ -15,23 +15,35 @@ public class ProductoMapperTest {
 
     @Test
     void mapeaCamposYTiposDeLosOchoAccesorios() {
-        for (String tipo : new String[]{"Baul", "Casco", "Chaqueta", "Guantes", "Impermeable", "Intercomunicador", "SoporteCelular", "Visor"}) {
-            Producto producto = DatosRestPrueba.producto(tipo, "p1");
+        // Arrange
+        String[] tipos = {"Baul", "Casco", "Chaqueta", "Guantes", "Impermeable", "Intercomunicador", "SoporteCelular", "Visor"};
+        var productos = java.util.Arrays.stream(tipos).map(tipo -> DatosRestPrueba.producto(tipo, "p1")).toList();
 
-            ProductoResponse response = mapper.toResponse(producto);
+        // Act
+        var respuestas = productos.stream().map(mapper::toResponse).toList();
 
-            assertEquals(new ProductoResponse("p1", tipo, "Marca", "Negro", 100, "COP", "NO_PUBLICADO"), response);
-            assertFalse(producto.estaPublicado());
+        // Assert
+        for (int indice = 0; indice < tipos.length; indice++) {
+            assertEquals(new ProductoResponse("p1", tipos[indice], "Marca", "Negro", 100, "COP", "NO_PUBLICADO"), respuestas.get(indice));
+            assertFalse(productos.get(indice).estaPublicado());
         }
     }
 
     @Test
     void reflejaPublicacionSinModificarProducto() {
+        // Arrange
         Producto producto = DatosRestPrueba.producto("Casco", "p1");
         producto.publicar();
-        assertEquals("PUBLICADO", mapper.toResponse(producto).estadoPublicacion());
-        assertTrue(producto.estaPublicado());
+
+        // Act
+        var resultado1 = mapper.toResponse(producto).estadoPublicacion();
+        var resultado2 = producto.estaPublicado();
         producto.despublicar();
-        assertEquals("NO_PUBLICADO", mapper.toResponse(producto).estadoPublicacion());
+        var resultado3 = mapper.toResponse(producto).estadoPublicacion();
+
+        // Assert
+        assertEquals("PUBLICADO", resultado1);
+        assertTrue(resultado2);
+        assertEquals("NO_PUBLICADO", resultado3);
     }
 }

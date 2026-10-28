@@ -24,16 +24,20 @@ public class PedidoMapperTest {
 
     @Test
     void mapeaDetalleConIdsEImportesSinExponerEntidades() {
+        // Arrange
         Pedido pedido = DatosRestPrueba.pedido("ped1");
 
+        // Act
         PedidoResponse response = mapper.toResponse(pedido);
 
+        // Assert
         assertEquals(new PedidoResponse("ped1", "PENDIENTE", LocalDateTime.of(2026, 10, 24, 10, 0), List.of(new ItemPedidoResponse("i1", "p1", 2, 200, "COP")), 200, "COP"), response);
         assertEquals(EstadoPedido.PENDIENTE, pedido.getEstadoPedido());
     }
 
     @Test
     void utilizaImportesHistoricosAunqueCambiePrecioVigente() {
+        // Arrange
         class ProductoVariable extends Producto {
             ProductoVariable() {
                 super("p1", new Marca("m1", "Marca"), new Precio(100, "USD"), "Negro", EstadoPublicacion.NO_PUBLICADO);
@@ -43,10 +47,12 @@ public class PedidoMapperTest {
         ProductoVariable producto = new ProductoVariable();
         ItemPedido item = ItemPedido.crear("i1", producto, 2);
         Pedido pedido = Pedido.registrar("ped1", DatosRestPrueba.comprador(), List.of(item), LocalDateTime.now());
-        producto.cambiarPrecio(new Precio(900, "USD"));
 
+        // Act
+        producto.cambiarPrecio(new Precio(900, "USD"));
         PedidoResponse response = mapper.toResponse(pedido);
 
+        // Assert
         assertEquals(200, response.totalMonto());
         assertEquals("USD", response.totalMoneda());
         assertEquals(new ItemPedidoResponse("i1", "p1", 2, 200, "USD"), response.items().getFirst());
@@ -55,10 +61,17 @@ public class PedidoMapperTest {
 
     @Test
     void reflejaEstadosCompletadoYReembolsado() {
+        // Arrange
         Pedido pedido = DatosRestPrueba.pedido("ped1");
         pedido.completar();
-        assertEquals("COMPLETADA", mapper.toResponse(pedido).estado());
+
+        // Act
+        var resultado1 = mapper.toResponse(pedido).estado();
         pedido.solicitarReembolso("Dañado");
-        assertEquals("REEMBOLSADA", mapper.toResponse(pedido).estado());
+        var resultado2 = mapper.toResponse(pedido).estado();
+
+        // Assert
+        assertEquals("COMPLETADA", resultado1);
+        assertEquals("REEMBOLSADA", resultado2);
     }
 }

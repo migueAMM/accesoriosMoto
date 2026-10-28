@@ -12,10 +12,13 @@ public class ComentarioMapperTest {
 
     @Test
     void mapeaComentarioSinExponerCompradorCompleto() {
+        // Arrange
         Comentario comentario = DatosRestPrueba.comentario("c1");
 
+        // Act
         ComentarioResponse response = new ComentarioMapper().toResponse(comentario);
 
+        // Assert
         assertEquals(new ComentarioResponse("c1", "p1", 5, "Excelente"), response);
         assertEquals("u1", comentario.getComprador().getId());
         assertEquals("Excelente", comentario.getTexto());

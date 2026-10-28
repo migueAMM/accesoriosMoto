@@ -1,21 +1,27 @@
 package com.uniquindio.accesoriosMoto.domain.infraestructure.rest;
 
-import com.uniquindio.accesoriosMoto.application.dto.request.ItemPedidoRequest;
+import com.uniquindio.accesoriosMoto.application.usecase.CompletarPedidoUseCase;
+import com.uniquindio.accesoriosMoto.application.usecase.ListarPedidosUseCase;
 import com.uniquindio.accesoriosMoto.application.usecase.RegistrarPedidoUseCase;
 import com.uniquindio.accesoriosMoto.application.usecase.SolicitarReembolsoUseCase;
 import com.uniquindio.accesoriosMoto.domain.entity.Pedido;
 import com.uniquindio.accesoriosMoto.infrastructure.rest.PedidoController;
 import com.uniquindio.accesoriosMoto.infrastructure.rest.mapper.PedidoMapper;
+import com.uniquindio.accesoriosMoto.infrastructure.security.SecurityConfig;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.matchesPattern;
@@ -29,11 +35,16 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(PedidoController.class)
-@Import({PedidoMapper.class, com.uniquindio.accesoriosMoto.infrastructure.security.SecurityConfig.class})
-@org.springframework.security.test.context.support.WithMockUser(username="u1", roles="COMPRADOR")
-class PedidoControllerTest {
+@Import({PedidoMapper.class, SecurityConfig.class})
+@WithMockUser(username="u1", roles="COMPRADOR")
+
+public class PedidoControllerTest {
     @MockitoBean
-    private org.springframework.security.oauth2.jwt.JwtDecoder jwtDecoder;
+    private JwtDecoder jwtDecoder;
+    @MockitoBean
+    private CompletarPedidoUseCase completarPedidoUseCase;
+    @MockitoBean
+    private ListarPedidosUseCase listarPedidosUseCase;
     @Autowired
     private MockMvc mockMvc;
     @MockitoBean
@@ -42,14 +53,20 @@ class PedidoControllerTest {
     private SolicitarReembolsoUseCase solicitarReembolsoUseCase;
 
     @Test
-    void registraPedidoConIdGeneradoEItemsSinImportesDelCliente() throws Exception {
-        List<ItemPedidoRequest> items = List.of(new ItemPedidoRequest("p1", 2));
+    public void registraPedidoConIdGeneradoEItemsSinImportesDelCliente() throws Exception {
+        ArgumentCaptor<String> id = ArgumentCaptor.forClass(String.class);
+        List<RegistrarPedidoUseCase.ItemSolicitado> items = List.of(new RegistrarPedidoUseCase.ItemSolicitado("p1", 2));
+
         when(registrarPedidoUseCase.ejecutar(anyString(), eq("u1"), eq(items)))
                 .thenAnswer(invocacion -> DatosRestPrueba.pedido(invocacion.getArgument(0, String.class)));
 
-        MvcResult resultado = mockMvc.perform(post("/api/pedidos").contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"compradorId\":\"u1\",\"items\":[{\"productoId\":\"p1\",\"cantidad\":2}]}"))
-                .andExpect(status().isCreated())
+        var solicitud1 = post("/api/pedidos").contentType(MediaType.APPLICATION_JSON)
+                .content("{\"compradorId\":\"u1\",\"items\":[{\"productoId\":\"p1\",\"cantidad\":2}]}");
+
+        var respuesta1 = mockMvc.perform(solicitud1);
+        MvcResult resultado = respuesta1.andReturn();
+
+        respuesta1.andExpect(status().isCreated())
                 .andExpect(header().string("Location", matchesPattern("http://localhost/api/pedidos/[^/]+")))
                 .andExpect(jsonPath("$.estado").value("PENDIENTE"))
                 .andExpect(jsonPath("$.fecha").exists())
@@ -60,9 +77,7 @@ class PedidoControllerTest {
                 .andExpect(jsonPath("$.items[0].subtotalMonto").value(200))
                 .andExpect(jsonPath("$.comprador").doesNotExist())
                 .andExpect(jsonPath("$.contrasena").doesNotExist())
-                .andExpect(jsonPath("$.items[0].producto").doesNotExist()).andReturn();
-
-        ArgumentCaptor<String> id = ArgumentCaptor.forClass(String.class);
+                .andExpect(jsonPath("$.items[0].producto").doesNotExist());
         verify(registrarPedidoUseCase).ejecutar(id.capture(), eq("u1"), eq(items));
         assertNotNull(id.getValue());
         assertFalse(id.getValue().isBlank());
@@ -70,38 +85,50 @@ class PedidoControllerTest {
     }
 
     @Test
-    void validaPedidoEItemsAnidadosAntesDeInvocarUseCase() throws Exception {
-        for (String json : new String[]{"{}", "{\"compradorId\":\"u1\",\"items\":[]}",
-                "{\"compradorId\":\"u1\",\"items\":[{\"productoId\":\"p1\",\"cantidad\":0}]}"}) {
-            mockMvc.perform(post("/api/pedidos").contentType(MediaType.APPLICATION_JSON).content(json))
-                    .andExpect(status().isBadRequest());
+    public void validaPedidoEItemsAnidadosAntesDeInvocarUseCase() throws Exception {
+        String[] cuerpos = new String[]{"{}", "{\"compradorId\":\"u1\",\"items\":[]}", "{\"compradorId\":\"u1\",\"items\":[{\"productoId\":\"p1\",\"cantidad\":0}]}"};
+        var respuestas = new java.util.ArrayList<org.springframework.test.web.servlet.ResultActions>();
+
+        for (String json : cuerpos) {
+            respuestas.add(mockMvc.perform(post("/api/pedidos").contentType(MediaType.APPLICATION_JSON).content(json)));
+        }
+
+        for (var respuesta : respuestas) {
+            respuesta.andExpect(status().isBadRequest());
         }
 
         verifyNoInteractions(registrarPedidoUseCase);
     }
 
     @Test
-    void solicitaReembolsoConIdDeUrlYMotivoDelBody() throws Exception {
+    public void solicitaReembolsoConIdDeUrlYMotivoDelBody() throws Exception {
         Pedido pedido = DatosRestPrueba.pedido("ped1");
         pedido.completar();
         pedido.solicitarReembolso("Dañado");
-        when(solicitarReembolsoUseCase.ejecutar("ped1", "u1", "Dañado")).thenReturn(pedido);
 
-        mockMvc.perform(put("/api/pedidos/ped1/reembolso").contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"motivo\":\"Dañado\"}"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value("ped1"))
-                .andExpect(jsonPath("$.estado").value("REEMBOLSADA"))
-                .andExpect(jsonPath("$.totalMonto").value(200));
+        doNothing().when(solicitarReembolsoUseCase).ejecutar("ped1", "u1", "Dañado");
 
+        var solicitud1 = put("/api/pedidos/ped1/reembolso").contentType(MediaType.APPLICATION_JSON)
+                .content("{\"motivo\":\"Dañado\"}");
+
+        var respuesta1 = mockMvc.perform(solicitud1);
+
+        respuesta1.andExpect(status().isOk())
+                .andExpect(content().string(""));
         verify(solicitarReembolsoUseCase).ejecutar("ped1", "u1", "Dañado");
     }
 
     @Test
-    void rechazaReembolsoSinMotivo() throws Exception {
-        for (String json : new String[]{"{}", "{\"motivo\":\" \"}"}) {
-            mockMvc.perform(put("/api/pedidos/ped1/reembolso").contentType(MediaType.APPLICATION_JSON).content(json))
-                    .andExpect(status().isBadRequest());
+    public void rechazaReembolsoSinMotivo() throws Exception {
+        String[] cuerpos = new String[]{"{}", "{\"motivo\":\" \"}"};
+        var respuestas = new ArrayList<ResultActions>();
+
+        for (String json : cuerpos) {
+            respuestas.add(mockMvc.perform(put("/api/pedidos/ped1/reembolso").contentType(MediaType.APPLICATION_JSON).content(json)));
+        }
+
+        for (var respuesta : respuestas) {
+            respuesta.andExpect(status().isBadRequest());
         }
 
         verifyNoInteractions(solicitarReembolsoUseCase);

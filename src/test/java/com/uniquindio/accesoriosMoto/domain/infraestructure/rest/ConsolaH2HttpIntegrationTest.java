@@ -11,25 +11,26 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 
+import static java.net.http.HttpClient.newHttpClient;
+import static java.net.http.HttpRequest.newBuilder;
+import static java.net.http.HttpResponse.BodyHandlers.ofString;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ActiveProfiles("dev")
 @SpringBootTest(webEnvironment=SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties="spring.h2.console.enabled=true")
-class ConsolaH2HttpIntegrationTest {
+
+public class ConsolaH2HttpIntegrationTest {
     @Value("${local.server.port}") private int puerto;
 
     @Test
-    void ofreceLaConsolaH2EnElServidor() throws Exception {
-        // Arrange
-        HttpClient cliente = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder(URI.create("http://localhost:" + puerto + "/h2-console/"))
+    public void ofreceLaConsolaH2EnElServidor() throws Exception {
+        HttpClient cliente = newHttpClient();
+        HttpRequest request = newBuilder(URI.create("http://localhost:" + puerto + "/h2-console/"))
                 .timeout(Duration.ofSeconds(20)).GET().build();
 
-        // Act
-        var respuesta = cliente.send(request, HttpResponse.BodyHandlers.ofString());
+        var respuesta = cliente.send(request, ofString());
 
-        // Assert
         assertThat(respuesta.statusCode()).isBetween(200, 399);
     }
 }
