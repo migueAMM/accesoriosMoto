@@ -4,6 +4,7 @@ import com.uniquindio.accesoriosMoto.domain.entity.Producto;
 import com.uniquindio.accesoriosMoto.domain.exception.ReglaDominioException;
 import com.uniquindio.accesoriosMoto.domain.repository.Pagina;
 import com.uniquindio.accesoriosMoto.domain.repository.ProductoRepository;
+import com.uniquindio.accesoriosMoto.domain.repository.ProductoVentas;
 import com.uniquindio.accesoriosMoto.domain.valueObject.*;
 import com.uniquindio.accesoriosMoto.infrastructure.persistence.jpa.entity.BaulEntity;
 import com.uniquindio.accesoriosMoto.infrastructure.persistence.jpa.entity.ProductoEntity;

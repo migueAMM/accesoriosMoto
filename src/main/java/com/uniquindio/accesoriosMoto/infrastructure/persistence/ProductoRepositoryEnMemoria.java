@@ -17,25 +17,24 @@ public class ProductoRepositoryEnMemoria implements ProductoRepository{
     private final Map<String, Producto> productos = new HashMap<>();
     private final Supplier<List<Pedido>> pedidos;
 
-    public ProductoRepositoryEnMemoria() { this(List::of); }
+    public ProductoRepositoryEnMemoria() {
+        this(List::of);
+    }
 
-    public ProductoRepositoryEnMemoria(Supplier<List<Pedido>> pedidos) { this.pedidos = Objects.requireNonNull(pedidos); }
+    public ProductoRepositoryEnMemoria(Supplier<List<Pedido>> pedidos) {
+        this.pedidos = Objects.requireNonNull(pedidos);
+    }
 
-    @Override
     public void guardar(Producto producto) {
         productos.put(producto.getId(), producto);
     }
 
-    @Override
     public Optional<Producto> obtenerPorId(String id) {
         return Optional.ofNullable(productos.get(id));
     }
 
-    @Override
-    public List<Producto> buscar(FiltroProducto filtro){
-        if(filtro == null){
-            throw new ReglaDominioException("Debe proporcionar los criterios de búsqueda");
-        }
+    public List<Producto> buscar(FiltroProducto filtro) {
+        if (filtro == null) throw new ReglaDominioException("Debe proporcionar los criterios de búsqueda");
         return productos.values().stream().filter(filtro::coincideCon).toList();
     }
 

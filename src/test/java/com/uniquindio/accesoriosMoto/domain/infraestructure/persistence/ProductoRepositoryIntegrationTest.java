@@ -7,7 +7,6 @@ import com.uniquindio.accesoriosMoto.domain.repository.PedidoRepository;
 import com.uniquindio.accesoriosMoto.domain.repository.ProductoRepository;
 import com.uniquindio.accesoriosMoto.domain.valueObject.*;
 import com.uniquindio.accesoriosMoto.infrastructure.persistence.jpa.ProductoJpaDataRepository;
-import com.uniquindio.accesoriosMoto.infrastructure.persistence.jpa.ProductoVentas;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
