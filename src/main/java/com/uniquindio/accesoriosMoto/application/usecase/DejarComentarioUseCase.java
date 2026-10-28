@@ -6,6 +6,7 @@ import com.uniquindio.accesoriosMoto.domain.entity.Pedido;
 import com.uniquindio.accesoriosMoto.domain.repository.ComentarioRepository;
 import com.uniquindio.accesoriosMoto.domain.repository.CompradorRepository;
 import com.uniquindio.accesoriosMoto.domain.repository.PedidoRepository;
+import com.uniquindio.accesoriosMoto.domain.service.VerificadorDeCompra;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;

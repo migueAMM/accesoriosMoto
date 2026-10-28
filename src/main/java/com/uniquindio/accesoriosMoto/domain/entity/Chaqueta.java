@@ -21,8 +21,7 @@ public class Chaqueta extends Producto{
         this.proteccion = proteccion;
     }
 
-    public static Chaqueta crear(String id, Marca marca, Precio precio, String color,
-                                 Talla talla, Material material, Proteccion proteccion) {
+    public static Chaqueta crear(String id, Marca marca, Precio precio, String color, Talla talla, Material material, Proteccion proteccion) {
         if (proteccion == null) {
             throw new ReglaDominioException("Se debe especificar la protección de la chaqueta");
         }

@@ -1,5 +1,7 @@
 package com.uniquindio.accesoriosMoto.domain.entity;
 
+import com.uniquindio.accesoriosMoto.domain.valueObject.Rol;
+
 public class Administrador extends Usuario{
 
     public Administrador(String id, String nombre, String correo, String contrasena) {
@@ -7,7 +9,7 @@ public class Administrador extends Usuario{
     }
 
     @Override
-    public com.uniquindio.accesoriosMoto.domain.valueObject.Rol getRol() {
-        return com.uniquindio.accesoriosMoto.domain.valueObject.Rol.ADMINISTRADOR;
+    public Rol getRol() {
+        return Rol.ADMINISTRADOR;
     }
 }

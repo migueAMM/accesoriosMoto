@@ -1,5 +1,7 @@
 package com.uniquindio.accesoriosMoto.application.dto.response;
 
+import com.uniquindio.accesoriosMoto.domain.repository.Pagina;
+
 import java.util.List;
 import java.util.function.Function;
 

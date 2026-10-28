@@ -20,6 +20,14 @@ public class Baul extends Producto implements ProductoCompatible {
 
     private final Set<Compatibilidad> compatibilidades = new LinkedHashSet<>();
 
+    private Baul(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion, Material material, double capacidadLitros, String dimensiones, double capacidadMaximaCarga) {
+        super(id, marca, precio, color, estadoPublicacion);
+        this.material = material;
+        this.capacidadLitros = capacidadLitros;
+        this.dimensiones = dimensiones;
+        this.capacidadMaximaCarga = capacidadMaximaCarga;
+    }
+
     @Override
     public void indicarCompatibilidad(Compatibilidad compatibilidad) {
         validarCompatibilidad(compatibilidad);
@@ -48,14 +56,6 @@ public class Baul extends Producto implements ProductoCompatible {
         return Set.copyOf(compatibilidades);
     }
 
-
-    private Baul(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion, Material material, double capacidadLitros, String dimensiones, double capacidadMaximaCarga) {
-        super(id, marca, precio, color, estadoPublicacion);
-        this.material = material;
-        this.capacidadLitros = capacidadLitros;
-        this.dimensiones = dimensiones;
-        this.capacidadMaximaCarga = capacidadMaximaCarga;
-    }
 
     public static Baul crear(String id, Marca marca, Material material, double capacidadLitros, String dimensiones, Precio precio, double capacidadMaximaCarga, String color) {
         if (material == null) {

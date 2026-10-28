@@ -1,6 +1,7 @@
 package com.uniquindio.accesoriosMoto.domain.repository;
 
 import com.uniquindio.accesoriosMoto.domain.entity.Producto;
+import com.uniquindio.accesoriosMoto.domain.exception.ReglaDominioException;
 import com.uniquindio.accesoriosMoto.domain.valueObject.FiltroProducto;
 
 import java.util.Comparator;
@@ -19,7 +20,7 @@ public interface ProductoRepository {
 
     default Pagina<Producto> buscar(FiltroProducto filtro, int pagina, int tamano) {
         if (pagina < 0 || tamano < 1 || tamano > 50 || (long) pagina * tamano > Integer.MAX_VALUE)
-            throw new com.uniquindio.accesoriosMoto.domain.exception.ReglaDominioException("Paginación inválida");
+            throw new ReglaDominioException("Paginación inválida");
         List<Producto> productos = buscar(filtro).stream().sorted(Comparator.comparing(Producto::getId)).toList();
         long inicio = (long) pagina * tamano;
         List<Producto> contenido = inicio >= productos.size() ? List.of() :

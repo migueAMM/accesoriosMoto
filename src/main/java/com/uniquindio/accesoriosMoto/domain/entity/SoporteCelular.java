@@ -9,8 +9,6 @@ public class SoporteCelular extends Producto{
 
     @Getter
     private String tipoSujecion;
-    @Getter
-    private String compatibleTamanoCelular;
 
     private SoporteCelular(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion, String tipoSujecion) {
         super(id, marca, precio, color, estadoPublicacion);
