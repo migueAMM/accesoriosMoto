@@ -4,9 +4,11 @@ import com.uniquindio.accesoriosMoto.domain.entity.Producto;
 import com.uniquindio.accesoriosMoto.domain.exception.ReglaDominioException;
 import com.uniquindio.accesoriosMoto.domain.repository.ProductoRepository;
 import com.uniquindio.accesoriosMoto.domain.valueObject.EstadoPublicacion;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -15,20 +17,11 @@ public class EliminarProductoUseCase {
 
     private final ProductoRepository productoRepository;
 
-
+    @Transactional
     public void eliminar(String id) {
-
-        Optional<Producto> productoOptional = productoRepository.obtenerPorId(id);
-        if(productoOptional.isEmpty()){
-            throw new ReglaDominioException("Este producto no existe");
-        }
-
-        Producto producto = productoOptional.get();
-
-        if(producto.estaEliminado()){
-            throw new ReglaDominioException("Este producto no existe");
-        }
-
-        producto.setEstadoPublicacion(EstadoPublicacion.ELIMINADO);
+        Producto producto = productoRepository.obtenerPorId(id)
+                .orElseThrow(() -> new NoSuchElementException("No existe un producto con ese id"));
+        producto.eliminar();
+        productoRepository.guardar(producto);
     }
 }

@@ -72,10 +72,14 @@ public abstract class Producto {
     }
 
 
-
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    public void eliminar() {
+        if (estaEliminado()) throw new ReglaDominioException("Este producto no existe");
+        this.estadoPublicacion = EstadoPublicacion.ELIMINADO;
     }
 
 }

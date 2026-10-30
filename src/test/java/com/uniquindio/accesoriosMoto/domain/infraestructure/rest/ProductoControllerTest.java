@@ -63,6 +63,8 @@ public class ProductoControllerTest {
     private GestionarCompatibilidadUseCase gestionarCompatibilidadUseCase;
     @MockitoBean
     private BuscarProductoUseCase buscarProductoUseCase;
+    @MockitoBean
+    private EliminarProductoUseCase eliminarProductoUseCase;
 
     private MockHttpServletRequestBuilder prepararRegistro(String ruta, String especificos) {
         String json = "{\"marcaId\":\"m1\",\"marcaNombre\":\"Marca\",\"precioMonto\":100,\"precioMoneda\":\"COP\",\"color\":\"Negro\"," + especificos + "}";
