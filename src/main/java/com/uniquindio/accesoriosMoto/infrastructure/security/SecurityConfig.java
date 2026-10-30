@@ -60,6 +60,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/pedidos", "/api/comentarios").hasRole("COMPRADOR")
                         .requestMatchers(HttpMethod.PUT, "/api/pedidos/{id}/reembolso").hasRole("COMPRADOR")
                         .requestMatchers(HttpMethod.DELETE, "/api/productos/{id}").hasRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.GET, "/api/productos", "/api/productos/{id}", "/api/productos/mas-vendidos", "/api/productos/buscar").permitAll()
                         .anyRequest().denyAll())
                 .exceptionHandling(e -> e.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
                         .accessDeniedHandler(new BearerTokenAccessDeniedHandler()))
