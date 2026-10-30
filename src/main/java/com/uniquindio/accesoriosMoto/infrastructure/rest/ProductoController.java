@@ -35,6 +35,7 @@ public class ProductoController {
     private final GestionarCompatibilidadUseCase gestionarCompatibilidadUseCase;
     private final BuscarProductoUseCase buscarProductoUseCase;
     private final ProductoMapper mapper;
+    private final EliminarProductoUseCase eliminarProductoUseCase;
 
     @PostMapping("/baules")
     public ResponseEntity<ProductoResponse> registrarBaul(@Valid @RequestBody RegistrarBaulRequest request) {
@@ -161,5 +162,12 @@ public class ProductoController {
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().replacePath("/api/productos").replaceQuery(null)
                 .path("/{id}").buildAndExpand(producto.getId()).toUri();
         return ResponseEntity.created(location).body(mapper.toResponse(producto));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity delete(@PathVariable("id") String id){
+        eliminarProductoUseCase.eliminar(id);
+        return ResponseEntity.ok().build();
+
     }
 }

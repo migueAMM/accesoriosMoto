@@ -5,6 +5,7 @@ import com.uniquindio.accesoriosMoto.domain.valueObject.EstadoPublicacion;
 import com.uniquindio.accesoriosMoto.domain.valueObject.Marca;
 import com.uniquindio.accesoriosMoto.domain.valueObject.Precio;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Objects;
 
@@ -19,6 +20,7 @@ public abstract class Producto {
     @Getter
     protected String color;
     @Getter
+    @Setter
     protected EstadoPublicacion estadoPublicacion;
 
     protected Producto(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion) {
@@ -36,9 +38,6 @@ public abstract class Producto {
     }
 
     public void publicar(){
-        if (estaEliminado()){
-            throw new ReglaDominioException("Un producto eliminado no puede publicarse");
-        }
         if (this.estadoPublicacion == EstadoPublicacion.PUBLICADO){
             throw new ReglaDominioException("El producto ya esta publicado");
         }
@@ -47,9 +46,6 @@ public abstract class Producto {
     }
 
     public void despublicar(){
-        if (estaEliminado()){
-            throw new ReglaDominioException("Un producto eliminado no puede despublicarse");
-        }
         if (this.estadoPublicacion == EstadoPublicacion.NO_PUBLICADO){
             throw new ReglaDominioException("El producto ya esta despublicado");
         }
@@ -57,18 +53,25 @@ public abstract class Producto {
         this.estadoPublicacion = EstadoPublicacion.NO_PUBLICADO;
     }
 
-    /** Borrado lógico: el producto pasa a ELIMINADO y no se puede reactivar. */
-    public void eliminar(){
-        if (estaEliminado()){
-            throw new ReglaDominioException("El producto ya esta eliminado");
-        }
-
-        this.estadoPublicacion = EstadoPublicacion.ELIMINADO;
+    public boolean estaPublicado() {
+        return this.estadoPublicacion == EstadoPublicacion.PUBLICADO;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Producto producto = (Producto) o;
+        return id.equals(producto.id);
+    }
+
+
 
     public boolean estaEliminado() {
         return this.estadoPublicacion == EstadoPublicacion.ELIMINADO;
     }
+
+
 
     @Override
     public int hashCode() {

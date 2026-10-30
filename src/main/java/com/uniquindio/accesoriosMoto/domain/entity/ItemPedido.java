@@ -28,8 +28,8 @@ public class ItemPedido {
         if (id == null || id.isBlank()) {
             throw new ReglaDominioException("El ítem debe tener un identificador válido");
         }
-        if (producto == null) {
-            throw new ReglaDominioException("El ítem debe indicar un producto");
+        if (producto.estaEliminado()) {
+            throw new ReglaDominioException("No se puede pedir un producto eliminado");
         }
         if (cantidad <= 0) {
             throw new ReglaDominioException("La cantidad de un Item de pedido debe ser mayor a cero");
