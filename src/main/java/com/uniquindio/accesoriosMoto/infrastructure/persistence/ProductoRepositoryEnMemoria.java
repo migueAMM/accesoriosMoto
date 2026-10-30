@@ -3,8 +3,10 @@ package com.uniquindio.accesoriosMoto.infrastructure.persistence;
 import com.uniquindio.accesoriosMoto.domain.entity.Pedido;
 import com.uniquindio.accesoriosMoto.domain.entity.Producto;
 import com.uniquindio.accesoriosMoto.domain.exception.ReglaDominioException;
+import com.uniquindio.accesoriosMoto.domain.repository.Pagina;
 import com.uniquindio.accesoriosMoto.domain.repository.ProductoRepository;
 import com.uniquindio.accesoriosMoto.domain.repository.ProductoVentas;
+import com.uniquindio.accesoriosMoto.domain.valueObject.BusquedaProducto;
 import com.uniquindio.accesoriosMoto.domain.valueObject.EstadoPedido;
 import com.uniquindio.accesoriosMoto.domain.valueObject.FiltroProducto;
 import org.w3c.dom.stylesheets.LinkStyle;
@@ -38,6 +40,11 @@ public class ProductoRepositoryEnMemoria implements ProductoRepository{
         return productos.values().stream().filter(filtro::coincideCon).toList();
     }
 
+    @Override
+    public Pagina<Producto> buscar(FiltroProducto filtro, int pagina, int tamano) {
+        return null;
+    }
+
     public List<ProductoVentas> masVendidos(int limite) {
         if (limite < 1 || limite > 20) throw new ReglaDominioException("El límite debe estar entre 1 y 20");
         Map<String, Long> cantidades = new HashMap<>();
@@ -47,5 +54,10 @@ public class ProductoRepositoryEnMemoria implements ProductoRepository{
         return cantidades.entrySet().stream().map(e -> new ProductoVentas(e.getKey(), e.getValue()))
                 .sorted(Comparator.comparingLong(ProductoVentas::cantidadVendida).reversed().thenComparing(ProductoVentas::productoId))
                 .limit(limite).toList();
+    }
+
+    @Override
+    public Pagina<Producto> buscarPorTexto(BusquedaProducto busqueda, int pagina, int tamano) {
+        return ProductoRepository.super.buscarPorTexto(busqueda, pagina, tamano);
     }
 }

@@ -170,19 +170,19 @@ public class ProductoController {
         return ResponseEntity.ok().build();
 
     }
-//Paginacion
-@GetMapping("/buscar")
-public PageResponse<ProductoResponse> buscarPorTexto(
-        @RequestParam(name = "texto", required = false) String texto,
-        @RequestParam(name = "precioMinimo", required = false) Double precioMinimo,
-        @RequestParam(name = "precioMaximo", required = false) Double precioMaximo,
-        @RequestParam(name = "moneda", required = false) String moneda,
-        @RequestParam(name = "ordenarPor", defaultValue = "id") String ordenarPor,
-        @RequestParam(name = "direccion", defaultValue = "asc") String direccion,
-        @RequestParam(name = "pagina", defaultValue = "0") int pagina,
-        @RequestParam(name = "tamano", defaultValue = "5") int tamano) {
-    var busqueda = new BusquedaProducto(texto, precioMinimo, precioMaximo, moneda,
-            ordenarPor, !"desc".equalsIgnoreCase(direccion));
-    return PageResponse.desde(buscarProductoUseCase.buscarPorTexto(busqueda, pagina, tamano), ProductoResponse::desde);
-}
+    //Paginacion
+    @GetMapping("/buscar")
+    public PageResponse<ProductoResponse> buscarPorTexto(
+            @RequestParam(name = "texto", required = false) String texto,
+            @RequestParam(name = "precioMinimo", required = false) Double precioMinimo,
+            @RequestParam(name = "precioMaximo", required = false) Double precioMaximo,
+            @RequestParam(name = "moneda", required = false) String moneda,
+            @RequestParam(name = "ordenarPor", defaultValue = "id") String ordenarPor,
+            @RequestParam(name = "direccion", defaultValue = "asc") String direccion,
+            @RequestParam(name = "pagina", defaultValue = "0") int pagina,
+            @RequestParam(name = "tamano", defaultValue = "5") int tamano) {
+        var busqueda = new BusquedaProducto(texto, precioMinimo, precioMaximo, moneda,
+                ordenarPor, !"desc".equalsIgnoreCase(direccion));
+        return PageResponse.desde(buscarProductoUseCase.buscarPorTexto(busqueda, pagina, tamano), ProductoResponse::desde);
+    }
 }
