@@ -30,6 +30,6 @@ public class PedidoEntity {
     private PrecioEmbeddable total;
     @Lob private String motivoReembolso;
     @OneToMany(mappedBy="pedido", cascade=CascadeType.ALL, orphanRemoval=true)
-    @OrderColumn(name="posicion")
+    @OrderBy("id ASC")
     private List<ItemPedidoEntity> items = new ArrayList<>();
 }
