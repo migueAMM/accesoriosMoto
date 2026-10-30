@@ -17,6 +17,8 @@ public interface ProductoRepository {
 
     List<Producto> buscar(FiltroProducto filtro);
 
+    Pagina<Producto> buscar(FiltroProducto filtro, int pagina, int tamano);
+
     List<ProductoVentas> masVendidos(int limite);
 
     default Pagina<Producto> buscarPorTexto(BusquedaProducto busqueda, int pagina, int tamano) {

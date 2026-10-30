@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -90,5 +91,31 @@ public class ProductoRepositoryJpa implements ProductoRepository {
     private static Expression<String> normalizar(CriteriaBuilder cb, Expression<String> texto) {
         return cb.upper(cb.function("regexp_replace", String.class, texto,
                 cb.literal("^[\\p{javaWhitespace}]+|[\\p{javaWhitespace}]+$"), cb.literal("")));
+    }
+
+    //Seccion de adaptacion para la paginacion
+    private static final Map<String, String> CAMPO_JPA = Map.of(
+            "id", "id", "precio", "precio.monto", "marca", "marca.nombre", "color", "color");
+
+    @Override
+    public Pagina<Producto> buscarPorTexto(BusquedaProducto b, int pagina, int tamano) {
+        if (pagina < 0 || tamano < 1 || tamano > 50 || (long) pagina * tamano > Integer.MAX_VALUE)
+            throw new ReglaDominioException("Paginación inválida");
+        Sort orden = Sort.by(b.ascendente() ? Sort.Direction.ASC : Sort.Direction.DESC, CAMPO_JPA.get(b.ordenarPor()));
+        if (!b.ordenarPor().equals("id")) orden = orden.and(Sort.by("id"));   // desempate estable
+
+        String patron = b.texto() == null ? "%" : "%" + escaparLike(b.texto()) + "%";
+        double min = b.precioMinimo() == null ? 0.0 : b.precioMinimo();
+        double max = b.precioMaximo() == null ? Double.MAX_VALUE : b.precioMaximo();
+        String moneda = b.moneda() == null ? "" : b.moneda();
+
+        var r = repository.buscarPorTexto(EstadoPublicacion.PUBLICADO, patron, min, max, moneda,
+                PageRequest.of(pagina, tamano, orden));
+        return new Pagina<>(r.getContent().stream().map(mapper::toDomain).toList(),
+                r.getTotalElements(), r.getTotalPages(), pagina, tamano);
+    }
+
+    private static String escaparLike(String texto) {
+        return texto.replace("!", "!!").replace("%", "!%").replace("_", "!_");
     }
 }

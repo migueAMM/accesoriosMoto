@@ -5,6 +5,7 @@ import com.uniquindio.accesoriosMoto.domain.exception.ReglaDominioException;
 import com.uniquindio.accesoriosMoto.domain.repository.Pagina;
 import com.uniquindio.accesoriosMoto.domain.repository.ProductoRepository;
 import com.uniquindio.accesoriosMoto.domain.repository.ProductoVentas;
+import com.uniquindio.accesoriosMoto.domain.valueObject.BusquedaProducto;
 import com.uniquindio.accesoriosMoto.domain.valueObject.FiltroProducto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -38,5 +39,13 @@ public class BuscarProductoUseCase {
         if (limite < 1 || limite > RANKING_MAXIMO)
             throw new ReglaDominioException("El límite debe estar entre 1 y " + RANKING_MAXIMO);
         return repository.masVendidos(limite);
+    }
+
+    //Paginacion
+    @Transactional(readOnly = true)
+    public Pagina<Producto> buscarPorTexto(BusquedaProducto busqueda, int pagina, int tamano) {
+        if (pagina < 0 || tamano < 1 || tamano > TAMANO_MAXIMO || (long) pagina * tamano > Integer.MAX_VALUE)
+            throw new ReglaDominioException("La página debe ser no negativa y el tamaño entre 1 y " + TAMANO_MAXIMO);
+        return repository.buscarPorTexto(busqueda, pagina, tamano);
     }
 }
