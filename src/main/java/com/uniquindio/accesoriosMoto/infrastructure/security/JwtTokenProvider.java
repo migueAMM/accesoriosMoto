@@ -20,12 +20,11 @@ public class JwtTokenProvider {
     @Value("${security.jwt.issuer}")
     private String issuer;
 
-    public String generar(String usuarioId, Collection<String> roles, Instant emitidoEn, Instant expiraEn) {
+    public String generar(String usuarioId, String correo, Collection<String> roles, Instant emitidoEn, Instant expiraEn) {
         if (roles == null || roles.size() != 1) throw new IllegalArgumentException("Se requiere un único rol");
         String rol = RolSeguridad.valueOf(roles.iterator().next()).name();
         var header = JwsHeader.with(MacAlgorithm.HS256).build();
-        var claims = JwtClaimsSet.builder().issuer(issuer).subject(usuarioId)
-                .issuedAt(emitidoEn).expiresAt(expiraEn).claim("rol", rol).build();
+        var claims = JwtClaimsSet.builder().issuer(issuer).subject(usuarioId).issuedAt(emitidoEn).expiresAt(expiraEn).claim("correo", correo).claim("rol", rol).build();
         return encoder.encode(JwtEncoderParameters.from(header, claims)).getTokenValue();
     }
 }

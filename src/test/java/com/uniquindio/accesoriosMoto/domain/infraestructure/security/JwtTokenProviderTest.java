@@ -16,15 +16,22 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 public class JwtTokenProviderTest {
 
-    private final JwtConfig config = new JwtConfig("clave-unitaria-de-tests-01234567890123456789", "test");
+    private final JwtConfig config = new JwtConfig("clave-test", "test");
     private final Clock reloj = Clock.fixed(Instant.parse("2026-10-25T12:00:00Z"), ZoneOffset.UTC);
     private final JwtEncoder encoder = config.jwtEncoder();
     private final JwtDecoder decoder = config.jwtDecoder(reloj);
-    private Comprador comprador() { return new Comprador("c1", "Ana", "ana@correo.com", "hash"); }
-    private String emitir(Usuario usuario, Clock tiempo) { var provider = new JwtTokenProvider(encoder); org.springframework.test.util.ReflectionTestUtils.setField(provider, "issuer", "test"); return provider.generar(usuario.getId(), java.util.List.of(usuario.getRol().name()), tiempo.instant(), tiempo.instant().plusSeconds(1800)); }
+
+    private Comprador comprador() {
+        return new Comprador("c1", "Ana", "ana@gmail.com", "hash");
+    }
+
+    private String emitir(Usuario usuario, Clock tiempo) {
+        var provider = new JwtTokenProvider(encoder); setField(provider, "issuer", "test"); return provider.generar(usuario.getId(), usuario.getCorreo(), java.util.List.of(usuario.getRol().name()), tiempo.instant(), tiempo.instant().plusSeconds(1800));
+    }
 
     @Test
     public void contieneIdentidadRolYExpiracionSinCredenciales() {
@@ -32,21 +39,28 @@ public class JwtTokenProviderTest {
         Jwt jwt = decoder.decode(emitir(comprador(), reloj));
 
         assertThat(jwt.getSubject()).isEqualTo("c1");
+        assertThat(jwt.getClaimAsString("correo")).isEqualTo("ana@gmail.com");
         assertThat(jwt.getClaimAsString("rol")).isEqualTo("COMPRADOR");
         assertThat(jwt.getClaimAsString("iss")).isEqualTo("test");
         assertThat(jwt.getIssuedAt()).isEqualTo(reloj.instant());
         assertThat(jwt.getExpiresAt()).isEqualTo(reloj.instant().plusSeconds(1800));
-        assertThat(jwt.getClaims()).doesNotContainKeys("contrasena", "password", "hash", "correo");
+        assertThat(jwt.getClaims()).doesNotContainKeys("contrasena", "password", "hash");
     }
+
     @Test
     public void emiteRolAdministradorDerivadoDelDominio() {
 
-        var admin = new Administrador("a1", "Admin", "admin@correo.com", "hash");
+        var admin = new Administrador("a1", "Admin", "admin@gmail.com", "hash");
 
-        var resultado1 = decoder.decode(emitir(admin, reloj)).getClaimAsString("rol");
+        var jwt = decoder.decode(emitir(admin, reloj));
+        var resultado1 = jwt.getClaimAsString("rol");
 
         assertThat(resultado1).isEqualTo("ADMINISTRADOR");
+        assertThat(jwt.getSubject()).isEqualTo("a1");
+        assertThat(jwt.getClaimAsString("correo")).isEqualTo("admin@gmail.com");
+        assertThat(jwt.getClaims()).doesNotContainKeys("contrasena", "password", "hash");
     }
+
     @Test
     public void rechazaTokenExpiradoConTiempoDeterminista() {
 
@@ -56,6 +70,7 @@ public class JwtTokenProviderTest {
 
         assertThat(accion1Error).isInstanceOf(JwtException.class);
     }
+
     @Test
     public void rechazaFirmaManipulada() {
 
@@ -68,24 +83,27 @@ public class JwtTokenProviderTest {
 
         assertThat(accion1Error).isInstanceOf(JwtException.class);
     }
+
     @Test
     public void rechazaFirmaConOtraClave() {
 
-        var otra = new JwtConfig("otra-clave-exclusiva-de-tests-012345678901", "test");
+        var otra = new JwtConfig("otra-clave-tests", "test");
 
         var accion1Error = catchThrowable(() -> otra.jwtDecoder(reloj).decode(emitir(comprador(), reloj)));
 
         assertThat(accion1Error).isInstanceOf(JwtException.class);
     }
+
     @Test
     public void rechazaIssuerIncorrecto() {
 
-        var otra = new JwtConfig("clave-unitaria-de-tests-01234567890123456789", "otro");
+        var otra = new JwtConfig("clave-test", "otro");
 
         var accion1Error = catchThrowable(() -> otra.jwtDecoder(reloj).decode(emitir(comprador(), reloj)));
 
         assertThat(accion1Error).isInstanceOf(JwtException.class);
     }
+
     @Test
     public void rechazaClaimsAusentesORolNoPermitido() {
 
@@ -93,19 +111,18 @@ public class JwtTokenProviderTest {
                 JwtClaimsSet.builder().issuer("test").subject("c1").issuedAt(reloj.instant()).claim("rol", "COMPRADOR").build(),
                 JwtClaimsSet.builder().issuer("test").subject("c1").issuedAt(reloj.instant()).expiresAt(reloj.instant().plusSeconds(60)).claim("rol", "SUPERADMIN").build()};
 
-        var tokensInvalidos = stream(claimsInvalidos).map(claim -> encoder.encode(
-                JwtEncoderParameters.from(JwsHeader.with(MacAlgorithm.HS256).build(), claim)).getTokenValue()).toList();
-        var acciones = tokensInvalidos.stream().map(token -> (org.assertj.core.api.ThrowableAssert.ThrowingCallable)
-                () -> decoder.decode(token)).toList();
+        var tokensInvalidos = stream(claimsInvalidos).map(claim -> encoder.encode(JwtEncoderParameters.from(JwsHeader.with(MacAlgorithm.HS256).build(), claim)).getTokenValue()).toList();
+        var acciones = tokensInvalidos.stream().map(token -> (org.assertj.core.api.ThrowableAssert.ThrowingCallable) () -> decoder.decode(token)).toList();
 
         for (var accion : acciones) { assertThatThrownBy(accion).isInstanceOf(JwtException.class); }
     }
+
     @Test
     public void exigeSecretoAdecuadoYNoLoMuestraEnToString() {
 
         var accion1Error = catchThrowable(() -> new JwtConfig("corta", "test"));
 
         assertThat(accion1Error).isInstanceOf(IllegalArgumentException.class);
-        assertThat(config.toString()).doesNotContain("clave-unitaria-de-tests-01234567890123456789");
+        assertThat(config.toString()).doesNotContain("clave-test");
     }
 }

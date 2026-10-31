@@ -39,8 +39,7 @@ public class AutenticacionService {
             throw new BadCredentialsException("Credenciales incorrectas");
         CustomUserDetails detalles;
         try {
-            var autenticacion = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                    request.correo().strip().toLowerCase(Locale.ROOT), request.contrasena()));
+            var autenticacion = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.correo().strip().toLowerCase(Locale.ROOT), request.contrasena()));
             detalles = (CustomUserDetails) autenticacion.getPrincipal();
         } catch (IllegalArgumentException ex) {
             throw new BadCredentialsException("Credenciales incorrectas");
@@ -48,7 +47,7 @@ public class AutenticacionService {
         List<String> roles = List.of(detalles.usuario().getRol().name());
         Instant emitidoEn = reloj.instant();
         Instant expiraEn = emitidoEn.plus(duracionConfigurada);
-        String token = jwtTokenProvider.generar(detalles.usuario().getId(), roles, emitidoEn, expiraEn);
+        String token = jwtTokenProvider.generar(detalles.usuario().getId(), detalles.getUsername(), roles, emitidoEn, expiraEn);
         return new TokenResponse(token, "Bearer", expiraEn, roles);
     }
 }

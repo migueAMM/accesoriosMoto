@@ -55,9 +55,7 @@ public class AutenticacionHttpIntegrationTest {
     private final HttpClient http = HttpClient.newHttpClient();
 
     private HttpResponse<String> enviar(String metodo, String ruta, String cuerpo, String token) throws Exception {
-        var request = HttpRequest.newBuilder(URI.create("http://localhost:" + puerto + ruta))
-                .timeout(Duration.ofSeconds(20)).header("Content-Type", "application/json")
-                .method(metodo, cuerpo == null ? noBody() : ofString(cuerpo));
+        var request = HttpRequest.newBuilder(URI.create("http://localhost:" + puerto + ruta)).timeout(Duration.ofSeconds(20)).header("Content-Type", "application/json").method(metodo, cuerpo == null ? noBody() : ofString(cuerpo));
         if (token != null) request.header("Authorization", "Bearer " + token);
         return http.send(request.build(), HttpResponse.BodyHandlers.ofString());
     }
@@ -76,6 +74,7 @@ public class AutenticacionHttpIntegrationTest {
     private HttpResponse<String> login(String correo, String clave) throws Exception {
         return enviar("POST", "/api/auth/login", "{\"correo\":\"" + correo + "\",\"contrasena\":\"" + clave + "\"}", null);
     }
+
     private Producto producto() {
         Producto producto = Casco.crear(UUID.randomUUID().toString(), new Marca("m", "Marca"), "K3", "Negro", Talla.M, new Precio(100, "COP"), Proteccion.NIVEL_1, "DOT");
         productos.guardar(producto);
@@ -114,6 +113,7 @@ public class AutenticacionHttpIntegrationTest {
         assertThat(login.statusCode()).isEqualTo(200);
         assertThat(resultado9).isEqualTo("Bearer");
         assertThat(jwt.getSubject()).isEqualTo(id);
+        assertThat(jwt.getClaimAsString("correo")).isEqualTo(correo);
         assertThat(resultado11).isEqualTo(jwt.getExpiresAt());
         assertThat(resultado12).isEqualTo("COMPRADOR");
         assertThat(jwt.getClaimAsString("rol")).isEqualTo("COMPRADOR");
