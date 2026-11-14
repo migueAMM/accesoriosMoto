@@ -26,6 +26,10 @@ public record RegistrarBaulRequest(
         @Positive(message = "El monto del precio debe ser mayor a cero")
         Double precioMonto,
         @NotBlank(message = "Debe indicar la moneda del precio")
-        String precioMoneda
+        String precioMoneda,
+        String imagenUrl
 ) {
+    public RegistrarBaulRequest(String marcaId, String marcaNombre, Material material, Double capacidadLitros, Double capacidadMaximaCarga, String dimensiones, String color, Double precioMonto, String precioMoneda) {
+        this(marcaId, marcaNombre, material, capacidadLitros, capacidadMaximaCarga, dimensiones, color, precioMonto, precioMoneda, null);
+    }
 }

@@ -15,21 +15,33 @@ public class Chaqueta extends Producto{
 
 
     private Chaqueta(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion, Talla talla, Material material, Proteccion proteccion) {
-        super(id, marca, precio, color, estadoPublicacion);
+        this(id, marca, precio, color, estadoPublicacion, talla, material, proteccion, null);
+    }
+
+    private Chaqueta(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion, Talla talla, Material material, Proteccion proteccion, String imagenUrl) {
+        super(id, marca, precio, color, estadoPublicacion, imagenUrl);
         this.talla = talla;
         this.material = material;
         this.proteccion = proteccion;
     }
 
     public static Chaqueta crear(String id, Marca marca, Precio precio, String color, Talla talla, Material material, Proteccion proteccion) {
+        return crear(id, marca, precio, color, talla, material, proteccion, null);
+    }
+
+    public static Chaqueta crear(String id, Marca marca, Precio precio, String color, Talla talla, Material material, Proteccion proteccion, String imagenUrl) {
         if (proteccion == null) {
             throw new ReglaDominioException("Se debe especificar la protección de la chaqueta");
         }
-        return new Chaqueta(id, marca, precio, color, EstadoPublicacion.NO_PUBLICADO, talla, material, proteccion);
+        return new Chaqueta(id, marca, precio, color, EstadoPublicacion.NO_PUBLICADO, talla, material, proteccion, imagenUrl);
     }
 
     public static Chaqueta reconstruir(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion, Talla talla,Material material,Proteccion proteccion) {
-        Chaqueta producto = new Chaqueta(id, marca, precio, color, estadoPublicacion, talla, material, proteccion);
+        return reconstruir(id, marca, precio, color, estadoPublicacion, talla, material, proteccion, null);
+    }
+
+    public static Chaqueta reconstruir(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion, Talla talla,Material material,Proteccion proteccion, String imagenUrl) {
+        Chaqueta producto = new Chaqueta(id, marca, precio, color, estadoPublicacion, talla, material, proteccion, imagenUrl);
         return producto;
     }
 

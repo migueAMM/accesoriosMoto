@@ -12,5 +12,10 @@ public record RegistrarSoporteCelularRequest (
         @Positive(message = "El monto del precio debe ser mayor a cero") Double precioMonto,
         @NotBlank(message = "Debe indicar la moneda del precio") String precioMoneda,
         @NotBlank(message = "Debe indicar el color") String color,
-        @NotBlank(message = "Debe indicar el tipo de sujeción") String tipoSujecion
-) {}
+        @NotBlank(message = "Debe indicar el tipo de sujeción") String tipoSujecion,
+        String imagenUrl
+) {
+    public RegistrarSoporteCelularRequest(String marcaId, String marcaNombre, Double precioMonto, String precioMoneda, String color, String tipoSujecion) {
+        this(marcaId, marcaNombre, precioMonto, precioMoneda, color, tipoSujecion, null);
+    }
+}

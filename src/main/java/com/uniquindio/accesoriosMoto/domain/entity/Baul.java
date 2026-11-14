@@ -21,7 +21,11 @@ public class Baul extends Producto implements ProductoCompatible {
     private final Set<Compatibilidad> compatibilidades = new LinkedHashSet<>();
 
     private Baul(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion, Material material, double capacidadLitros, String dimensiones, double capacidadMaximaCarga) {
-        super(id, marca, precio, color, estadoPublicacion);
+        this(id, marca, precio, color, estadoPublicacion, material, capacidadLitros, dimensiones, capacidadMaximaCarga, null);
+    }
+
+    private Baul(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion, Material material, double capacidadLitros, String dimensiones, double capacidadMaximaCarga, String imagenUrl) {
+        super(id, marca, precio, color, estadoPublicacion, imagenUrl);
         this.material = material;
         this.capacidadLitros = capacidadLitros;
         this.dimensiones = dimensiones;
@@ -58,6 +62,10 @@ public class Baul extends Producto implements ProductoCompatible {
 
 
     public static Baul crear(String id, Marca marca, Material material, double capacidadLitros, String dimensiones, Precio precio, double capacidadMaximaCarga, String color) {
+        return crear(id, marca, material, capacidadLitros, dimensiones, precio, capacidadMaximaCarga, color, null);
+    }
+
+    public static Baul crear(String id, Marca marca, Material material, double capacidadLitros, String dimensiones, Precio precio, double capacidadMaximaCarga, String color, String imagenUrl) {
         if (material == null) {
             throw new ReglaDominioException("El baúl debe indicar su material");
         }
@@ -67,11 +75,15 @@ public class Baul extends Producto implements ProductoCompatible {
         if (!Double.isFinite(capacidadMaximaCarga) || capacidadMaximaCarga <= 0) {
             throw new ReglaDominioException("Un baúl debe indicar su capacidad máxima de carga antes de ser publicado");
         }
-        return new Baul(id, marca, precio, color, EstadoPublicacion.NO_PUBLICADO, material, capacidadLitros, dimensiones, capacidadMaximaCarga);
+        return new Baul(id, marca, precio, color, EstadoPublicacion.NO_PUBLICADO, material, capacidadLitros, dimensiones, capacidadMaximaCarga, imagenUrl);
     }
 
     public static Baul reconstruir(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion, Material material,double capacidadLitros,String dimensiones,double capacidadMaximaCarga, java.util.Set<com.uniquindio.accesoriosMoto.domain.valueObject.Compatibilidad> compatibilidades) {
-        Baul producto = new Baul(id, marca, precio, color, estadoPublicacion, material, capacidadLitros, dimensiones, capacidadMaximaCarga);
+        return reconstruir(id, marca, precio, color, estadoPublicacion, material, capacidadLitros, dimensiones, capacidadMaximaCarga, compatibilidades, null);
+    }
+
+    public static Baul reconstruir(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion, Material material,double capacidadLitros,String dimensiones,double capacidadMaximaCarga, java.util.Set<com.uniquindio.accesoriosMoto.domain.valueObject.Compatibilidad> compatibilidades, String imagenUrl) {
+        Baul producto = new Baul(id, marca, precio, color, estadoPublicacion, material, capacidadLitros, dimensiones, capacidadMaximaCarga, imagenUrl);
         producto.compatibilidades.addAll(java.util.Set.copyOf(compatibilidades));
         return producto;
     }

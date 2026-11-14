@@ -67,15 +67,16 @@ public class CargadorDatosPrueba implements CommandLineRunner {
         }
 
         Marca agv = new Marca("m-agv", "AGV");
+        Marca ls2 = new Marca("m-ls2", "LS2");
         Marca alpinestars = new Marca("m-alp", "Alpinestars");
-        Marca fox = new Marca("m-fox", "Fox Racing");
+        Marca dainese = new Marca("m-dai", "Dainese");
         Marca givi = new Marca("m-giv", "Givi");
-        Marca shaft = new Marca("m-sha", "Shaft");
+        Marca rainwear = new Marca("m-rai", "Rainwear");
         Marca cardo = new Marca("m-car", "Cardo");
         Marca quadlock = new Marca("m-qua", "Quad Lock");
 
-        // 1. Casco
-        Casco casco = Casco.crear(
+        // 1. Casco AGV
+        Casco cascoAgv = Casco.crear(
                 "prod-casco-1",
                 agv,
                 "K3 SV",
@@ -83,12 +84,28 @@ public class CargadorDatosPrueba implements CommandLineRunner {
                 Talla.M,
                 new Precio(850000, "COP"),
                 Proteccion.NIVEL_1,
-                "ECE 22.05 / DOT"
+                "ECE 22.05 / DOT",
+                "/productos/casco-agv-k3-negro.jpg"
         );
-        casco.publicar();
-        productoRepository.guardar(casco);
+        cascoAgv.publicar();
+        productoRepository.guardar(cascoAgv);
 
-        // 2. Chaqueta
+        // 2. Casco LS2
+        Casco cascoLs2 = Casco.crear(
+                "prod-casco-2",
+                ls2,
+                "Rookie",
+                "Blanco",
+                Talla.L,
+                new Precio(420000, "COP"),
+                Proteccion.NIVEL_1,
+                "ECE 22.05",
+                "/productos/casco-ls2-blanco.jpg"
+        );
+        cascoLs2.publicar();
+        productoRepository.guardar(cascoLs2);
+
+        // 3. Chaqueta
         Chaqueta chaqueta = Chaqueta.crear(
                 "prod-chaqueta-1",
                 alpinestars,
@@ -96,25 +113,27 @@ public class CargadorDatosPrueba implements CommandLineRunner {
                 "Negro / Rojo",
                 Talla.L,
                 Material.CUERO,
-                Proteccion.NIVEL_2
+                Proteccion.NIVEL_2,
+                "/productos/chaqueta-alpinestars-cuero.jpg"
         );
         chaqueta.publicar();
         productoRepository.guardar(chaqueta);
 
-        // 3. Guantes
+        // 4. Guantes
         Guantes guantes = Guantes.crear(
                 "prod-guantes-1",
-                fox,
+                dainese,
                 new Precio(150000, "COP"),
                 "Negro",
                 Talla.M,
                 Material.TEXTIL,
-                Proteccion.NIVEL_1
+                Proteccion.NIVEL_1,
+                "/productos/guantes-dainese-negro.jpg"
         );
         guantes.publicar();
         productoRepository.guardar(guantes);
 
-        // 4. Baul con compatibilidad
+        // 5. Baul con compatibilidad
         Baul baul = Baul.crear(
                 "prod-baul-1",
                 givi,
@@ -123,60 +142,65 @@ public class CargadorDatosPrueba implements CommandLineRunner {
                 "45x40x30",
                 new Precio(450000, "COP"),
                 10,
-                "Negro"
+                "Negro",
+                "/productos/baul-givi-negro.jpg"
         );
         baul.indicarCompatibilidad(new Compatibilidad(TipoCompatibilidad.MOTO, "Yamaha MT-07"));
         baul.publicar();
         productoRepository.guardar(baul);
 
-        // 5. Impermeable
+        // 6. Impermeable
         Impermeable impermeable = Impermeable.crear(
                 "prod-imper-1",
-                shaft,
+                rainwear,
                 new Precio(120000, "COP"),
-                "Amarillo Fluor",
+                "Azul",
                 Talla.L,
-                Material.PVC
+                Material.PVC,
+                "/productos/impermeable-rainwear-azul.jpg"
         );
         impermeable.publicar();
         productoRepository.guardar(impermeable);
 
-        // 6. Intercomunicador
+        // 7. Intercomunicador
         Intercomunicador intercom = Intercomunicador.crear(
                 "prod-inter-1",
                 cardo,
                 new Precio(950000, "COP"),
-                "Negro",
+                "Gris",
                 1200,
                 13,
-                true
+                true,
+                "/productos/intercomunicador-cardo-gris.jpg"
         );
         intercom.publicar();
         productoRepository.guardar(intercom);
 
-        // 7. Soporte Celular
+        // 8. Soporte Celular
         SoporteCelular soporte = SoporteCelular.crear(
                 "prod-soporte-1",
                 quadlock,
                 new Precio(180000, "COP"),
                 "Negro",
-                "Manillar"
+                "Manillar",
+                "/productos/soporte-quadlock-negro.jpg"
         );
         soporte.publicar();
         productoRepository.guardar(soporte);
 
-        // 8. Visor compatible
+        // 9. Visor compatible
         Visor visor = Visor.crear(
                 "prod-visor-1",
                 agv,
                 new Precio(140000, "COP"),
-                "Humo Oscuro",
+                "Transparente",
                 "Antifog Pinlock",
-                List.of("K3 SV")
+                List.of("K3 SV"),
+                "/productos/visor-agv-transparente.jpg"
         );
         visor.publicar();
         productoRepository.guardar(visor);
 
-        log.info("Catálogo inicial de accesorios para moto cargado exitosamente con 8 productos.");
+        log.info("Catálogo inicial de accesorios para moto cargado exitosamente con 9 productos.");
     }
 }

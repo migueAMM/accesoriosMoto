@@ -16,7 +16,10 @@ public record RegistrarCascoRequest(
         @NotBlank(message = "Debe indicar el modelo") String modelo,
         @NotNull(message = "Debe indicar la talla") Talla talla,
         @NotNull(message = "Debe indicar la protección") Proteccion proteccion,
-        @NotBlank(message = "Debe indicar la certificación de seguridad") String certificacionSeguridad
+        @NotBlank(message = "Debe indicar la certificación de seguridad") String certificacionSeguridad,
+        String imagenUrl
 ) {
-
+    public RegistrarCascoRequest(String marcaId, String marcaNombre, Double precioMonto, String precioMoneda, String color, String modelo, Talla talla, Proteccion proteccion, String certificacionSeguridad) {
+        this(marcaId, marcaNombre, precioMonto, precioMoneda, color, modelo, talla, proteccion, certificacionSeguridad, null);
+    }
 }

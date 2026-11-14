@@ -16,6 +16,10 @@ public record RegistrarChaquetaRequest(
         @NotBlank(message = "Debe indicar el color") String color,
         @NotNull(message = "Debe indicar la talla") Talla talla,
         @NotNull(message = "Debe indicar el material") Material material,
-        @NotNull(message = "Debe indicar la protección") Proteccion proteccion
+        @NotNull(message = "Debe indicar la protección") Proteccion proteccion,
+        String imagenUrl
 ) {
+    public RegistrarChaquetaRequest(String marcaId, String marcaNombre, Double precioMonto, String precioMoneda, String color, Talla talla, Material material, Proteccion proteccion) {
+        this(marcaId, marcaNombre, precioMonto, precioMoneda, color, talla, material, proteccion, null);
+    }
 }

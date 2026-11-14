@@ -14,6 +14,10 @@ public record RegistrarImpermeableRequest(
         @NotBlank(message = "Debe indicar la moneda del precio") String precioMoneda,
         @NotBlank(message = "Debe indicar el color") String color,
         @NotNull(message = "Debe indicar la talla") Talla talla,
-        @NotNull(message = "Debe indicar el material") Material material
+        @NotNull(message = "Debe indicar el material") Material material,
+        String imagenUrl
 ) {
+    public RegistrarImpermeableRequest(String marcaId, String marcaNombre, Double precioMonto, String precioMoneda, String color, Talla talla, Material material) {
+        this(marcaId, marcaNombre, precioMonto, precioMoneda, color, talla, material, null);
+    }
 }

@@ -25,4 +25,7 @@ public abstract class ProductoEntity {
     private String color;
     @Enumerated(EnumType.STRING)
     private EstadoPublicacion estadoPublicacion;
+    @Lob
+    @Column(name = "imagen_url", columnDefinition = "CLOB")
+    private String imagenUrl;
 }

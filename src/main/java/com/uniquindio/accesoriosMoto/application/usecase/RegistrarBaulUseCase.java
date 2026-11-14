@@ -17,7 +17,12 @@ public class RegistrarBaulUseCase {
 
     @Transactional
     public Baul ejecutar(String id, Marca marca, Material material, double capacidadLitros, String dimensiones, Precio precio, double capacidadMaximaCarga, String color) {
-        Baul baul = Baul.crear(id, marca, material, capacidadLitros, dimensiones, precio, capacidadMaximaCarga, color);
+        return ejecutar(id, marca, material, capacidadLitros, dimensiones, precio, capacidadMaximaCarga, color, null);
+    }
+
+    @Transactional
+    public Baul ejecutar(String id, Marca marca, Material material, double capacidadLitros, String dimensiones, Precio precio, double capacidadMaximaCarga, String color, String imagenUrl) {
+        Baul baul = Baul.crear(id, marca, material, capacidadLitros, dimensiones, precio, capacidadMaximaCarga, color, imagenUrl);
         repository.guardar(baul);
         return baul;
     }

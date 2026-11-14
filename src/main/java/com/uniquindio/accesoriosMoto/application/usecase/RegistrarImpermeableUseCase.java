@@ -15,7 +15,12 @@ public class RegistrarImpermeableUseCase {
 
     @Transactional
     public Impermeable ejecutar(String id, Marca marca, Precio precio, String color, Talla talla, Material material) {
-        Impermeable impermeable = Impermeable.crear(id, marca, precio, color, talla, material);
+        return ejecutar(id, marca, precio, color, talla, material, null);
+    }
+
+    @Transactional
+    public Impermeable ejecutar(String id, Marca marca, Precio precio, String color, Talla talla, Material material, String imagenUrl) {
+        Impermeable impermeable = Impermeable.crear(id, marca, precio, color, talla, material, imagenUrl);
         repository.guardar(impermeable);
         return impermeable;
     }

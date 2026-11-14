@@ -11,16 +11,28 @@ public class SoporteCelular extends Producto{
     private String tipoSujecion;
 
     private SoporteCelular(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion, String tipoSujecion) {
-        super(id, marca, precio, color, estadoPublicacion);
+        this(id, marca, precio, color, estadoPublicacion, tipoSujecion, null);
+    }
+
+    private SoporteCelular(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion, String tipoSujecion, String imagenUrl) {
+        super(id, marca, precio, color, estadoPublicacion, imagenUrl);
         this.tipoSujecion = tipoSujecion;
     }
 
     public static SoporteCelular crear(String id, Marca marca, Precio precio, String color, String tipoSujecion){
-        return new SoporteCelular(id, marca, precio, color, EstadoPublicacion.NO_PUBLICADO, tipoSujecion);
+        return crear(id, marca, precio, color, tipoSujecion, null);
+    }
+
+    public static SoporteCelular crear(String id, Marca marca, Precio precio, String color, String tipoSujecion, String imagenUrl){
+        return new SoporteCelular(id, marca, precio, color, EstadoPublicacion.NO_PUBLICADO, tipoSujecion, imagenUrl);
     }
 
     public static SoporteCelular reconstruir(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion, String tipoSujecion) {
-        SoporteCelular producto = new SoporteCelular(id, marca, precio, color, estadoPublicacion, tipoSujecion);
+        return reconstruir(id, marca, precio, color, estadoPublicacion, tipoSujecion, null);
+    }
+
+    public static SoporteCelular reconstruir(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion, String tipoSujecion, String imagenUrl) {
+        SoporteCelular producto = new SoporteCelular(id, marca, precio, color, estadoPublicacion, tipoSujecion, imagenUrl);
         return producto;
     }
 
