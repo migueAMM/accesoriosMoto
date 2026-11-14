@@ -20,7 +20,7 @@ import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 public class JwtTokenProviderTest {
 
-    private final JwtConfig config = new JwtConfig("clave-test", "test");
+    private final JwtConfig config = new JwtConfig("clave-secreta-para-pruebas-unitarias-jwt-2026", "test");
     private final Clock reloj = Clock.fixed(Instant.parse("2026-10-25T12:00:00Z"), ZoneOffset.UTC);
     private final JwtEncoder encoder = config.jwtEncoder();
     private final JwtDecoder decoder = config.jwtDecoder(reloj);
@@ -87,7 +87,7 @@ public class JwtTokenProviderTest {
     @Test
     public void rechazaFirmaConOtraClave() {
 
-        var otra = new JwtConfig("otra-clave-tests", "test");
+        var otra = new JwtConfig("otra-clave-secreta-para-pruebas-unitarias-jwt-2026", "test");
 
         var accion1Error = catchThrowable(() -> otra.jwtDecoder(reloj).decode(emitir(comprador(), reloj)));
 
@@ -97,7 +97,7 @@ public class JwtTokenProviderTest {
     @Test
     public void rechazaIssuerIncorrecto() {
 
-        var otra = new JwtConfig("clave-test", "otro");
+        var otra = new JwtConfig("clave-secreta-para-pruebas-unitarias-jwt-2026", "otro");
 
         var accion1Error = catchThrowable(() -> otra.jwtDecoder(reloj).decode(emitir(comprador(), reloj)));
 
@@ -123,6 +123,6 @@ public class JwtTokenProviderTest {
         var accion1Error = catchThrowable(() -> new JwtConfig("corta", "test"));
 
         assertThat(accion1Error).isInstanceOf(IllegalArgumentException.class);
-        assertThat(config.toString()).doesNotContain("clave-test");
+        assertThat(config.toString()).doesNotContain("clave-secreta-para-pruebas-unitarias-jwt-2026");
     }
 }
