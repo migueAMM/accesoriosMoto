@@ -22,8 +22,15 @@ public abstract class Producto {
     @Getter
     @Setter
     protected EstadoPublicacion estadoPublicacion;
+    @Getter
+    @Setter
+    protected String imagenUrl;
 
     protected Producto(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion) {
+        this(id, marca, precio, color, estadoPublicacion, null);
+    }
+
+    protected Producto(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion, String imagenUrl) {
         if (id == null || id.isBlank()){
             throw new ReglaDominioException("El producto debe tener un identificador valido");
         }
@@ -35,6 +42,7 @@ public abstract class Producto {
         this.precio = precio;
         this.color = color;
         this.estadoPublicacion = estadoPublicacion;
+        this.imagenUrl = imagenUrl;
     }
 
     public void publicar(){

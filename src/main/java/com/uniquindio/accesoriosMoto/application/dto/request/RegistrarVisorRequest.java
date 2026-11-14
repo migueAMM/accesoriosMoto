@@ -16,5 +16,10 @@ public record RegistrarVisorRequest (
         @NotBlank(message = "Debe indicar el color") String color,
         @NotBlank(message = "Debe indicar el tipo de visor") String tipoVisor,
         @NotNull(message = "Debe indicar la lista de modelos compatibles")
-        List<@NotBlank(message = "El modelo compatible no puede estar vacío") String> modelosCascoCompatibles
-){}
+        List<@NotBlank(message = "El modelo compatible no puede estar vacío") String> modelosCascoCompatibles,
+        String imagenUrl
+){
+    public RegistrarVisorRequest(String marcaId, String marcaNombre, Double precioMonto, String precioMoneda, String color, String tipoVisor, List<String> modelosCascoCompatibles) {
+        this(marcaId, marcaNombre, precioMonto, precioMoneda, color, tipoVisor, modelosCascoCompatibles, null);
+    }
+}

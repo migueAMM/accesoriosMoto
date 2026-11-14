@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @Repository
 @Transactional(readOnly = true)
@@ -62,11 +64,24 @@ public class ProductoRepositoryJpa implements ProductoRepository {
     public List<ProductoVentas> masVendidos(int limite) {
         if (limite < 1 || limite > 20) throw new ReglaDominioException("El límite debe estar entre 1 y 20");
         return repository.masVendidos(EstadoPedido.COMPLETADA, PageRequest.of(0, limite));
-    }    private static Specification<ProductoEntity> criterios(FiltroProducto filtro) {
+    }    private static boolean esAdmin() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated()) {
+            return false;
+        }
+        return auth.getAuthorities().stream()
+                .anyMatch(a -> "ROLE_ADMINISTRADOR".equals(a.getAuthority()) || "ADMINISTRADOR".equals(a.getAuthority()));
+    }
+
+    private static Specification<ProductoEntity> criterios(FiltroProducto filtro) {
         if (filtro == null) throw new ReglaDominioException("Debe proporcionar los criterios de búsqueda");
         return (producto, consulta, cb) -> {
             List<Predicate> condiciones = new ArrayList<>();
-            condiciones.add(cb.equal(producto.get("estadoPublicacion"), EstadoPublicacion.PUBLICADO));
+            if (esAdmin()) {
+                condiciones.add(cb.notEqual(producto.get("estadoPublicacion"), EstadoPublicacion.ELIMINADO));
+            } else {
+                condiciones.add(cb.equal(producto.get("estadoPublicacion"), EstadoPublicacion.PUBLICADO));
+            }
             if (filtro.marca() != null) condiciones.add(cb.equal(normalizar(cb, producto.get("marca").get("nombre")), filtro.marca()));
             if (filtro.color() != null) condiciones.add(cb.equal(normalizar(cb, producto.get("color")), filtro.color()));
             if (filtro.moneda() != null) condiciones.add(cb.equal(normalizar(cb, producto.get("precio").get("moneda")), filtro.moneda()));
@@ -109,7 +124,9 @@ public class ProductoRepositoryJpa implements ProductoRepository {
         double max = b.precioMaximo() == null ? Double.MAX_VALUE : b.precioMaximo();
         String moneda = b.moneda() == null ? "" : b.moneda();
 
-        var r = repository.buscarPorTexto(EstadoPublicacion.PUBLICADO, patron, min, max, moneda,
+        EstadoPublicacion estado = esAdmin() ? null : EstadoPublicacion.PUBLICADO;
+
+        var r = repository.buscarPorTexto(estado, patron, min, max, moneda,
                 PageRequest.of(pagina, tamano, orden));
         return new Pagina<>(r.getContent().stream().map(mapper::toDomain).toList(),
                 r.getTotalElements(), r.getTotalPages(), pagina, tamano);

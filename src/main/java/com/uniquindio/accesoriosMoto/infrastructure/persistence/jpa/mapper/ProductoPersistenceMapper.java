@@ -77,6 +77,7 @@ public class ProductoPersistenceMapper {
         entidad.setPrecio(new PrecioEmbeddable(producto.getPrecio().monto(), producto.getPrecio().moneda()));
         entidad.setColor(producto.getColor());
         entidad.setEstadoPublicacion(producto.getEstadoPublicacion());
+        entidad.setImagenUrl(producto.getImagenUrl());
         return entidad;
     }
 
@@ -84,16 +85,18 @@ public class ProductoPersistenceMapper {
         ProductoEntity e = (ProductoEntity) org.hibernate.Hibernate.unproxy(entidad);
         Marca marca = new Marca(e.getMarca().getId(), e.getMarca().getNombre());
         Precio precio = new Precio(e.getPrecio().getMonto(), e.getPrecio().getMoneda());
-        return switch (e) {
-            case BaulEntity p -> Baul.reconstruir(e.getId(), marca, precio, e.getColor(), e.getEstadoPublicacion(), p.getMaterial(), p.getCapacidadLitros(), p.getDimensiones(), p.getCapacidadMaximaCarga(), p.getCompatibilidades().stream().map(c -> new Compatibilidad(c.getTipo(), c.getModelo())).collect(Collectors.toSet()));
-            case CascoEntity p -> Casco.reconstruir(e.getId(), marca, precio, e.getColor(), e.getEstadoPublicacion(), p.getModelo(), p.getTalla(), p.getProteccion(), p.getCertificacionSeguridad());
-            case ChaquetaEntity p -> Chaqueta.reconstruir(e.getId(), marca, precio, e.getColor(), e.getEstadoPublicacion(), p.getTalla(), p.getMaterial(), p.getProteccion());
-            case GuantesEntity p -> Guantes.reconstruir(e.getId(), marca, precio, e.getColor(), e.getEstadoPublicacion(), p.getTalla(), p.getMaterial(), p.getProteccion());
-            case ImpermeableEntity p -> Impermeable.reconstruir(e.getId(), marca, precio, e.getColor(), e.getEstadoPublicacion(), p.getTalla(), p.getMaterial());
-            case IntercomunicadorEntity p -> Intercomunicador.reconstruir(e.getId(), marca, precio, e.getColor(), e.getEstadoPublicacion(), p.getAlcanceMetros(), p.getAutonomiaHoras(), p.isBluetooth());
-            case SoporteCelularEntity p -> SoporteCelular.reconstruir(e.getId(), marca, precio, e.getColor(), e.getEstadoPublicacion(), p.getTipoSujecion());
-            case VisorEntity p -> Visor.reconstruir(e.getId(), marca, precio, e.getColor(), e.getEstadoPublicacion(), p.getTipoVisor(), p.getCompatibilidades().stream().map(c -> new Compatibilidad(c.getTipo(), c.getModelo())).collect(Collectors.toSet()));
+        Producto producto = switch (e) {
+            case BaulEntity p -> Baul.reconstruir(e.getId(), marca, precio, e.getColor(), e.getEstadoPublicacion(), p.getMaterial(), p.getCapacidadLitros(), p.getDimensiones(), p.getCapacidadMaximaCarga(), p.getCompatibilidades().stream().map(c -> new Compatibilidad(c.getTipo(), c.getModelo())).collect(Collectors.toSet()), e.getImagenUrl());
+            case CascoEntity p -> Casco.reconstruir(e.getId(), marca, precio, e.getColor(), e.getEstadoPublicacion(), p.getModelo(), p.getTalla(), p.getProteccion(), p.getCertificacionSeguridad(), e.getImagenUrl());
+            case ChaquetaEntity p -> Chaqueta.reconstruir(e.getId(), marca, precio, e.getColor(), e.getEstadoPublicacion(), p.getTalla(), p.getMaterial(), p.getProteccion(), e.getImagenUrl());
+            case GuantesEntity p -> Guantes.reconstruir(e.getId(), marca, precio, e.getColor(), e.getEstadoPublicacion(), p.getTalla(), p.getMaterial(), p.getProteccion(), e.getImagenUrl());
+            case ImpermeableEntity p -> Impermeable.reconstruir(e.getId(), marca, precio, e.getColor(), e.getEstadoPublicacion(), p.getTalla(), p.getMaterial(), e.getImagenUrl());
+            case IntercomunicadorEntity p -> Intercomunicador.reconstruir(e.getId(), marca, precio, e.getColor(), e.getEstadoPublicacion(), p.getAlcanceMetros(), p.getAutonomiaHoras(), p.isBluetooth(), e.getImagenUrl());
+            case SoporteCelularEntity p -> SoporteCelular.reconstruir(e.getId(), marca, precio, e.getColor(), e.getEstadoPublicacion(), p.getTipoSujecion(), e.getImagenUrl());
+            case VisorEntity p -> Visor.reconstruir(e.getId(), marca, precio, e.getColor(), e.getEstadoPublicacion(), p.getTipoVisor(), p.getCompatibilidades().stream().map(c -> new Compatibilidad(c.getTipo(), c.getModelo())).collect(Collectors.toSet()), e.getImagenUrl());
             default -> throw new IllegalArgumentException("Tipo persistido no soportado: " + e.getClass().getName());
         };
+        producto.setImagenUrl(e.getImagenUrl());
+        return producto;
     }
 }

@@ -18,7 +18,12 @@ public class RegistrarVisorUseCase {
 
     @Transactional
     public Visor ejecutar(String id, Marca marca, Precio precio, String color, String tipoVisor, List<String> modelosCascoCompatibles) {
-        Visor visor = Visor.crear(id, marca, precio, color, tipoVisor, modelosCascoCompatibles);
+        return ejecutar(id, marca, precio, color, tipoVisor, modelosCascoCompatibles, null);
+    }
+
+    @Transactional
+    public Visor ejecutar(String id, Marca marca, Precio precio, String color, String tipoVisor, List<String> modelosCascoCompatibles, String imagenUrl) {
+        Visor visor = Visor.crear(id, marca, precio, color, tipoVisor, modelosCascoCompatibles, imagenUrl);
         repository.guardar(visor);
         return visor;
     }

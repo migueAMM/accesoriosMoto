@@ -15,7 +15,12 @@ public class RegistrarChaquetaUseCase {
 
     @Transactional
     public Chaqueta ejecutar(String id, Marca marca, Precio precio, String color, Talla talla, Material material, Proteccion proteccion) {
-        Chaqueta chaqueta = Chaqueta.crear(id, marca, precio, color, talla, material, proteccion);
+        return ejecutar(id, marca, precio, color, talla, material, proteccion, null);
+    }
+
+    @Transactional
+    public Chaqueta ejecutar(String id, Marca marca, Precio precio, String color, Talla talla, Material material, Proteccion proteccion, String imagenUrl) {
+        Chaqueta chaqueta = Chaqueta.crear(id, marca, precio, color, talla, material, proteccion, imagenUrl);
         repository.guardar(chaqueta);
         return chaqueta;
     }

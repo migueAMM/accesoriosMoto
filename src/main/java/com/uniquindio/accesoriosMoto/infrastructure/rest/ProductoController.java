@@ -39,69 +39,105 @@ public class ProductoController {
 
     @PostMapping("/baules")
     public ResponseEntity<ProductoResponse> registrarBaul(@Valid @RequestBody RegistrarBaulRequest request) {
-        Producto producto = registrarBaulUseCase.ejecutar(
-                UUID.randomUUID().toString(),
-                new Marca(request.marcaId(), request.marcaNombre()), request.material(), request.capacidadLitros(),
-                request.dimensiones(), new Precio(request.precioMonto(), request.precioMoneda()), request.capacidadMaximaCarga(), request.color());
+        Producto producto = (request.imagenUrl() != null && !request.imagenUrl().isBlank())
+                ? registrarBaulUseCase.ejecutar(
+                        UUID.randomUUID().toString(),
+                        new Marca(request.marcaId(), request.marcaNombre()), request.material(), request.capacidadLitros(),
+                        request.dimensiones(), new Precio(request.precioMonto(), request.precioMoneda()), request.capacidadMaximaCarga(), request.color(), request.imagenUrl())
+                : registrarBaulUseCase.ejecutar(
+                        UUID.randomUUID().toString(),
+                        new Marca(request.marcaId(), request.marcaNombre()), request.material(), request.capacidadLitros(),
+                        request.dimensiones(), new Precio(request.precioMonto(), request.precioMoneda()), request.capacidadMaximaCarga(), request.color());
         return creado(producto);
     }
 
     @PostMapping("/cascos")
     public ResponseEntity<ProductoResponse> registrarCasco(@Valid @RequestBody RegistrarCascoRequest request) {
-        Producto producto = registrarCascoUseCase.ejecutar(
-                UUID.randomUUID().toString(),
-                new Marca(request.marcaId(), request.marcaNombre()), request.modelo(), request.color(),
-                request.talla(), new Precio(request.precioMonto(), request.precioMoneda()), request.proteccion(), request.certificacionSeguridad());
+        Producto producto = (request.imagenUrl() != null && !request.imagenUrl().isBlank())
+                ? registrarCascoUseCase.ejecutar(
+                        UUID.randomUUID().toString(),
+                        new Marca(request.marcaId(), request.marcaNombre()), request.modelo(), request.color(),
+                        request.talla(), new Precio(request.precioMonto(), request.precioMoneda()), request.proteccion(), request.certificacionSeguridad(), request.imagenUrl())
+                : registrarCascoUseCase.ejecutar(
+                        UUID.randomUUID().toString(),
+                        new Marca(request.marcaId(), request.marcaNombre()), request.modelo(), request.color(),
+                        request.talla(), new Precio(request.precioMonto(), request.precioMoneda()), request.proteccion(), request.certificacionSeguridad());
         return creado(producto);
     }
 
     @PostMapping("/chaquetas")
     public ResponseEntity<ProductoResponse> registrarChaqueta(@Valid @RequestBody RegistrarChaquetaRequest request) {
-        Producto producto = registrarChaquetaUseCase.ejecutar(
-                UUID.randomUUID().toString(),
-                new Marca(request.marcaId(), request.marcaNombre()), new Precio(request.precioMonto(), request.precioMoneda()), request.color(), request.talla(), request.material(), request.proteccion());
+        Producto producto = (request.imagenUrl() != null && !request.imagenUrl().isBlank())
+                ? registrarChaquetaUseCase.ejecutar(
+                        UUID.randomUUID().toString(),
+                        new Marca(request.marcaId(), request.marcaNombre()), new Precio(request.precioMonto(), request.precioMoneda()), request.color(), request.talla(), request.material(), request.proteccion(), request.imagenUrl())
+                : registrarChaquetaUseCase.ejecutar(
+                        UUID.randomUUID().toString(),
+                        new Marca(request.marcaId(), request.marcaNombre()), new Precio(request.precioMonto(), request.precioMoneda()), request.color(), request.talla(), request.material(), request.proteccion());
         return creado(producto);
     }
 
     @PostMapping("/guantes")
     public ResponseEntity<ProductoResponse> registrarGuantes(@Valid @RequestBody RegistrarGuantesRequest request) {
-        Producto producto = registrarGuantesUseCase.ejecutar(
-                UUID.randomUUID().toString(),
-                new Marca(request.marcaId(), request.marcaNombre()), new Precio(request.precioMonto(), request.precioMoneda()), request.color(), request.talla(), request.material(), request.proteccion());
+        Producto producto = (request.imagenUrl() != null && !request.imagenUrl().isBlank())
+                ? registrarGuantesUseCase.ejecutar(
+                        UUID.randomUUID().toString(),
+                        new Marca(request.marcaId(), request.marcaNombre()), new Precio(request.precioMonto(), request.precioMoneda()), request.color(), request.talla(), request.material(), request.proteccion(), request.imagenUrl())
+                : registrarGuantesUseCase.ejecutar(
+                        UUID.randomUUID().toString(),
+                        new Marca(request.marcaId(), request.marcaNombre()), new Precio(request.precioMonto(), request.precioMoneda()), request.color(), request.talla(), request.material(), request.proteccion());
         return creado(producto);
     }
 
     @PostMapping("/impermeables")
     public ResponseEntity<ProductoResponse> registrarImpermeable(@Valid @RequestBody RegistrarImpermeableRequest request) {
-        Producto producto = registrarImpermeableUseCase.ejecutar(
-                UUID.randomUUID().toString(),
-                new Marca(request.marcaId(), request.marcaNombre()), new Precio(request.precioMonto(), request.precioMoneda()), request.color(), request.talla(), request.material());
+        Producto producto = (request.imagenUrl() != null && !request.imagenUrl().isBlank())
+                ? registrarImpermeableUseCase.ejecutar(
+                        UUID.randomUUID().toString(),
+                        new Marca(request.marcaId(), request.marcaNombre()), new Precio(request.precioMonto(), request.precioMoneda()), request.color(), request.talla(), request.material(), request.imagenUrl())
+                : registrarImpermeableUseCase.ejecutar(
+                        UUID.randomUUID().toString(),
+                        new Marca(request.marcaId(), request.marcaNombre()), new Precio(request.precioMonto(), request.precioMoneda()), request.color(), request.talla(), request.material());
         return creado(producto);
     }
 
     @PostMapping("/intercomunicadores")
     public ResponseEntity<ProductoResponse> registrarIntercomunicador(@Valid @RequestBody RegistrarIntercomunicadorRequest request) {
-        Producto producto = registrarIntercomunicadorUseCase.ejecutar(
-                UUID.randomUUID().toString(),
-                new Marca(request.marcaId(), request.marcaNombre()), new Precio(request.precioMonto(), request.precioMoneda()), request.color(), request.alcanceMetros(), request.autonomiaHoras(),
-                request.bluetooth());
+        Producto producto = (request.imagenUrl() != null && !request.imagenUrl().isBlank())
+                ? registrarIntercomunicadorUseCase.ejecutar(
+                        UUID.randomUUID().toString(),
+                        new Marca(request.marcaId(), request.marcaNombre()), new Precio(request.precioMonto(), request.precioMoneda()), request.color(), request.alcanceMetros(), request.autonomiaHoras(),
+                        request.bluetooth(), request.imagenUrl())
+                : registrarIntercomunicadorUseCase.ejecutar(
+                        UUID.randomUUID().toString(),
+                        new Marca(request.marcaId(), request.marcaNombre()), new Precio(request.precioMonto(), request.precioMoneda()), request.color(), request.alcanceMetros(), request.autonomiaHoras(),
+                        request.bluetooth());
         return creado(producto);
     }
 
     @PostMapping("/soportes-celular")
     public ResponseEntity<ProductoResponse> registrarSoporteCelular(@Valid @RequestBody RegistrarSoporteCelularRequest request) {
-        Producto producto = registrarSoporteCelularUseCase.ejecutar(
-                UUID.randomUUID().toString(),
-                new Marca(request.marcaId(), request.marcaNombre()), new Precio(request.precioMonto(), request.precioMoneda()), request.color(), request.tipoSujecion());
+        Producto producto = (request.imagenUrl() != null && !request.imagenUrl().isBlank())
+                ? registrarSoporteCelularUseCase.ejecutar(
+                        UUID.randomUUID().toString(),
+                        new Marca(request.marcaId(), request.marcaNombre()), new Precio(request.precioMonto(), request.precioMoneda()), request.color(), request.tipoSujecion(), request.imagenUrl())
+                : registrarSoporteCelularUseCase.ejecutar(
+                        UUID.randomUUID().toString(),
+                        new Marca(request.marcaId(), request.marcaNombre()), new Precio(request.precioMonto(), request.precioMoneda()), request.color(), request.tipoSujecion());
         return creado(producto);
     }
 
     @PostMapping("/visores")
     public ResponseEntity<ProductoResponse> registrarVisor(@Valid @RequestBody RegistrarVisorRequest request) {
-        Producto producto = registrarVisorUseCase.ejecutar(
-                UUID.randomUUID().toString(),
-                new Marca(request.marcaId(), request.marcaNombre()), new Precio(request.precioMonto(), request.precioMoneda()), request.color(), request.tipoVisor(),
-                request.modelosCascoCompatibles());
+        Producto producto = (request.imagenUrl() != null && !request.imagenUrl().isBlank())
+                ? registrarVisorUseCase.ejecutar(
+                        UUID.randomUUID().toString(),
+                        new Marca(request.marcaId(), request.marcaNombre()), new Precio(request.precioMonto(), request.precioMoneda()), request.color(), request.tipoVisor(),
+                        request.modelosCascoCompatibles(), request.imagenUrl())
+                : registrarVisorUseCase.ejecutar(
+                        UUID.randomUUID().toString(),
+                        new Marca(request.marcaId(), request.marcaNombre()), new Precio(request.precioMonto(), request.precioMoneda()), request.color(), request.tipoVisor(),
+                        request.modelosCascoCompatibles());
         return creado(producto);
     }
 

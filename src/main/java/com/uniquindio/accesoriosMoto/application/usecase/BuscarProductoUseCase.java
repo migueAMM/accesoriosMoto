@@ -6,8 +6,11 @@ import com.uniquindio.accesoriosMoto.domain.repository.Pagina;
 import com.uniquindio.accesoriosMoto.domain.repository.ProductoRepository;
 import com.uniquindio.accesoriosMoto.domain.repository.ProductoVentas;
 import com.uniquindio.accesoriosMoto.domain.valueObject.BusquedaProducto;
+import com.uniquindio.accesoriosMoto.domain.valueObject.EstadoPublicacion;
 import com.uniquindio.accesoriosMoto.domain.valueObject.FiltroProducto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +34,12 @@ public class BuscarProductoUseCase {
 
     @Transactional(readOnly = true)
     public Producto obtener(String id) {
-        return repository.obtenerPorId(id).filter(Producto::estaPublicado).orElseThrow();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        boolean esAdmin = auth != null && auth.isAuthenticated() && auth.getAuthorities().stream()
+                .anyMatch(a -> "ROLE_ADMINISTRADOR".equals(a.getAuthority()) || "ADMINISTRADOR".equals(a.getAuthority()));
+        return repository.obtenerPorId(id)
+                .filter(p -> esAdmin ? p.getEstadoPublicacion() != EstadoPublicacion.ELIMINADO : p.estaPublicado())
+                .orElseThrow();
     }
 
     @Transactional(readOnly = true)

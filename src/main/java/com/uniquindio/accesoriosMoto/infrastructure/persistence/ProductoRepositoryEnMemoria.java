@@ -43,15 +43,12 @@ public class ProductoRepositoryEnMemoria implements ProductoRepository{
     @Override
     public Pagina<Producto> buscar(FiltroProducto filtro, int pagina, int tamano) {
         if (filtro == null) throw new ReglaDominioException("Debe proporcionar los criterios de búsqueda");
-        List<Producto> todos = productos.values().stream()
-                .filter(filtro::coincideCon)
-                .sorted(Comparator.comparing(Producto::getId))
-                .toList();
+        List<Producto> filtrados = productos.values().stream().filter(filtro::coincideCon).toList();
         long inicio = (long) pagina * tamano;
-        List<Producto> contenido = inicio >= todos.size() ? List.of()
-                : todos.subList((int) inicio, (int) Math.min(inicio + tamano, todos.size()));
-        int totalPaginas = (int) ((todos.size() + (long) tamano - 1) / tamano);
-        return new Pagina<>(contenido, todos.size(), totalPaginas, pagina, tamano);
+        List<Producto> contenido = inicio >= filtrados.size() ? List.of()
+                : filtrados.subList((int) inicio, (int) Math.min(inicio + tamano, filtrados.size()));
+        int totalPaginas = (int) ((filtrados.size() + (long) tamano - 1) / Math.max(1, tamano));
+        return new Pagina<>(contenido, filtrados.size(), totalPaginas, pagina, tamano);
     }
 
     public List<ProductoVentas> masVendidos(int limite) {

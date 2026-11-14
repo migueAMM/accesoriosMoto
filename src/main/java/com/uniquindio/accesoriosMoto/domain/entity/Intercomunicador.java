@@ -15,18 +15,30 @@ public class Intercomunicador extends Producto{
     private boolean bluetooth;
 
     private Intercomunicador(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion, int alcanceMetros, int autonomiaHoras, boolean bluetooth) {
-        super(id, marca, precio, color, estadoPublicacion);
+        this(id, marca, precio, color, estadoPublicacion, alcanceMetros, autonomiaHoras, bluetooth, null);
+    }
+
+    private Intercomunicador(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion, int alcanceMetros, int autonomiaHoras, boolean bluetooth, String imagenUrl) {
+        super(id, marca, precio, color, estadoPublicacion, imagenUrl);
         this.alcanceMetros = alcanceMetros;
         this.autonomiaHoras = autonomiaHoras;
         this.bluetooth = bluetooth;
     }
 
     public static Intercomunicador crear(String id, Marca marca, Precio precio, String color, int alcanceMetros, int autonomiaHoras, boolean bluetooth){
-        return new Intercomunicador(id, marca, precio, color, EstadoPublicacion.NO_PUBLICADO, alcanceMetros, autonomiaHoras, bluetooth);
+        return crear(id, marca, precio, color, alcanceMetros, autonomiaHoras, bluetooth, null);
+    }
+
+    public static Intercomunicador crear(String id, Marca marca, Precio precio, String color, int alcanceMetros, int autonomiaHoras, boolean bluetooth, String imagenUrl){
+        return new Intercomunicador(id, marca, precio, color, EstadoPublicacion.NO_PUBLICADO, alcanceMetros, autonomiaHoras, bluetooth, imagenUrl);
     }
 
     public static Intercomunicador reconstruir(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion, int alcanceMetros,int autonomiaHoras,boolean bluetooth) {
-        Intercomunicador producto = new Intercomunicador(id, marca, precio, color, estadoPublicacion, alcanceMetros, autonomiaHoras, bluetooth);
+        return reconstruir(id, marca, precio, color, estadoPublicacion, alcanceMetros, autonomiaHoras, bluetooth, null);
+    }
+
+    public static Intercomunicador reconstruir(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion, int alcanceMetros,int autonomiaHoras,boolean bluetooth, String imagenUrl) {
+        Intercomunicador producto = new Intercomunicador(id, marca, precio, color, estadoPublicacion, alcanceMetros, autonomiaHoras, bluetooth, imagenUrl);
         return producto;
     }
 }

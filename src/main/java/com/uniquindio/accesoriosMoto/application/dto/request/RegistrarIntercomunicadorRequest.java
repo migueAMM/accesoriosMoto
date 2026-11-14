@@ -15,6 +15,10 @@ public record RegistrarIntercomunicadorRequest(
         @Positive(message = "El alcance debe ser mayor a cero") Integer alcanceMetros,
         @NotNull(message = "Debe indicar la autonomía")
         @Positive(message = "La autonomía debe ser mayor a cero") Integer autonomiaHoras,
-        @NotNull(message = "Debe indicar si tiene bluetooth") Boolean bluetooth
+        @NotNull(message = "Debe indicar si tiene bluetooth") Boolean bluetooth,
+        String imagenUrl
 ) {
+    public RegistrarIntercomunicadorRequest(String marcaId, String marcaNombre, Double precioMonto, String precioMoneda, String color, Integer alcanceMetros, Integer autonomiaHoras, Boolean bluetooth) {
+        this(marcaId, marcaNombre, precioMonto, precioMoneda, color, alcanceMetros, autonomiaHoras, bluetooth, null);
+    }
 }

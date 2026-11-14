@@ -15,7 +15,12 @@ public class RegistrarSoporteCelularUseCase {
 
     @Transactional
     public SoporteCelular ejecutar(String id, Marca marca, Precio precio, String color, String tipoSujecion) {
-        SoporteCelular soporteCelular = SoporteCelular.crear(id, marca, precio, color, tipoSujecion);
+        return ejecutar(id, marca, precio, color, tipoSujecion, null);
+    }
+
+    @Transactional
+    public SoporteCelular ejecutar(String id, Marca marca, Precio precio, String color, String tipoSujecion, String imagenUrl) {
+        SoporteCelular soporteCelular = SoporteCelular.crear(id, marca, precio, color, tipoSujecion, imagenUrl);
         repository.guardar(soporteCelular);
         return soporteCelular;
     }

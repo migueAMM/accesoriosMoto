@@ -27,7 +27,8 @@ public interface ProductoJpaDataRepository extends JpaRepository<ProductoEntity,
 
     @Query("""
         SELECT p FROM ProductoEntity p
-        WHERE p.estadoPublicacion = :estado
+        WHERE (:estado IS NULL AND p.estadoPublicacion != com.uniquindio.accesoriosMoto.domain.valueObject.EstadoPublicacion.ELIMINADO
+               OR p.estadoPublicacion = :estado)
           AND (UPPER(p.marca.nombre) LIKE :patron ESCAPE '!'
                OR UPPER(COALESCE(p.color, '')) LIKE :patron ESCAPE '!')
           AND p.precio.monto >= :precioMinimo

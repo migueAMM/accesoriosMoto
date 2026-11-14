@@ -16,7 +16,11 @@ public class Visor extends Producto implements ProductoCompatible{
     private final Set<Compatibilidad> compatibilidades = new LinkedHashSet<>();
 
     private Visor(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion, String tipoVisor, List<String> modelosCascoCompatibles) {
-        super(id, marca, precio, color, estadoPublicacion);
+        this(id, marca, precio, color, estadoPublicacion, tipoVisor, modelosCascoCompatibles, null);
+    }
+
+    private Visor(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion, String tipoVisor, List<String> modelosCascoCompatibles, String imagenUrl) {
+        super(id, marca, precio, color, estadoPublicacion, imagenUrl);
         this.tipoVisor = tipoVisor;
         if (modelosCascoCompatibles == null) {
             throw new ReglaDominioException("La lista de modelos compatibles no puede ser nula");
@@ -59,11 +63,19 @@ public class Visor extends Producto implements ProductoCompatible{
 
 
     public static Visor crear(String id, Marca marca, Precio precio, String color, String tipoVisor, List<String> modelosCascoCompatibles) {
-        return new Visor(id, marca, precio, color, EstadoPublicacion.NO_PUBLICADO, tipoVisor, modelosCascoCompatibles);
+        return crear(id, marca, precio, color, tipoVisor, modelosCascoCompatibles, null);
+    }
+
+    public static Visor crear(String id, Marca marca, Precio precio, String color, String tipoVisor, List<String> modelosCascoCompatibles, String imagenUrl) {
+        return new Visor(id, marca, precio, color, EstadoPublicacion.NO_PUBLICADO, tipoVisor, modelosCascoCompatibles, imagenUrl);
     }
 
     public static Visor reconstruir(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion, String tipoVisor, java.util.Set<com.uniquindio.accesoriosMoto.domain.valueObject.Compatibilidad> compatibilidades) {
-        Visor producto = new Visor(id, marca, precio, color, estadoPublicacion, tipoVisor, List.of());
+        return reconstruir(id, marca, precio, color, estadoPublicacion, tipoVisor, compatibilidades, null);
+    }
+
+    public static Visor reconstruir(String id, Marca marca, Precio precio, String color, EstadoPublicacion estadoPublicacion, String tipoVisor, java.util.Set<com.uniquindio.accesoriosMoto.domain.valueObject.Compatibilidad> compatibilidades, String imagenUrl) {
+        Visor producto = new Visor(id, marca, precio, color, estadoPublicacion, tipoVisor, List.of(), imagenUrl);
         producto.compatibilidades.addAll(java.util.Set.copyOf(compatibilidades));
         return producto;
     }

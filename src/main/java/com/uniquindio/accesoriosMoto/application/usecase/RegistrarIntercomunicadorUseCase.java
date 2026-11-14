@@ -15,7 +15,12 @@ public class RegistrarIntercomunicadorUseCase {
 
     @Transactional
     public Intercomunicador ejecutar(String id, Marca marca, Precio precio, String color, int alcanceMetros, int autonomiaHoras,boolean bluetooth) {
-        Intercomunicador intercomunicador = Intercomunicador.crear(id, marca, precio, color, alcanceMetros, autonomiaHoras, bluetooth);
+        return ejecutar(id, marca, precio, color, alcanceMetros, autonomiaHoras, bluetooth, null);
+    }
+
+    @Transactional
+    public Intercomunicador ejecutar(String id, Marca marca, Precio precio, String color, int alcanceMetros, int autonomiaHoras,boolean bluetooth, String imagenUrl) {
+        Intercomunicador intercomunicador = Intercomunicador.crear(id, marca, precio, color, alcanceMetros, autonomiaHoras, bluetooth, imagenUrl);
         repository.guardar(intercomunicador);
         return intercomunicador;
     }

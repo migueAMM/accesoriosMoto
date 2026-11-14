@@ -15,7 +15,12 @@ public class RegistrarCascoUseCase {
 
     @Transactional
     public Casco ejecutar(String id, Marca marca, String modelo, String color, Talla talla, Precio precio, Proteccion proteccion, String certificacionSeguridad){
-        Casco casco = Casco.crear(id, marca, modelo, color, talla, precio, proteccion, certificacionSeguridad);
+        return ejecutar(id, marca, modelo, color, talla, precio, proteccion, certificacionSeguridad, null);
+    }
+
+    @Transactional
+    public Casco ejecutar(String id, Marca marca, String modelo, String color, Talla talla, Precio precio, Proteccion proteccion, String certificacionSeguridad, String imagenUrl){
+        Casco casco = Casco.crear(id, marca, modelo, color, talla, precio, proteccion, certificacionSeguridad, imagenUrl);
         repository.guardar(casco);
         return casco;
     }
